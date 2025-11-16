@@ -141,10 +141,11 @@ LANGUAGES = [
 PROMPT_TEMPLATE = """Please generate {type} about {keywords_list} in {language}."""
 
 SEED = 42
-MODEL = "qwen/qwen3-235b-a22b-2507"
+BASE_URL = "https://api.siliconflow.cn/v1"
+MODEL = "Qwen/Qwen3-235B-A22B-Instruct-2507"
 MAX_TOKENS = 2048
 TEMPERATURE = 0.7
-COUNT = 1000
+COUNT = 2000
 DATASET_NAME = "Sculpt-AI/random-articles"
 
 
@@ -171,18 +172,23 @@ def format_prompt(article_type: str, keywords: list[str], language: str) -> str:
 
 
 def model_request(client: OpenAI, prompt: str) -> str:
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=MAX_TOKENS,
-        temperature=TEMPERATURE,
-    )
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=MAX_TOKENS,
+            temperature=TEMPERATURE,
+        )
+    except Exception as e:
+        print(f"Error during model request: {e}")
+        return ""
+
     response_content = response.choices[0].message.content
     return response_content or ""
 
 
 def article_generator(count: int):
-    client = OpenAI(base_url="https://openrouter.ai/api/v1")
+    client = OpenAI(base_url=BASE_URL)
     for _ in range(count):
         article_type, keywords, language = random_config()
         prompt = format_prompt(article_type, keywords, language)
@@ -201,4 +207,5 @@ if __name__ == "__main__":
     _generator = partial(article_generator, count=COUNT)
     ds = Dataset.from_generator(_generator)
     ds = ds.filter(lambda x: len(x["article"].strip()) > 0)
+    ds.save_to_disk(DATASET_NAME.replace("/", "_"))
     ds.push_to_hub(DATASET_NAME)
