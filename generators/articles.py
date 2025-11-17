@@ -154,9 +154,9 @@ MODELS = [
 ]
 MAX_TOKENS = 2048
 TEMPERATURE = 0.7
-COUNT = 2000
+COUNT = 5000
 DATASET_NAME = "Sculpt-AI/random-articles"
-PROCESSES = 10
+PROCESSES = 20
 TIMEOUT = 20.0
 
 client: OpenAI | None = None
