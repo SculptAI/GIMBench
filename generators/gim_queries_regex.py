@@ -41,7 +41,7 @@ Your job is to generate the **corresponding query**, masking certain spans using
 
 ## Requirements
 
-* The generated query must hide **between 1 and 10 spans**.
+* The generated query must hide **between 1 and 5 spans**.
 * A span may be a word, phrase, sentence, paragraph, code block, symbol sequence, or any meaningful structural unit.
 * Within each `g()` call, you may use:
 
@@ -51,8 +51,7 @@ Your job is to generate the **corresponding query**, masking certain spans using
   * or neither (empty `g()`), depending on what best tests the model.
 * The masked regions should be meaningful and non-trivial, targeting genuine infilling difficulty.
 * **The final query must include at least two `g()` calls that specify a `regex=` pattern.**
-* You must ensure the generated query is a valid Python f-string.
-* You must wrap the entire query like f"""xxx"""
+* You must ensure the generated query is a valid Python f-string and wrap the entire query like f"""xxx"""
 * Do not contain any explanations or additional text outside the f-string.
 '''
 
@@ -89,7 +88,7 @@ MODELS = [
 MAX_TOKENS = 2048
 TEMPERATURE = 0.7
 PROCESSES = 20
-COUNT = 5000
+COUNT = 50
 RANDOM_ARTICLES_DATASET = "Sculpt-AI/random-articles"
 UPLOAD_DATASET_NAME = "Sculpt-AI/GIMBench"
 SUBSET_NAME = "regex"
@@ -147,10 +146,16 @@ def parse_query_response(query: str, response: str) -> tuple[Query, Response]:
         if isinstance(part, str):
             gim_response_parts.append(part)
         elif isinstance(part, MaskedTag):
+            if part.regex and not re.fullmatch(part.regex, matches[i + 1], re.DOTALL):
+                raise ValueError(
+                    f"Matched content '{matches[i + 1]}' does not match the regex '{part.regex}'."
+                )
             tag = deepcopy(part)
             tag.content = matches[i + 1]
             gim_response_parts.append(tag)
     gim_response = Response(gim_response_parts)
+    if all(tag.regex for tag in gim_response.tags):
+        raise ValueError("Response must contain at least one tag with a regex.")
     return gim_query, gim_response
 
 
@@ -166,20 +171,22 @@ def generate_gim_query(_=None) -> dict:
         return {
             "gim_query": gim_query,
             "gim_response": gim_response,
-            "model": model,
             "correct": False,
             "type": row["type"],
             "keywords": row["keywords"],
             "language": row["language"],
+            "article_model": row["model"],
+            "gim_query_model": model,
         }
     return {
-        "gim_query": str(gim_query_obj),
-        "gim_response": str(gim_response_obj),
-        "model": model,
+        "gim_query": gim_query_obj.to_string(fields="all"),
+        "gim_response": gim_response_obj.to_string(fields="all"),
         "correct": True,
         "type": row["type"],
         "keywords": row["keywords"],
         "language": row["language"],
+        "article_model": row["model"],
+        "gim_query_model": model,
     }
 
 
@@ -190,6 +197,7 @@ if __name__ == "__main__":
             if result:
                 ds.append(result)
     hf_ds = Dataset.from_list(ds).filter(lambda x: x["correct"] is True).remove_columns(["correct"])
+    print(f"Generated {len(hf_ds)} valid records.")
     hf_ds.save_to_disk(UPLOAD_DATASET_NAME.replace("/", "_") + f"_{SUBSET_NAME}_{SPLIT_NAME}")
     hf_ds.push_to_hub(UPLOAD_DATASET_NAME, SUBSET_NAME, split=SPLIT_NAME)
     print(
