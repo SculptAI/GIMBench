@@ -143,7 +143,15 @@ PROMPT_TEMPLATE = """Please generate {type} about {keywords_list} in {language}.
 
 SEED = 42
 BASE_URL = "https://api.siliconflow.cn/v1"
-MODEL = "Qwen/Qwen3-235B-A22B-Instruct-2507"
+MODELS = [
+    "Qwen/Qwen3-235B-A22B-Instruct-2507",
+    "zai-org/GLM-4.6",
+    "moonshotai/Kimi-K2-Instruct-0905",
+    "Pro/deepseek-ai/DeepSeek-V3.2-Exp",
+    "Kwaipilot/KAT-Dev",
+    "inclusionAI/Ling-1T",
+    "MiniMaxAI/MiniMax-M2",
+]
 MAX_TOKENS = 2048
 TEMPERATURE = 0.7
 COUNT = 2000
@@ -162,11 +170,12 @@ def init_worker():
     random.seed(SEED + current_process().pid)
 
 
-def random_config() -> tuple[str, list[str], str]:
+def random_config() -> tuple[str, list[str], str, str]:
     article_type = random.choice(TYPES)
     keywords = random.sample(KEYWORDS, k=random.randint(1, 3))
     language = random.choice(LANGUAGES)
-    return article_type, keywords, language
+    model = random.choice(MODELS)
+    return article_type, keywords, language, model
 
 
 def format_prompt(article_type: str, keywords: list[str], language: str) -> str:
@@ -180,10 +189,10 @@ def format_prompt(article_type: str, keywords: list[str], language: str) -> str:
     )
 
 
-def model_request(client: OpenAI, prompt: str) -> str:
+def model_request(client: OpenAI, model: str, prompt: str) -> str:
     try:
         response = client.chat.completions.create(
-            model=MODEL,
+            model=model,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=MAX_TOKENS,
             temperature=TEMPERATURE,
@@ -201,9 +210,9 @@ def generate_article(_=None) -> dict | None:
     if client is None:
         return None
 
-    article_type, keywords, language = random_config()
+    article_type, keywords, language, model = random_config()
     prompt = format_prompt(article_type, keywords, language)
-    article = model_request(client, prompt)
+    article = model_request(client, model, prompt)
     if not article:
         return None
 
@@ -213,6 +222,7 @@ def generate_article(_=None) -> dict | None:
         "language": language,
         "prompt": prompt,
         "article": article,
+        "model": model,
     }
 
 
