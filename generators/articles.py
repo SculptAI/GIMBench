@@ -224,5 +224,6 @@ if __name__ == "__main__":
                 articles.append(result)
 
     dataset = Dataset.from_list(articles)
+    dataset = dataset.filter(lambda x: len(x["article"].strip()) > 0)
     dataset.save_to_disk(DATASET_NAME.replace("/", "_"))
     dataset.push_to_hub(DATASET_NAME)
