@@ -82,11 +82,14 @@ MODELS = [
     "zai-org/GLM-4.6",
     "moonshotai/Kimi-K2-Instruct-0905",
     "Pro/deepseek-ai/DeepSeek-V3.2-Exp",
+    "Kwaipilot/KAT-Dev",
+    "inclusionAI/Ling-1T",
+    "MiniMaxAI/MiniMax-M2",
 ]
 MAX_TOKENS = 2048
 TEMPERATURE = 0.7
 PROCESSES = 10
-COUNT = 10
+COUNT = 2500
 RANDOM_ARTICLES_DATASET = "Sculpt-AI/random-articles"
 UPLOAD_DATASET_NAME = "Sculpt-AI/GIMBench"
 SUBSET_NAME = "regex"
