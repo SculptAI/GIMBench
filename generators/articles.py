@@ -1,9 +1,10 @@
 import random
 
-from functools import partial
+from multiprocessing import Pool, current_process
 
 from datasets import Dataset
 from openai import OpenAI
+from tqdm import tqdm
 
 
 KEYWORDS = [
@@ -147,6 +148,18 @@ MAX_TOKENS = 2048
 TEMPERATURE = 0.7
 COUNT = 2000
 DATASET_NAME = "Sculpt-AI/random-articles"
+PROCESSES = 10
+TIMEOUT = 20.0
+
+client: OpenAI | None = None
+
+
+def init_worker():
+    global client
+    # Each worker has its own client instance
+    client = OpenAI(base_url=BASE_URL, timeout=TIMEOUT)
+    # Ensure different random seeds for each worker
+    random.seed(SEED + current_process().pid)
 
 
 def random_config() -> tuple[str, list[str], str]:
@@ -157,10 +170,6 @@ def random_config() -> tuple[str, list[str], str]:
 
 
 def format_prompt(article_type: str, keywords: list[str], language: str) -> str:
-    article_type = random.choice(TYPES)
-    keywords = random.sample(KEYWORDS, k=random.randint(1, 3))
-    language = random.choice(LANGUAGES)
-
     keywords_list = (
         ", ".join(keywords[:-1]) + ", and " + keywords[-1] if len(keywords) > 1 else keywords[0]
     )
@@ -187,25 +196,33 @@ def model_request(client: OpenAI, prompt: str) -> str:
     return response_content or ""
 
 
-def article_generator(count: int):
-    client = OpenAI(base_url=BASE_URL)
-    for _ in range(count):
-        article_type, keywords, language = random_config()
-        prompt = format_prompt(article_type, keywords, language)
-        article = model_request(client, prompt)
-        yield {
-            "type": article_type,
-            "keywords": keywords,
-            "language": language,
-            "prompt": prompt,
-            "article": article,
-        }
+def generate_article(_=None) -> dict | None:
+    # The client is initialized in the worker process
+    if client is None:
+        return None
+
+    article_type, keywords, language = random_config()
+    prompt = format_prompt(article_type, keywords, language)
+    article = model_request(client, prompt)
+    if not article:
+        return None
+
+    return {
+        "type": article_type,
+        "keywords": keywords,
+        "language": language,
+        "prompt": prompt,
+        "article": article,
+    }
 
 
 if __name__ == "__main__":
-    random.seed(SEED)
-    _generator = partial(article_generator, count=COUNT)
-    ds = Dataset.from_generator(_generator)
-    ds = ds.filter(lambda x: len(x["article"].strip()) > 0)
-    ds.save_to_disk(DATASET_NAME.replace("/", "_"))
-    ds.push_to_hub(DATASET_NAME)
+    articles = []
+    with Pool(processes=PROCESSES, initializer=init_worker) as pool:
+        for result in tqdm(pool.imap_unordered(generate_article, range(COUNT)), total=COUNT):
+            if result and result.get("article"):
+                articles.append(result)
+
+    dataset = Dataset.from_list(articles)
+    dataset.save_to_disk(DATASET_NAME.replace("/", "_"))
+    dataset.push_to_hub(DATASET_NAME)
