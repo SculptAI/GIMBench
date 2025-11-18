@@ -4,9 +4,9 @@ import random
 
 from datasets import load_dataset
 
-from eval.arguments import get_args
-from eval.log import get_logger
-from eval.mcqa.evaluators import conduct_eval
+from evals.arguments import get_args
+from evals.log import get_logger
+from evals.mcqa.evaluators import conduct_eval
 
 
 logger = get_logger(__name__)

@@ -5,7 +5,7 @@ from pathlib import Path
 from sys import stdout
 
 
-APP_NAME = "GIMEval"
+APP_NAME = "GIMBench"
 
 
 LOGGING_CONFIG = {

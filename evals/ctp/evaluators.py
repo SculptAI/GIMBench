@@ -17,7 +17,7 @@ from pydantic import BaseModel, field_serializer
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from eval.log import get_logger
+from evals.log import get_logger
 
 
 GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")

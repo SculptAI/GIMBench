@@ -2,9 +2,9 @@
 
 from datasets import concatenate_datasets, load_dataset
 
-from eval.arguments import get_args
-from eval.ctp.evaluators import conduct_eval
-from eval.log import get_logger
+from evals.arguments import get_args
+from evals.ctp.evaluators import conduct_eval
+from evals.log import get_logger
 
 
 logger = get_logger(__name__)
