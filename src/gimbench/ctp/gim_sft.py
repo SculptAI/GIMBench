@@ -2,9 +2,9 @@
 
 from datasets import concatenate_datasets, load_dataset
 
-from evals.arguments import get_args
-from evals.ctp.evaluators import conduct_eval
-from evals.log import get_logger
+from gimbench.arguments import get_args
+from gimbench.ctp.evaluators import conduct_eval
+from gimbench.log import get_logger
 
 
 logger = get_logger(__name__)

@@ -17,7 +17,7 @@ from pydantic import BaseModel, field_serializer
 from tqdm import tqdm
 from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
-from evals.log import get_logger
+from gimbench.log import get_logger
 
 
 GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")

@@ -4,9 +4,7 @@ from logging.config import dictConfig
 from pathlib import Path
 from sys import stdout
 
-
-APP_NAME = "GIMBench"
-
+APP_NAME = "gimbench"
 
 LOGGING_CONFIG = {
     "version": 1,
@@ -35,15 +33,15 @@ LOGGING_CONFIG = {
     },
     "loggers": {
         APP_NAME: {
-            "level": "DEBUG",
             "handlers": ["console", "file"],
+            "level": "DEBUG",
             "propagate": False,
         }
-    },
+}
 }
 
 
-def get_logger(name: str | None = None, log_dir: str = ".", log_filename: str = "eval.log") -> logging.Logger:
+def get_logger(name: str, log_dir: str = ".", log_filename: str = "eval.log") -> logging.Logger:
     """returns the project logger, scoped to a child name if provided
     Args:
         name: will define a child logger
@@ -64,7 +62,4 @@ def get_logger(name: str | None = None, log_dir: str = ".", log_filename: str = 
 
     dictConfig(LOGGING_CONFIG)
 
-    parent_logger = logging.getLogger(APP_NAME)
-    if name:
-        return parent_logger.getChild(name)
-    return parent_logger
+    return logging.getLogger("" if name.startswith(APP_NAME) else APP_NAME).getChild(name)

@@ -4,9 +4,9 @@ import random
 
 from datasets import load_dataset
 
-from evals.arguments import get_args
-from evals.log import get_logger
-from evals.mcqa.evaluators import conduct_eval
+from gimbench.arguments import get_args
+from gimbench.log import get_logger
+from gimbench.mcqa.evaluators import conduct_eval
 
 
 logger = get_logger(__name__)
