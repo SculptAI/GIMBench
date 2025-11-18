@@ -1,6 +1,9 @@
 install:
 	uv sync
 
+install-dev:
+	uv sync --all-groups --all-extras
+
 lint:
 	uv run ruff check
 	uv run ruff format --diff
