@@ -1,8 +1,12 @@
-from argparse import ArgumentParser
 import argparse
 
+from argparse import ArgumentParser
+
+
 def _add_gim_args(parser):
-    parser.add_argument("--is_gim", action="store_true", help="The model is trained using GIM paradigm")  # TODO: Drop this later. Replace it with no_gimkit for the common inference case.
+    parser.add_argument(
+        "--is_gim", action="store_true", help="The model is trained using GIM paradigm"
+    )  # TODO: Drop this later. Replace it with no_gimkit for the common inference case.
     parser.add_argument("--use_gim_prompt", action="store_true", help="Whether to use GIM prompt")
     parser.add_argument(
         "--output_type",
@@ -14,7 +18,12 @@ def _add_gim_args(parser):
 
 
 def _add_model_args(parser):
-    parser.add_argument("--model_type", type=str, choices=["openai", "vllm", "vllm-offline"], help="Type of model to use")
+    parser.add_argument(
+        "--model_type",
+        type=str,
+        choices=["openai", "vllm", "vllm-offline"],
+        help="Type of model to use",
+    )
     parser.add_argument("--model_name", type=str, required=True, help="Model under evaluation")
     parser.add_argument("--api_key", type=str, default="", help="API key for the model")
     parser.add_argument(
@@ -83,6 +92,7 @@ def _add_ctp_eval_args(parser):
         help="Device for the reference model",
     )
 
+
 def _add_mcqa_eval_args(parser):
     parser.add_argument(
         "--reason_budget",
@@ -101,6 +111,7 @@ def validate_and_standardize(args: argparse.Namespace) -> argparse.Namespace:
     if args.output_type == "none":
         args.output_type = None
     return args
+
 
 def get_args() -> argparse.Namespace:
     parser = ArgumentParser()

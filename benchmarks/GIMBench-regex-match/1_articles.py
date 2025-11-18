@@ -179,9 +179,7 @@ def random_config() -> tuple[str, list[str], str, str]:
 
 
 def format_prompt(article_type: str, keywords: list[str], language: str) -> str:
-    keywords_list = (
-        ", ".join(keywords[:-1]) + ", and " + keywords[-1] if len(keywords) > 1 else keywords[0]
-    )
+    keywords_list = ", ".join(keywords[:-1]) + ", and " + keywords[-1] if len(keywords) > 1 else keywords[0]
     return PROMPT_TEMPLATE.format(
         type=article_type,
         keywords_list=keywords_list,

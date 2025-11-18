@@ -255,7 +255,11 @@ class CommonEvaluator(BaseEvaluator):
         last_line = response_str.splitlines()[-1] if response_str.splitlines() else response_str
 
         # 1) Try marker-based extraction: e.g. "The answer is: A", "Final answer: (B)", "Answer: C."
-        if m := re.search(r"(?:the answer is|final answer|answer)[:\s]*\(?([A-Za-z0-9]+)\)?", last_line, re.IGNORECASE):
+        if m := re.search(
+            r"(?:the answer is|final answer|answer)[:\s]*\(?([A-Za-z0-9]+)\)?",
+            last_line,
+            re.IGNORECASE,
+        ):
             model_choice = m.group(1).strip().rstrip(".),")
             additional_info["extracted_by"] = "marker"
 

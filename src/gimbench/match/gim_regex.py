@@ -6,18 +6,16 @@ import os
 import re
 
 from dataclasses import dataclass
-from typing import Literal, cast
-
-from gimkit import from_openai, from_vllm_offline
-from gimkit.contexts import Query, Result
-from gimkit.exceptions import InvalidFormatError
-from gimkit.models.openai import OpenAI as GIMKitOpenAI
-from gimkit.models.vllm_offline import VLLMOffline as GIMKitvLLMOffline
-from gimkit.schemas import MaskedTag
 
 from datasets import load_dataset
+from gimkit.contexts import Query
+from gimkit.exceptions import InvalidFormatError
+from gimkit.schemas import MaskedTag
+
 from gimbench.arguments import get_args
 from gimbench.models import SimpleGIM
+
+
 logging.getLogger("gimkit").setLevel(logging.DEBUG)
 
 
@@ -46,9 +44,7 @@ class EvalResult:
     eval_queries: list[EvalQuery]
 
 
-def conduct_eval(
-    queries: list[str], model: SimpleGIM, args: argparse.Namespace
-) -> list[EvalQuery]:
+def conduct_eval(queries: list[str], model: SimpleGIM, args: argparse.Namespace) -> list[EvalQuery]:
     output_type = args.output_type
     if output_type == "none":
         output_type = None
@@ -132,12 +128,8 @@ def print_beautiful_stats(eval_results: EvalResult) -> None:
         total_regex += result.num_regex
         total_regex_match += result.num_regex_match
 
-        pred_rate = (
-            f"{result.num_has_prediction / result.num_tags:.2%}" if result.num_tags > 0 else "N/A"
-        )
-        match_rate = (
-            f"{result.num_regex_match / result.num_regex:.2%}" if result.num_regex > 0 else "N/A"
-        )
+        pred_rate = f"{result.num_has_prediction / result.num_tags:.2%}" if result.num_tags > 0 else "N/A"
+        match_rate = f"{result.num_regex_match / result.num_regex:.2%}" if result.num_regex > 0 else "N/A"
 
         table.add_row(
             str(result.num_tags),
@@ -168,16 +160,14 @@ def save_eval_results(eval_results: EvalResult) -> None:
     save_path += ".json"
 
     with open(save_path, "w") as f:
-        json.dump(
-            eval_results_to_save, f, default=lambda o: o.__dict__, indent=2, ensure_ascii=False
-        )
+        json.dump(eval_results_to_save, f, default=lambda o: o.__dict__, indent=2, ensure_ascii=False)
 
 
 if __name__ == "__main__":
     args = get_args()
     model = SimpleGIM(args)
     dataset = load_dataset("Sculpt-AI/GIMBench-regex-match", split="test")
-    queries = dataset["gim_query"][:args.first_n if args.first_n > 0 else None]
+    queries = dataset["gim_query"][: args.first_n if args.first_n > 0 else None]
     eval_queries = conduct_eval(queries, model, args)
     eval_results = EvalResult(run_args=args, eval_queries=eval_queries)
     print_beautiful_stats(eval_results)

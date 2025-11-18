@@ -27,7 +27,10 @@ def to_csv(results, output_file):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
-        "--output_dir", type=str, default="results/", help="Directory containing evaluation result files."
+        "--output_dir",
+        type=str,
+        default="results/",
+        help="Directory containing evaluation result files.",
     )
     parser.add_argument(
         "--exclude_fields",

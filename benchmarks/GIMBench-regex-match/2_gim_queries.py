@@ -146,9 +146,7 @@ def parse_query_response(query: str, response: str) -> tuple[Query, Response]:
             gim_response_parts.append(part)
         elif isinstance(part, MaskedTag):
             if part.regex and not re.fullmatch(part.regex, matches[i + 1], re.DOTALL):
-                raise ValueError(
-                    f"Matched content '{matches[i + 1]}' does not match the regex '{part.regex}'."
-                )
+                raise ValueError(f"Matched content '{matches[i + 1]}' does not match the regex '{part.regex}'.")
             tag = deepcopy(part)
             tag.content = matches[i + 1]
             gim_response_parts.append(tag)

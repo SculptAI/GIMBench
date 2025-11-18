@@ -57,7 +57,7 @@ sudo shutdown -h +3
 # export OPENAI_BASE_URL="https://xxx/v1"
 # export HF_TOKEN="xxx"
 
-python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 
+python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100
 python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 --use_gim_prompt
 python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 --use_gim_prompt --output_type json
 

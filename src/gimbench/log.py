@@ -4,6 +4,7 @@ from logging.config import dictConfig
 from pathlib import Path
 from sys import stdout
 
+
 APP_NAME = "gimbench"
 
 LOGGING_CONFIG = {
@@ -37,7 +38,7 @@ LOGGING_CONFIG = {
             "level": "DEBUG",
             "propagate": False,
         }
-}
+    },
 }
 
 
