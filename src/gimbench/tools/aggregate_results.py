@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from pathlib import Path
 
-from log import get_logger
+from gimbench.log import get_logger
 
 
 logger = get_logger(__name__)
