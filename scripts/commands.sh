@@ -54,15 +54,15 @@ sudo shutdown -h +3
 
 # Run some exports before running the commands
 # export OPENAI_API_KEY="xxx"
-# export OPENAI_API_BASE="https://xxx/v1"
+# export OPENAI_BASE_URL="https://xxx/v1"
 # export HF_TOKEN="xxx"
 
-python -m gimbench.run --model_type openai --api_key $OPENAI_API_KEY --api_base $OPENAI_API_BASE --model_name openai/gpt-5
-python -m gimbench.run --model_type openai --api_key $OPENAI_API_KEY --api_base $OPENAI_API_BASE --model_name openai/gpt-5 --use_gim_prompt
-python -m gimbench.run --model_type openai --api_key $OPENAI_API_KEY --api_base $OPENAI_API_BASE --model_name openai/gpt-5 --use_gim_prompt --output_type json
+python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 
+python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 --use_gim_prompt
+python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 --use_gim_prompt --output_type json
 
-python -m gimbench.run --model_type vllm --model_name Qwen/Qwen3-0.6B --use_gim_prompt --output_type cfg
+python -m gimbench.match.gim_regex --model_type vllm --model_name Qwen/Qwen3-0.6B --first_n 100 --use_gim_prompt --output_type cfg
 
-python -m gimbench.run --model_type vllm --model_name Sculpt-AI/GIM-test
-python -m gimbench.run --model_type vllm --model_name Sculpt-AI/GIM-test --output_type json
-python -m gimbench.run --model_type vllm --model_name Sculpt-AI/GIM-test --output_type cfg
+python -m gimbench.match.gim_regex --model_type vllm --model_name Sculpt-AI/GIM-test --first_n 100
+python -m gimbench.match.gim_regex --model_type vllm --model_name Sculpt-AI/GIM-test --first_n 100 --output_type json
+python -m gimbench.match.gim_regex --model_type vllm --model_name Sculpt-AI/GIM-test --first_n 100 --output_type cfg

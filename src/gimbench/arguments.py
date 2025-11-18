@@ -1,24 +1,27 @@
 from argparse import ArgumentParser
+import argparse
+
+def _add_gim_args(parser):
+    parser.add_argument("--is_gim", action="store_true", help="The model is trained using GIM paradigm")  # TODO: Drop this later. Replace it with no_gimkit for the common inference case.
+    parser.add_argument("--use_gim_prompt", action="store_true", help="Whether to use GIM prompt")
+    parser.add_argument(
+        "--output_type",
+        type=str,
+        choices=["none", "json", "cfg"],
+        default="none",
+        help="Constrained decoding output type",
+    )
 
 
 def _add_model_args(parser):
-    parser.add_argument("--model_name", type=str, default="", help="Model under evaluation")
+    parser.add_argument("--model_type", type=str, choices=["openai", "vllm", "vllm-offline"], help="Type of model to use")
+    parser.add_argument("--model_name", type=str, required=True, help="Model under evaluation")
     parser.add_argument("--api_key", type=str, default="", help="API key for the model")
     parser.add_argument(
         "--base_url",
         type=str,
         default="http://localhost:8000/v1",
         help="Base URL for the model API",
-    )
-
-
-def _add_gim_args(parser):
-    parser.add_argument("--is_gim", action="store_true", help="Whether to use GIM models")
-    parser.add_argument(
-        "--reason_budget",
-        type=int,
-        default=0,
-        help="Number of reasoning steps to include in the prompt",
     )
 
 
@@ -80,12 +83,33 @@ def _add_ctp_eval_args(parser):
         help="Device for the reference model",
     )
 
+def _add_mcqa_eval_args(parser):
+    parser.add_argument(
+        "--reason_budget",
+        type=int,
+        default=0,
+        help="Number of reasoning steps to include in the prompt",
+    )
 
-def get_args():
+
+def validate_and_standardize(args: argparse.Namespace) -> argparse.Namespace:
+    if args.model_type == "openai" and not args.api_key and not args.base_url:
+        raise ValueError("API key and base URL must be provided for OpenAI models.")
+    if args.model_type == "vllm" and not args.base_url:
+        raise ValueError("Base URL must be provided for vLLM models.")
+
+    if args.output_type == "none":
+        args.output_type = None
+    return args
+
+def get_args() -> argparse.Namespace:
     parser = ArgumentParser()
-    _add_model_args(parser)
     _add_gim_args(parser)
+    _add_model_args(parser)
     _add_sample_args(parser)
     _add_evaluator_args(parser)
     _add_ctp_eval_args(parser)
-    return parser.parse_args()
+    _add_mcqa_eval_args(parser)
+    args = parser.parse_args()
+    validate_and_standardize(args)
+    return args

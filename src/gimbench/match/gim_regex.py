@@ -15,9 +15,9 @@ from gimkit.models.openai import OpenAI as GIMKitOpenAI
 from gimkit.models.vllm_offline import VLLMOffline as GIMKitvLLMOffline
 from gimkit.schemas import MaskedTag
 
-from .queries import queries
-
-
+from datasets import load_dataset
+from gimbench.arguments import get_args
+from gimbench.models import SimpleGIM
 logging.getLogger("gimkit").setLevel(logging.DEBUG)
 
 
@@ -31,7 +31,6 @@ class EvalTag:
 
 @dataclass
 class EvalQuery:
-    query_name: str
     query: str
     result: str
     eval_tags: list[EvalTag]
@@ -47,105 +46,22 @@ class EvalResult:
     eval_queries: list[EvalQuery]
 
 
-def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Evaluate the guided infilling capabilities of "
-        "OpenAI-style API models and vLLM local models."
-    )
-
-    # General arguments
-    parser.add_argument("--model_type", type=str, choices=["openai", "vllm"], help="Model Type")
-    parser.add_argument("--model_name", type=str, help="Model Name")
-    parser.add_argument(
-        "--save_dir", type=str, default="eval_results", help="Directory to save evaluation results"
-    )
-
-    # OpenAI API arguments
-    parser.add_argument("--api_key", type=str, help="OpenAI API Key")
-    parser.add_argument("--api_base", type=str, help="OpenAI API Base URL")
-
-    # Sampling arguments
-    parser.add_argument(
-        "--temperature", type=float, default=0, help="Sampling temperature for generation"
-    )
-    parser.add_argument("--max_tokens", type=int, default=4096, help="Maximum tokens")
-
-    # GIMKit arguments
-    parser.add_argument("--use_gim_prompt", action="store_true", help="Whether to use GIM prompt")
-    parser.add_argument(
-        "--output_type",
-        type=str,
-        choices=["none", "json", "cfg"],
-        default="none",
-        help="Constrained decoding output type",
-    )
-    return parser.parse_args()
-
-
-def get_model(args: argparse.Namespace) -> GIMKitOpenAI | GIMKitvLLMOffline:
-    model: GIMKitOpenAI | GIMKitvLLMOffline
-    if args.model_type == "openai":
-        from openai import OpenAI
-
-        openai_client = OpenAI(api_key=args.api_key, base_url=args.api_base)
-        model = from_openai(openai_client, model_name=args.model_name)
-    elif args.model_type == "vllm":
-        from vllm import LLM
-
-        vllm_client = LLM(args.model_name)
-        model = from_vllm_offline(vllm_client)
-    else:
-        raise ValueError(f"Unsupported model type: {args.model_type}")
-    return model
-
-
-def run_model(
-    model: GIMKitOpenAI | GIMKitvLLMOffline,
-    args: argparse.Namespace,
-    output_type: str | None,
-    query: str,
-) -> Result:
-    if isinstance(model, GIMKitOpenAI):
-        result = model(
-            query,
-            use_gim_prompt=args.use_gim_prompt,
-            output_type=cast('Literal["json"] | None', output_type),
-            max_tokens=args.max_tokens,
-            temperature=args.temperature,
-        )
-    elif isinstance(model, GIMKitvLLMOffline):
-        from vllm import SamplingParams
-
-        result = model(
-            query,
-            use_gim_prompt=args.use_gim_prompt,
-            output_type=cast('Literal["cfg", "json"] | None', output_type),
-            sampling_params=SamplingParams(
-                max_tokens=args.max_tokens, temperature=args.temperature
-            ),
-        )
-    if isinstance(result, list):
-        raise ValueError("Expected a single result, but got a list.")
-    return result
-
-
 def conduct_eval(
-    queries: dict[str, str], model: GIMKitOpenAI | GIMKitvLLMOffline, args: argparse.Namespace
+    queries: list[str], model: SimpleGIM, args: argparse.Namespace
 ) -> list[EvalQuery]:
     output_type = args.output_type
     if output_type == "none":
         output_type = None
 
     eval_results = []
-    for query_name, query in queries.items():
+    for query in queries:
         try:
-            result = run_model(model, args, output_type, query)
+            result = model.generate(query)
         except InvalidFormatError as e:
-            print(f"Skipping query '{query_name}' due to invalid format: {e}")
+            print(f"Skipping query '{query}' due to invalid format: {e}")
             query_obj = Query(query)
             eval_results.append(
                 EvalQuery(
-                    query_name=query_name,
                     query=query,
                     result="Invalid Format Error",
                     eval_tags=[],
@@ -169,7 +85,6 @@ def conduct_eval(
                 regex_match = True
             eval_items.append(EvalTag(tag, has_prediction, has_regex, regex_match))
         eval_result = EvalQuery(
-            query_name=query_name,
             query=query,
             result=str(result),
             eval_tags=eval_items,
@@ -199,7 +114,6 @@ def print_beautiful_stats(eval_results: EvalResult) -> None:
     console.print(Panel(info_text, title="Run Arguments", border_style="blue", expand=False))
 
     table = Table()
-    table.add_column("Query Name", justify="left", style="cyan", no_wrap=True)
     table.add_column("Tags", justify="right", style="magenta")
     table.add_column("Predicted", justify="right", style="green")
     table.add_column("Regex", justify="right", style="blue")
@@ -226,7 +140,6 @@ def print_beautiful_stats(eval_results: EvalResult) -> None:
         )
 
         table.add_row(
-            result.query_name,
             str(result.num_tags),
             str(result.num_has_prediction),
             str(result.num_regex),
@@ -243,7 +156,7 @@ def save_eval_results(eval_results: EvalResult) -> None:
     if hasattr(eval_results_to_save.run_args, "api_key"):
         eval_results_to_save.run_args.api_key = "***"
 
-    save_dir = eval_results.run_args.save_dir
+    save_dir = eval_results.run_args.output_dir
     os.makedirs(save_dir, exist_ok=True)
     model_name = re.sub(r"[^\w\-_. ]", "_", eval_results.run_args.model_name)
 
@@ -262,7 +175,9 @@ def save_eval_results(eval_results: EvalResult) -> None:
 
 if __name__ == "__main__":
     args = get_args()
-    model = get_model(args)
+    model = SimpleGIM(args)
+    dataset = load_dataset("Sculpt-AI/GIMBench-regex-match", split="test")
+    queries = dataset["gim_query"][:args.first_n if args.first_n > 0 else None]
     eval_queries = conduct_eval(queries, model, args)
     eval_results = EvalResult(run_args=args, eval_queries=eval_queries)
     print_beautiful_stats(eval_results)
