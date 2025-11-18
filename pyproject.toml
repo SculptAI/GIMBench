@@ -1,7 +1,7 @@
 [project]
 name = "gimbench"
 version = "0.1.0"
-description = "Add your description here"
+description = "Benchmarking the guided infilling models."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
