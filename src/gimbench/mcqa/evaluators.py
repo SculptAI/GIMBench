@@ -75,7 +75,7 @@ class EvalResult(BaseModel):
             dataset_path = dataset.get("path", "unknown_dataset") if isinstance(dataset, dict) else "unknown_dataset"
             model_name = getattr(self.args, "model_name", "unknown_model")
             filename = f"{model_name}_{dataset_path}_{self.start_time.strftime('%y%m%d-%H%M%S')}.json".replace("/", "_")
-            filepath = Path(self.args.output_dir) / filename
+            filepath = str(Path(self.args.output_dir) / filename)
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, "w") as f:
             f.write(self.model_dump_json(indent=4))
@@ -216,11 +216,14 @@ class GIMEvaluator(BaseEvaluator):
             seed=self.args.seed,
             max_tokens=self.args.max_tokens,
         )
+        if isinstance(result, list):
+            raise ValueError("Expected a single Result, but got a list.")
         return result
 
     def _parse_response(self, response: Result, validate_choices: list[str]) -> tuple[str, str, dict]:
         str_response = str(response)
-        model_choice = response.tags["predicted_choice"].content.strip().strip("().,")
+        content = response.tags["predicted_choice"].content or ""
+        model_choice = content.strip().strip("().,")
         additional_info = {tag.name or str(tag.id): tag.content for tag in response.tags}
         if model_choice not in validate_choices:
             raise ValueError(f"Extracted choice '{model_choice}' not in valid choices {validate_choices}")
@@ -245,7 +248,7 @@ class CommonEvaluator(BaseEvaluator):
         response = self.model.chat.completions.create(
             model=self.args.model_name, messages=[{"role": "user", "content": query}]
         )
-        return response.choices[0].message.content
+        return response.choices[0].message.content or ""
 
     def _parse_response(self, response: str, validate_choices: list[str]) -> tuple[str, str, dict]:
         response_str = response.strip()

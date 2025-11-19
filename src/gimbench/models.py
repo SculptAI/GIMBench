@@ -1,11 +1,14 @@
 import argparse
 
+from typing import Any
+
 from gimkit.contexts import Result
 
 
 class SimpleGIM:
     def __init__(self, args: argparse.Namespace):
         self.args = args
+        self.model: Any
         if args.model_type in ["openai", "vllm"]:
             from gimkit import from_openai
             from openai import OpenAI as OpenAIClient

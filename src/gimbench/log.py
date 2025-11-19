@@ -3,11 +3,12 @@ import logging
 from logging.config import dictConfig
 from pathlib import Path
 from sys import stdout
+from typing import Any
 
 
 APP_NAME = "gimbench"
 
-LOGGING_CONFIG = {
+LOGGING_CONFIG: dict[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
