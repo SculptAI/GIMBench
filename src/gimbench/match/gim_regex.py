@@ -46,10 +46,6 @@ class EvalResult:
 
 
 def conduct_eval(queries: list[str], model: SimpleGIM, args: argparse.Namespace) -> list[EvalQuery]:
-    output_type = args.output_type
-    if output_type == "none":
-        output_type = None
-
     eval_results = []
     for query in queries:
         try:

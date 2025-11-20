@@ -103,7 +103,7 @@ def _add_mcqa_eval_args(parser):
 
 
 def validate_and_standardize(args: argparse.Namespace) -> argparse.Namespace:
-    if args.model_type == "openai" and not args.api_key and not args.base_url:
+    if args.model_type == "openai" and not (args.api_key and args.base_url):
         raise ValueError("API key and base URL must be provided for OpenAI models.")
     if args.model_type == "vllm" and not args.base_url:
         raise ValueError("Base URL must be provided for vLLM models.")

@@ -104,9 +104,8 @@ class BaseEvaluator:
             result = self._model_call(query)
             ctp = self._compute_ctp(result)
         except IndexError:
-            err_msg = f"{self.args.model_name}'s context window may be too small for CTP evaluation."
-            logger.error(err_msg)
-            error_msg = err_msg
+            error_msg = f"{self.args.model_name}'s context window may be too small for CTP evaluation."
+            logger.error(error_msg)
         except Exception as e:
             logger.exception(e)
             error_msg = str(e)
