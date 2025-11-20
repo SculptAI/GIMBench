@@ -53,8 +53,8 @@ def conduct_eval(queries: list[str], model: SimpleGIM, args: argparse.Namespace)
     for query in queries:
         try:
             result = model.generate(query)
-        except InvalidFormatError as e:
-            print(f"Skipping query '{query}' due to invalid format: {e}")
+        except Exception as e:
+            print(f"Skipping query '{query}' due to: {e}")
             query_obj = Query(query)
             eval_results.append(
                 EvalQuery(

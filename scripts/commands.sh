@@ -1,7 +1,3 @@
-# TODO: OUTDATED
-
-# ─── COPIED FROM GIM-research/eval/commands.sh ────────────────────────────────
-
 # DO NOT RUN THIS SCRIPT DIRECTLY.
 # Commands below are intended to be copy-pasted into a terminal.
 
@@ -50,9 +46,7 @@ for BUDGET in {2..18..2}; do python -m gimbench.mcqa.qasc --model_name artifacts
 sudo shutdown -h +3
 
 
-# ─── COPIED FROM GIMKit/evals/commands.sh ─────────────────────────────────────
-
-# Run some exports before running the commands
+# Run some exports before running the commands below:
 # export OPENAI_API_KEY="xxx"
 # export OPENAI_BASE_URL="https://xxx/v1"
 # export HF_TOKEN="xxx"
@@ -61,8 +55,8 @@ python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY
 python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 --use_gim_prompt
 python -m gimbench.match.gim_regex --model_type openai --api_key $OPENAI_API_KEY --base_url $OPENAI_BASE_URL --model_name openai/gpt-5 --first_n 100 --use_gim_prompt --output_type json
 
-python -m gimbench.match.gim_regex --model_type vllm --model_name Qwen/Qwen3-0.6B --first_n 100 --use_gim_prompt --output_type cfg
+python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Qwen/Qwen3-0.6B --first_n 100 --use_gim_prompt --output_type cfg
 
-python -m gimbench.match.gim_regex --model_type vllm --model_name Sculpt-AI/GIM-test --first_n 100
-python -m gimbench.match.gim_regex --model_type vllm --model_name Sculpt-AI/GIM-test --first_n 100 --output_type json
-python -m gimbench.match.gim_regex --model_type vllm --model_name Sculpt-AI/GIM-test --first_n 100 --output_type cfg
+python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/GIM-test --first_n 100
+python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/GIM-test --first_n 100 --output_type json
+python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/GIM-test --first_n 100 --output_type cfg
