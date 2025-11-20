@@ -11,7 +11,6 @@ from dataclasses import dataclass
 
 from datasets import load_dataset
 from gimkit.contexts import Query
-from gimkit.exceptions import InvalidFormatError
 from gimkit.schemas import MaskedTag
 
 from gimbench.arguments import get_args
