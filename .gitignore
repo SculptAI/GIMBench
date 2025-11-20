@@ -8,3 +8,12 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Eval log
+eval.log
+
+# Eval results
+results/
+
+# Caches
+.mypy_cache/

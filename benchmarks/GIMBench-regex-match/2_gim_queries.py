@@ -90,8 +90,7 @@ TEMPERATURE = 0.7
 PROCESSES = 20
 COUNT = 6500
 RANDOM_ARTICLES_DATASET = "Sculpt-AI/random-articles"
-UPLOAD_DATASET_NAME = "Sculpt-AI/GIMBench"
-SUBSET_NAME = "regex"
+UPLOAD_DATASET_NAME = "Sculpt-AI/GIMBench-regex-match"
 SPLIT_NAME = "test"
 
 
@@ -147,9 +146,7 @@ def parse_query_response(query: str, response: str) -> tuple[Query, Response]:
             gim_response_parts.append(part)
         elif isinstance(part, MaskedTag):
             if part.regex and not re.fullmatch(part.regex, matches[i + 1], re.DOTALL):
-                raise ValueError(
-                    f"Matched content '{matches[i + 1]}' does not match the regex '{part.regex}'."
-                )
+                raise ValueError(f"Matched content '{matches[i + 1]}' does not match the regex '{part.regex}'.")
             tag = deepcopy(part)
             tag.content = matches[i + 1]
             gim_response_parts.append(tag)
@@ -198,8 +195,6 @@ if __name__ == "__main__":
                 ds.append(result)
     hf_ds = Dataset.from_list(ds).filter(lambda x: x["correct"] is True).remove_columns(["correct"])
     print(f"Generated {len(hf_ds)} valid records.")
-    hf_ds.save_to_disk(UPLOAD_DATASET_NAME.replace("/", "_") + f"_{SUBSET_NAME}_{SPLIT_NAME}")
-    hf_ds.push_to_hub(UPLOAD_DATASET_NAME, SUBSET_NAME, split=SPLIT_NAME)
-    print(
-        f"Pushed {len(hf_ds)} records to dataset {UPLOAD_DATASET_NAME} subset {SUBSET_NAME} split {SPLIT_NAME}."
-    )
+    hf_ds.save_to_disk(UPLOAD_DATASET_NAME.replace("/", "_") + f"_{SPLIT_NAME}")
+    hf_ds.push_to_hub(UPLOAD_DATASET_NAME, split=SPLIT_NAME)
+    print(f"Pushed {len(hf_ds)} records to dataset {UPLOAD_DATASET_NAME} split {SPLIT_NAME}.")
