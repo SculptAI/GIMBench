@@ -1,11 +1,7 @@
-import os
-import subprocess
-
 from abc import abstractmethod
 from argparse import Namespace
 from datetime import datetime
-from pathlib import Path
-from typing import Any
+from typing import Literal
 
 import torch
 
@@ -13,15 +9,13 @@ from datasets import Dataset
 from gimkit import from_vllm
 from gimkit.contexts import Query, Result
 from openai import OpenAI
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from gimbench.base import BaseEvalResult
 from gimbench.log import get_logger
 
-
-GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
-GIT_COMMIT_ID = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
 
 logger = get_logger(__name__)
 
@@ -38,10 +32,8 @@ class EvalItemResult(BaseModel):
     error_msg: str = ""
 
 
-class EvalResult(BaseModel):
-    model_config = {"arbitrary_types_allowed": True}
-
-    evaluator_type: str = "ctp"
+class EvalResult(BaseEvalResult):
+    evaluator_type: Literal["ctp"] = "ctp"
 
     total: int
     evaluates: int
@@ -52,29 +44,7 @@ class EvalResult(BaseModel):
     avg_result_tags: float = 0.0
     avg_infilling_ratio: float = 0.0
 
-    start_time: datetime
-    end_time: datetime
-    elapsed_minutes: float = 0.0
-    args: Namespace
-    git_branch: str = GIT_BRANCH
-    git_commit_id: str = GIT_COMMIT_ID
-    evaled_items: list[EvalItemResult] = []
-
-    @field_serializer("args")
-    def serialize_args(self, value: Namespace) -> dict[str, Any]:
-        return vars(value)
-
-    def dump(self, filepath: str | None = None):
-        if filepath is None:
-            dataset = getattr(self.args, "dataset", {})
-            dataset_path = dataset.get("path", "unknown_dataset") if isinstance(dataset, dict) else "unknown_dataset"
-            model_name = getattr(self.args, "model_name", "unknown_model")
-            filename = f"{model_name}_{dataset_path}_{self.start_time.strftime('%y%m%d-%H%M%S')}.json".replace("/", "_")
-            filepath = str(Path(self.args.output_dir) / filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, "w") as f:
-            f.write(self.model_dump_json(indent=4))
-        logger.info(f"Saved evaluation results to {filepath}")
+    evaled_items: list[EvalItemResult]
 
 
 class BaseEvaluator:

@@ -1,27 +1,22 @@
-import os
 import re
-import subprocess
 
 from abc import abstractmethod
 from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from datasets import Dataset
 from gimkit import from_vllm, guide
 from gimkit.contexts import Result
 from openai import OpenAI
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
+from gimbench.base import BaseEvalResult
 from gimbench.log import get_logger
 
-
-GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
-GIT_COMMIT_ID = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
 
 logger = get_logger(__name__)
 
@@ -42,44 +37,22 @@ class EvalItemResult(BaseModel):
     additional_info: dict = {}
 
 
-class EvalResult(BaseModel):
-    model_config = {"arbitrary_types_allowed": True}
-
-    evaluator_type: str = "mcqa"
+class EvalResult(BaseEvalResult):
+    evaluator_type: Literal["mcqa"] = "mcqa"
 
     total: int
     evaluates: int
     corrects: int
     errors: int
+
     accuracy: float
     calibrated_accuracy: float
     avg_query_tokens: float
     avg_response_tokens: float
     avg_query_len: float
     avg_response_len: float
-    start_time: datetime
-    end_time: datetime
-    elapsed_minutes: float = 0.0
-    args: Namespace
-    git_branch: str = GIT_BRANCH
-    git_commit_id: str = GIT_COMMIT_ID
-    evaled_items: list[EvalItemResult] = []
 
-    @field_serializer("args")
-    def serialize_args(self, value: Namespace) -> dict[str, Any]:
-        return vars(value)
-
-    def dump(self, filepath: str | None = None):
-        if filepath is None:
-            dataset = getattr(self.args, "dataset", {})
-            dataset_path = dataset.get("path", "unknown_dataset") if isinstance(dataset, dict) else "unknown_dataset"
-            model_name = getattr(self.args, "model_name", "unknown_model")
-            filename = f"{model_name}_{dataset_path}_{self.start_time.strftime('%y%m%d-%H%M%S')}.json".replace("/", "_")
-            filepath = str(Path(self.args.output_dir) / filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, "w") as f:
-            f.write(self.model_dump_json(indent=4))
-        logger.info(f"Saved evaluation results to {filepath}")
+    evaled_items: list[EvalItemResult]
 
 
 class BaseEvaluator:

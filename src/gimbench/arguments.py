@@ -3,6 +3,9 @@ import argparse
 from argparse import ArgumentParser
 
 
+SECRET_ARGS = ["api_key"]
+
+
 def _add_gim_args(parser):
     parser.add_argument("--no_gimkit", action="store_true", help="Whether to disable GIM kit usage")
     parser.add_argument("--use_gim_prompt", action="store_true", help="Whether to use GIM prompt")
