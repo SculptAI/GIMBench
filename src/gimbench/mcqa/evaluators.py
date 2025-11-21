@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
-from gimbench.base import BaseEvalResult
+from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
 
 
@@ -55,11 +55,9 @@ class EvalResult(BaseEvalResult):
     evaled_items: list[EvalItemResult]
 
 
-class BaseEvaluator:
+class MCQAEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
-        self.start_time = datetime.now()
-        self.dataset = dataset
-        self.args = args
+        super().__init__(args, dataset)
 
         self._counter_tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(args.counter_tokenizer)
         logger.info(f"Loaded tokenizer {args.counter_tokenizer} for token counting.")
@@ -131,10 +129,6 @@ class BaseEvaluator:
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")
 
-        def safe_average(items: list[EvalItemResult], attr: str) -> float:
-            values = [getattr(item, attr) for item in items if getattr(item, attr) != -1]
-            return sum(values) / len(values) if values else 0.0
-
         return EvalResult(
             total=total,
             evaluates=evaluates,
@@ -142,10 +136,10 @@ class BaseEvaluator:
             errors=errors,
             accuracy=accuracy,
             calibrated_accuracy=calibrated_accuracy,
-            avg_query_tokens=safe_average(evaled_items, "query_tokens"),
-            avg_response_tokens=safe_average(evaled_items, "response_tokens"),
-            avg_query_len=safe_average(evaled_items, "query_len"),
-            avg_response_len=safe_average(evaled_items, "response_len"),
+            avg_query_tokens=self._safe_average(evaled_items, "query_tokens"),
+            avg_response_tokens=self._safe_average(evaled_items, "response_tokens"),
+            avg_query_len=self._safe_average(evaled_items, "query_len"),
+            avg_response_len=self._safe_average(evaled_items, "response_len"),
             start_time=self.start_time,
             end_time=self.end_time,
             elapsed_minutes=(self.end_time - self.start_time).total_seconds() / 60.0,
@@ -164,7 +158,7 @@ SHARED_PROMPT_PREFIX = (
 )
 
 
-class GIMEvaluator(BaseEvaluator):
+class GIMEvaluator(MCQAEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
         openai_client = OpenAI(api_key=args.api_key, base_url=args.base_url)
@@ -203,7 +197,7 @@ class GIMEvaluator(BaseEvaluator):
         return str_response, model_choice, additional_info
 
 
-class CommonEvaluator(BaseEvaluator):
+class CommonEvaluator(MCQAEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
         self.model = OpenAI(api_key=args.api_key, base_url=args.base_url)

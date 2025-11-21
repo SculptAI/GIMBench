@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 
+from datasets import Dataset
 from pydantic import BaseModel, field_serializer
 
 from gimbench.arguments import SECRET_ARGS
@@ -53,3 +54,15 @@ class BaseEvalResult(BaseModel):
         with open(filepath, "w") as f:
             f.write(self.model_dump_json(indent=4))
         logger.info(f"Saved evaluation results to {filepath}")
+
+
+class BaseEvaluator:
+    def __init__(self, args: Namespace, dataset: Dataset):
+        self.start_time = datetime.now()
+        self.dataset = dataset
+        self.args = args
+
+    @staticmethod
+    def _safe_average(items: list, attr: str) -> float:
+        values = [getattr(item, attr) for item in items if getattr(item, attr) != -1]
+        return sum(values) / len(values) if values else 0.0

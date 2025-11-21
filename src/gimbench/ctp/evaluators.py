@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from gimbench.base import BaseEvalResult
+from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
 
 
@@ -47,13 +47,11 @@ class EvalResult(BaseEvalResult):
     evaled_items: list[EvalItemResult]
 
 
-class BaseEvaluator:
+class CTPEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
-        assert "gim_query" in dataset.column_names, "Dataset must contain 'gim_query' column"
+        super().__init__(args, dataset)
 
-        self.start_time = datetime.now()
-        self.dataset = dataset
-        self.args = args
+        assert "gim_query" in dataset.column_names, "Dataset must contain 'gim_query' column"
         self.ref_model = AutoModelForCausalLM.from_pretrained(args.ref_model_name).to(self.args.ref_model_device)
         self.ref_tokenizer = AutoTokenizer.from_pretrained(args.ref_model_name)
 
@@ -103,18 +101,14 @@ class BaseEvaluator:
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")
 
-        def safe_average(items: list[EvalItemResult], attr: str) -> float:
-            values = [getattr(item, attr) for item in items if getattr(item, attr) != -1]
-            return sum(values) / len(values) if values else 0.0
-
         return EvalResult(
             total=total,
             evaluates=len(evaled_items),
             errors=sum(1 for item in evaled_items if item.error_msg),
-            avg_ctp=safe_average(evaled_items, "ctp"),
-            avg_query_tags=safe_average(evaled_items, "query_tags"),
-            avg_result_tags=safe_average(evaled_items, "result_tags"),
-            avg_infilling_ratio=safe_average(evaled_items, "infilling_ratio"),
+            avg_ctp=self._safe_average(evaled_items, "ctp"),
+            avg_query_tags=self._safe_average(evaled_items, "query_tags"),
+            avg_result_tags=self._safe_average(evaled_items, "result_tags"),
+            avg_infilling_ratio=self._safe_average(evaled_items, "infilling_ratio"),
             start_time=self.start_time,
             end_time=self.end_time,
             elapsed_minutes=(self.end_time - self.start_time).total_seconds() / 60.0,
@@ -123,7 +117,7 @@ class BaseEvaluator:
         )
 
 
-class GIMEvaluator(BaseEvaluator):
+class GIMEvaluator(CTPEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
         openai_client = OpenAI(api_key=args.api_key, base_url=args.base_url)
