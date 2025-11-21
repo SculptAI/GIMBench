@@ -179,7 +179,7 @@ class GIMEvaluator(BaseEvaluator):
 
 
 def conduct_eval(args: Namespace, ds: Dataset):
-    if not args.is_gim:
+    if args.no_gimkit:
         raise NotImplementedError("Only GIM evaluation is implemented in this evaluator.")
     evaluator = GIMEvaluator(args, ds)
     result = evaluator.evaluate()

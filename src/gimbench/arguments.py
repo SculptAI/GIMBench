@@ -4,9 +4,7 @@ from argparse import ArgumentParser
 
 
 def _add_gim_args(parser):
-    parser.add_argument(
-        "--is_gim", action="store_true", help="The model is trained using GIM paradigm"
-    )  # TODO: Drop this later. Replace it with no_gimkit for the common inference case.
+    parser.add_argument("--no_gimkit", action="store_true", help="Whether to disable GIM kit usage")
     parser.add_argument("--use_gim_prompt", action="store_true", help="Whether to use GIM prompt")
     parser.add_argument(
         "--output_type",
