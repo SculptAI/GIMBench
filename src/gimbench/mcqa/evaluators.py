@@ -281,6 +281,6 @@ class CommonEvaluator(BaseEvaluator):
 
 
 def conduct_eval(args: Namespace, ds: Dataset):
-    evaluator = GIMEvaluator(args, ds) if args.is_gim else CommonEvaluator(args, ds)
+    evaluator = CommonEvaluator(args, ds) if args.no_gimkit else GIMEvaluator(args, ds)
     result = evaluator.evaluate()
     result.dump()
