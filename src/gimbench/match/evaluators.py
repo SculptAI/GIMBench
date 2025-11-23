@@ -25,6 +25,7 @@ class EvalItemResult(BaseModel):
     query: str
     result: str
     tags: list[MaskedTag]
+    regex_matched_ids: list[int]
     num_tags: int
     num_has_prediction: int
     num_regex: int
@@ -69,22 +70,26 @@ class MatchEvaluator(BaseEvaluator):
                 query=query,
                 result="Generation Error",
                 tags=query_obj.tags[:],
+                regex_matched_ids=[],
                 num_tags=len(query_obj.tags),
                 num_has_prediction=0,
                 num_regex=sum(1 for tag in query_obj.tags if tag.regex),
                 num_regex_match=0,
                 error_msg=str(e),
             )
-        for tag in result.tags:
-            tag.regex_matched = tag.regex and tag.content and re.fullmatch(tag.regex, tag.content)
+        regex_matched_ids = []
+        for idx, tag in enumerate(result.tags):
+            if tag.regex and tag.content and re.fullmatch(tag.regex, tag.content) is not None:
+                regex_matched_ids.append(idx)
         return EvalItemResult(
             query=query,
             result=str(result),
             tags=result.tags[:],
+            regex_matched_ids=regex_matched_ids,
             num_tags=len(result.tags),
             num_has_prediction=sum(1 for tag in result.tags if tag.content),
             num_regex=sum(1 for tag in result.tags if tag.regex),
-            num_regex_match=sum(1 for tag in result.tags if tag.regex_matched),
+            num_regex_match=len(regex_matched_ids),
             error_msg="",
         )
 
