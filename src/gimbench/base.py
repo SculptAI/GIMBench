@@ -50,7 +50,7 @@ class BaseEvalResult(BaseModel):
             model_name = getattr(self.args, "model_name", "unknown_model")
             filename = f"{model_name}_{dataset_path}_{self.start_time.strftime('%y%m%d-%H%M%S')}.json".replace("/", "_")
             filepath = str(Path(self.args.output_dir or ".") / filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        Path(filepath).parent.mkdir(parents=True, exist_ok=True)
         with open(filepath, "w") as f:
             f.write(self.model_dump_json(indent=4))
         logger.info(f"Saved evaluation results to {filepath}")
