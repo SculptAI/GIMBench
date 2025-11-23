@@ -49,9 +49,10 @@ class EvalResult(BaseEvalResult):
 
 class CTPEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
-        super().__init__(args, dataset)
+        if "gim_query" not in dataset.column_names:
+            raise ValueError("Dataset must contain 'gim_query' column for CTP evaluation.")
 
-        assert "gim_query" in dataset.column_names, "Dataset must contain 'gim_query' column"
+        super().__init__(args, dataset)
         self.ref_model = AutoModelForCausalLM.from_pretrained(args.ref_model_name).to(self.args.ref_model_device)
         self.ref_tokenizer = AutoTokenizer.from_pretrained(args.ref_model_name)
 

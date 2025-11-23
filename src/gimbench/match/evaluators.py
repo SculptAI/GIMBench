@@ -1,4 +1,3 @@
-import argparse
 import logging
 import re
 
@@ -53,13 +52,15 @@ class EvalResult(BaseEvalResult):
 
 class MatchEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
-        assert args.no_gimkit is False, "GIMKit must be enabled for MatchEvaluator."
+        if args.no_gimkit:
+            raise ValueError("GIMKit must be enabled for MatchEvaluator.")
 
         super().__init__(args, dataset)
         self.model = SimpleGIM(args)
 
     def _evaluate_item(self, item: dict) -> EvalItemResult:
         query = item["gim_query"]
+        query_obj = Query(query)
         try:
             result = self.model.generate(query)
         except Exception as e:
@@ -67,31 +68,23 @@ class MatchEvaluator(BaseEvaluator):
             return EvalItemResult(
                 query=query,
                 result="Generation Error",
-                tags=[],
-                num_tags=0,
+                tags=query_obj.tags[:],
+                num_tags=len(query_obj.tags),
                 num_has_prediction=0,
-                num_regex=0,
+                num_regex=sum(1 for tag in query_obj.tags if tag.regex),
                 num_regex_match=0,
                 error_msg=str(e),
             )
-        num_has_prediction = 0
-        num_regex = 0
-        num_regex_match = 0
         for tag in result.tags:
-            if tag.content:
-                num_has_prediction += 1
-            if tag.regex:
-                num_regex += 1
-                if tag.content and re.fullmatch(tag.regex, tag.content):
-                    num_regex_match += 1
+            tag.regex_matched = tag.regex and tag.content and re.fullmatch(tag.regex, tag.content)
         return EvalItemResult(
             query=query,
             result=str(result),
             tags=result.tags[:],
             num_tags=len(result.tags),
-            num_has_prediction=num_has_prediction,
-            num_regex=num_regex,
-            num_regex_match=num_regex_match,
+            num_has_prediction=sum(1 for tag in result.tags if tag.content),
+            num_regex=sum(1 for tag in result.tags if tag.regex),
+            num_regex_match=sum(1 for tag in result.tags if tag.regex_matched),
             error_msg="",
         )
 
@@ -151,18 +144,7 @@ class MatchEvaluator(BaseEvaluator):
         table.add_column("Matched", justify="right", style="yellow")
         table.add_column("Prediction Rate", justify="right", style="green")
         table.add_column("Match Rate", justify="right", style="yellow")
-
-        total_tags = 0
-        total_has_prediction = 0
-        total_regex = 0
-        total_regex_match = 0
-
         for result in eval_results.evaled_items:
-            total_tags += result.num_tags
-            total_has_prediction += result.num_has_prediction
-            total_regex += result.num_regex
-            total_regex_match += result.num_regex_match
-
             pred_rate = f"{result.num_has_prediction / result.num_tags:.2%}" if result.num_tags > 0 else "N/A"
             match_rate = f"{result.num_regex_match / result.num_regex:.2%}" if result.num_regex > 0 else "N/A"
 
@@ -178,7 +160,7 @@ class MatchEvaluator(BaseEvaluator):
         console.print(table)
 
 
-def conduct_eval(args: argparse.Namespace, dataset: Dataset):
+def conduct_eval(args: Namespace, dataset: Dataset):
     evaluator = MatchEvaluator(args, dataset)
     eval_results = evaluator.evaluate()
     MatchEvaluator.print_beautiful_stats(eval_results)
