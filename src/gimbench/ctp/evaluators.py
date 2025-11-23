@@ -1,11 +1,7 @@
-import os
-import subprocess
-
 from abc import abstractmethod
 from argparse import Namespace
 from datetime import datetime
-from pathlib import Path
-from typing import Any
+from typing import Literal
 
 import torch
 
@@ -13,15 +9,13 @@ from datasets import Dataset
 from gimkit import from_vllm
 from gimkit.contexts import Query, Result
 from openai import OpenAI
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
 
-
-GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
-GIT_COMMIT_ID = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
 
 logger = get_logger(__name__)
 
@@ -38,10 +32,8 @@ class EvalItemResult(BaseModel):
     error_msg: str = ""
 
 
-class EvalResult(BaseModel):
-    model_config = {"arbitrary_types_allowed": True}
-
-    evaluator_type: str = "ctp"
+class EvalResult(BaseEvalResult):
+    evaluator_type: Literal["ctp"] = "ctp"
 
     total: int
     evaluates: int
@@ -52,38 +44,15 @@ class EvalResult(BaseModel):
     avg_result_tags: float = 0.0
     avg_infilling_ratio: float = 0.0
 
-    start_time: datetime
-    end_time: datetime
-    elapsed_minutes: float = 0.0
-    args: Namespace
-    git_branch: str = GIT_BRANCH
-    git_commit_id: str = GIT_COMMIT_ID
-    evaled_items: list[EvalItemResult] = []
-
-    @field_serializer("args")
-    def serialize_args(self, value: Namespace) -> dict[str, Any]:
-        return vars(value)
-
-    def dump(self, filepath: str | None = None):
-        if filepath is None:
-            dataset = getattr(self.args, "dataset", {})
-            dataset_path = dataset.get("path", "unknown_dataset") if isinstance(dataset, dict) else "unknown_dataset"
-            model_name = getattr(self.args, "model_name", "unknown_model")
-            filename = f"{model_name}_{dataset_path}_{self.start_time.strftime('%y%m%d-%H%M%S')}.json".replace("/", "_")
-            filepath = str(Path(self.args.output_dir) / filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, "w") as f:
-            f.write(self.model_dump_json(indent=4))
-        logger.info(f"Saved evaluation results to {filepath}")
+    evaled_items: list[EvalItemResult]
 
 
-class BaseEvaluator:
+class CTPEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
-        assert "gim_query" in dataset.column_names, "Dataset must contain 'gim_query' column"
+        if "gim_query" not in dataset.column_names:
+            raise ValueError("Dataset must contain 'gim_query' column for CTP evaluation.")
 
-        self.start_time = datetime.now()
-        self.dataset = dataset
-        self.args = args
+        super().__init__(args, dataset)
         self.ref_model = AutoModelForCausalLM.from_pretrained(args.ref_model_name).to(self.args.ref_model_device)
         self.ref_tokenizer = AutoTokenizer.from_pretrained(args.ref_model_name)
 
@@ -133,18 +102,14 @@ class BaseEvaluator:
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")
 
-        def safe_average(items: list[EvalItemResult], attr: str) -> float:
-            values = [getattr(item, attr) for item in items if getattr(item, attr) != -1]
-            return sum(values) / len(values) if values else 0.0
-
         return EvalResult(
             total=total,
             evaluates=len(evaled_items),
             errors=sum(1 for item in evaled_items if item.error_msg),
-            avg_ctp=safe_average(evaled_items, "ctp"),
-            avg_query_tags=safe_average(evaled_items, "query_tags"),
-            avg_result_tags=safe_average(evaled_items, "result_tags"),
-            avg_infilling_ratio=safe_average(evaled_items, "infilling_ratio"),
+            avg_ctp=self._safe_average(evaled_items, "ctp"),
+            avg_query_tags=self._safe_average(evaled_items, "query_tags"),
+            avg_result_tags=self._safe_average(evaled_items, "result_tags"),
+            avg_infilling_ratio=self._safe_average(evaled_items, "infilling_ratio"),
             start_time=self.start_time,
             end_time=self.end_time,
             elapsed_minutes=(self.end_time - self.start_time).total_seconds() / 60.0,
@@ -153,7 +118,7 @@ class BaseEvaluator:
         )
 
 
-class GIMEvaluator(BaseEvaluator):
+class GIMEvaluator(CTPEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
         openai_client = OpenAI(api_key=args.api_key, base_url=args.base_url)
