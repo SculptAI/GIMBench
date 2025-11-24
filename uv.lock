@@ -1049,7 +1049,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "datasets", specifier = ">=4.4.1" },
-    { name = "gimkit", specifier = ">=0.1.0a7" },
+    { name = "gimkit", specifier = ">=0.1.0a8" },
     { name = "rich", specifier = ">=14.2.0" },
     { name = "vllm", specifier = ">=0.11.0" },
 ]
@@ -1063,16 +1063,16 @@ dev = [
 
 [[package]]
 name = "gimkit"
-version = "0.1.0a7"
+version = "0.1.0a8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "json-repair" },
     { name = "llguidance" },
     { name = "outlines", extra = ["openai"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d4/14/6bdbcaa4889344a1ab51ad1f68ac963aa22f420cf9ffc81c8caa7df1eca9/gimkit-0.1.0a7.tar.gz", hash = "sha256:1f91b25fb93be1fcc84fe7a2232854ce53475f7d66868518abb424e048b8a550", size = 12788, upload-time = "2025-11-18T10:25:38.13Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/4b/9394cc0ed3adf62a982104bd9b751c808f946c5b2e3bf2dc790111d27609/gimkit-0.1.0a8.tar.gz", hash = "sha256:07fdda4ed01b858c3ad8a5277c8aedf8b7f4a369ea307aa01fd317223027b8e6", size = 13549, upload-time = "2025-11-24T15:24:25.624Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/97/19/2c42c7382f2ae06e60f2678e38d63e5844d4c9cf56b61724a8ce305c8b38/gimkit-0.1.0a7-py3-none-any.whl", hash = "sha256:59f1676e978ea3e2588721ad7a36c216c96a363bbef3627251b80beb89775ead", size = 17270, upload-time = "2025-11-18T10:25:36.969Z" },
+    { url = "https://files.pythonhosted.org/packages/09/96/472859dd840f563946d4c5797c6b8ffaaa341ea17c57c859499837b6bb83/gimkit-0.1.0a8-py3-none-any.whl", hash = "sha256:5c8a3e353de1258bf8815abd490c516d4b47a6991ff142a0df016f6f486c3e40", size = 18054, upload-time = "2025-11-24T15:24:24.357Z" },
 ]
 
 [[package]]
@@ -2295,7 +2295,7 @@ wheels = [
 
 [[package]]
 name = "outlines"
-version = "1.2.8"
+version = "1.2.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cloudpickle" },
@@ -2309,9 +2309,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/11/e2a0d3c3a8b79a9dd7f69060927e91d6ffa3e9b9a3f6b05ba3501f2a2d63/outlines-1.2.8.tar.gz", hash = "sha256:acd479f440f8e14ceb98bf453ac39ca25d338a7540b72eb1ab93710e3514a64c", size = 2883833, upload-time = "2025-10-27T11:00:59.78Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b7/15/b378d55a5a44253462adb6e5ab9deade92a5960ab2eab47e9fe8c728c6ea/outlines-1.2.9.tar.gz", hash = "sha256:dcd0b08b4cb173fec01c7cacc09efebf4b16f4710adcaaf94ecbdb70d0f82f2e", size = 2866022, upload-time = "2025-11-24T12:49:03.231Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/35/7f/f5a517105a8367245f6286a3fd42ddc5fe7e7b6cb650a3fe7c7590b71c7a/outlines-1.2.8-py3-none-any.whl", hash = "sha256:d88a479346c7af4ba26a2d3743a3d95a11e1b013d68603a37f2da414af47248f", size = 98306, upload-time = "2025-10-27T11:00:58.443Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/15/efb96450da2292088c51e516f705b41b7ea94436e21ee5c23f30b8154487/outlines-1.2.9-py3-none-any.whl", hash = "sha256:0448eb5747e9c4ef1a061bd8881816ac5abd9ad7135294471c0753efa8cfafdb", size = 98380, upload-time = "2025-11-24T12:49:01.677Z" },
 ]
 
 [package.optional-dependencies]
