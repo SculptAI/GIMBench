@@ -9,7 +9,7 @@ from typing import Any, Literal
 import gimkit
 
 from datasets import Dataset
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel, Field, field_serializer
 
 import gimbench
 
@@ -32,16 +32,18 @@ logger = get_logger(__name__)
 class BaseEvalResult(BaseModel):
     model_config = {"arbitrary_types_allowed": True}
 
-    eval_env: dict[str, str] = {
-        "exec_command": " ".join([sys.executable, *sys.argv]),
-        "gimbench_version": gimbench.__version__,
-        "gimbench_file": str(gimbench.__file__),
-        "gimkit_version": gimkit.__version__,
-        "gimkit_file": str(gimkit.__file__),
-        "git_repo": GIT_REPO,
-        "git_branch": GIT_BRANCH,
-        "git_commit_id": GIT_COMMIT_ID,
-    }
+    eval_env: dict[str, str] = Field(
+        default_factory=lambda: {
+            "exec_command": " ".join([sys.executable, *sys.argv]),
+            "gimbench_version": gimbench.__version__,
+            "gimbench_file": str(gimbench.__file__),
+            "gimkit_version": gimkit.__version__,
+            "gimkit_file": str(gimkit.__file__),
+            "git_repo": GIT_REPO,
+            "git_branch": GIT_BRANCH,
+            "git_commit_id": GIT_COMMIT_ID,
+        }
+    )
 
     evaluator_type: Literal["mcqa", "ctp", "match"]
 
