@@ -17,33 +17,34 @@ from gimbench.arguments import SECRET_ARGS
 from gimbench.log import get_logger
 
 
-try:
-    GIT_REPO = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).strip().decode("utf-8")
-    GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
-    GIT_COMMIT_ID = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
-except (subprocess.CalledProcessError, FileNotFoundError, OSError):
-    GIT_REPO = "unknown"
-    GIT_BRANCH = "unknown"
-    GIT_COMMIT_ID = "unknown"
-
 logger = get_logger(__name__)
+
+
+def _create_eval_env() -> dict[str, str]:
+    try:
+        git_repo = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).strip().decode("utf-8")
+        git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
+        git_commit_id = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
+        git_repo = "unknown"
+        git_branch = "unknown"
+        git_commit_id = "unknown"
+    return {
+        "exec_command": " ".join([sys.executable, *sys.argv]),
+        "gimbench_version": gimbench.__version__,
+        "gimbench_file": str(gimbench.__file__),
+        "gimkit_version": gimkit.__version__,
+        "gimkit_file": str(gimkit.__file__),
+        "git_repo": git_repo,
+        "git_branch": git_branch,
+        "git_commit_id": git_commit_id,
+    }
 
 
 class BaseEvalResult(BaseModel):
     model_config = {"arbitrary_types_allowed": True}
 
-    eval_env: dict[str, str] = Field(
-        default_factory=lambda: {
-            "exec_command": " ".join([sys.executable, *sys.argv]),
-            "gimbench_version": gimbench.__version__,
-            "gimbench_file": str(gimbench.__file__),
-            "gimkit_version": gimkit.__version__,
-            "gimkit_file": str(gimkit.__file__),
-            "git_repo": GIT_REPO,
-            "git_branch": GIT_BRANCH,
-            "git_commit_id": GIT_COMMIT_ID,
-        }
-    )
+    eval_env: dict[str, str] = Field(default_factory=_create_eval_env)
 
     evaluator_type: Literal["mcqa", "ctp", "match"]
 
