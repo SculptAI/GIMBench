@@ -21,7 +21,7 @@ try:
     GIT_REPO = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).strip().decode("utf-8")
     GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
     GIT_COMMIT_ID = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
-except subprocess.CalledProcessError:
+except (subprocess.CalledProcessError, FileNotFoundError, OSError):
     GIT_REPO = "unknown"
     GIT_BRANCH = "unknown"
     GIT_COMMIT_ID = "unknown"
