@@ -1,19 +1,30 @@
 import subprocess
+import sys
 
 from argparse import Namespace
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 
+import gimkit
+
 from datasets import Dataset
 from pydantic import BaseModel, field_serializer
+
+import gimbench
 
 from gimbench.arguments import SECRET_ARGS
 from gimbench.log import get_logger
 
 
-GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
-GIT_COMMIT_ID = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
+try:
+    GIT_REPO = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).strip().decode("utf-8")
+    GIT_BRANCH = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode("utf-8")
+    GIT_COMMIT_ID = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
+except subprocess.CalledProcessError:
+    GIT_REPO = "unknown"
+    GIT_BRANCH = "unknown"
+    GIT_COMMIT_ID = "unknown"
 
 logger = get_logger(__name__)
 
@@ -21,8 +32,16 @@ logger = get_logger(__name__)
 class BaseEvalResult(BaseModel):
     model_config = {"arbitrary_types_allowed": True}
 
-    git_branch: str = GIT_BRANCH
-    git_commit_id: str = GIT_COMMIT_ID
+    eval_env: dict[str, str] = {
+        "exec_command": " ".join([sys.executable, *sys.argv]),
+        "gimbench_version": gimbench.__version__,
+        "gimbench_file": str(gimbench.__file__),
+        "gimkit_version": gimkit.__version__,
+        "gimkit_file": str(gimkit.__file__),
+        "git_repo": GIT_REPO,
+        "git_branch": GIT_BRANCH,
+        "git_commit_id": GIT_COMMIT_ID,
+    }
 
     evaluator_type: Literal["mcqa", "ctp", "match"]
 
