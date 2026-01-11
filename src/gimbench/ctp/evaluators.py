@@ -6,15 +6,14 @@ from typing import Literal
 import torch
 
 from datasets import Dataset
-from gimkit import from_vllm
 from gimkit.contexts import Query, Result
-from openai import OpenAI
 from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
+from gimbench.models import SimpleGIM
 
 
 logger = get_logger(__name__)
@@ -120,19 +119,13 @@ class CTPEvaluator(BaseEvaluator):
 
 class GIMEvaluator(CTPEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
+        # SimpleGIM is firstly initialized here to avoid
+        # CUDA context contamination in multiprocessing
+        self.model = SimpleGIM(args)
         super().__init__(args, dataset)
-        openai_client = OpenAI(api_key=args.api_key, base_url=args.base_url)
-        self.model = from_vllm(openai_client, model_name=args.model_name)
 
     def _model_call(self, query: str) -> str:
-        result = self.model(
-            query,
-            temperature=self.args.temperature,
-            presence_penalty=self.args.presence_penalty,
-            seed=self.args.seed,
-            max_tokens=self.args.max_tokens,
-        )
-        return str(result)
+        return str(self.model.generate(query))
 
     def _compute_ctp(self, text: str) -> float:
         tokens = self.ref_tokenizer(text, return_tensors="pt").input_ids.to(self.args.ref_model_device)
