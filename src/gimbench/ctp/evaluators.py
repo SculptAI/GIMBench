@@ -119,7 +119,7 @@ class CTPEvaluator(BaseEvaluator):
 
 class GIMEvaluator(CTPEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
-        # SimpleGIM is firstly initialized here to avoid 
+        # SimpleGIM is firstly initialized here to avoid
         # CUDA context contamination in multiprocessing
         self.model = SimpleGIM(args)
         super().__init__(args, dataset)
