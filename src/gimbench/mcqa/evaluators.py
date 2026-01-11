@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Any, Literal
 
 from datasets import Dataset
-from gimkit import from_vllm, guide
+from gimkit import guide
 from gimkit.contexts import Result
 from openai import OpenAI
 from pydantic import BaseModel
@@ -16,6 +16,7 @@ from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
+from gimbench.models import SimpleGIM
 
 
 logger = get_logger(__name__)
@@ -111,7 +112,7 @@ class MCQAEvaluator(BaseEvaluator):
         total = len(self.dataset) if self.args.first_n == -1 else min(self.args.first_n, len(self.dataset))
 
         evaled_items = []
-        if self.args.num_proc <= 1:
+        if self.args.num_proc <= 1 or self.args.model_type not in ["openai", "vllm"]:
             for idx in tqdm(range(total), desc=f"Evaluating {self.args.model_name}"):
                 result = self._evaluate_item(self.dataset[idx])
                 evaled_items.append(result)
@@ -161,8 +162,7 @@ SHARED_PROMPT_PREFIX = (
 class GIMEvaluator(MCQAEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
-        openai_client = OpenAI(api_key=args.api_key, base_url=args.base_url)
-        self.model = from_vllm(openai_client, model_name=args.model_name)
+        self.model = SimpleGIM(args)
 
     def _form_cot_query(self, question: str, choices: list[str]) -> str:
         reasoning_guides = [
@@ -176,16 +176,7 @@ class GIMEvaluator(MCQAEvaluator):
         return prompt
 
     def _model_call(self, query: str) -> Result:
-        result = self.model(
-            query,
-            temperature=self.args.temperature,
-            presence_penalty=self.args.presence_penalty,
-            seed=self.args.seed,
-            max_tokens=self.args.max_tokens,
-        )
-        if isinstance(result, list):
-            raise ValueError("Expected a single Result, but got a list.")
-        return result
+        return self.model.generate(query)
 
     def _parse_response(self, response: Result, validate_choices: list[str]) -> tuple[str, str, dict]:
         str_response = str(response)
