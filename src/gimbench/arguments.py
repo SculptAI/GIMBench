@@ -113,7 +113,11 @@ def _add_mcqa_eval_args(parser):
         default=0,
         help="Number of reasoning steps to include in the prompt",
     )
-    parser.add_argument("--auto_budget", action="store_true", help="Automatically determine the reasoning budget")
+    parser.add_argument(
+        "--auto_budget",
+        action="store_true",
+        help="Automatically determine the reasoning budget (overrides --reason_budget if both are set)",
+    )
 
 
 def validate_and_standardize(args: argparse.Namespace) -> argparse.Namespace:
