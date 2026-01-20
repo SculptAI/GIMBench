@@ -74,7 +74,7 @@ class CTPEvaluator(BaseEvaluator):
             query = str(Query(item["gim_query"]))
             result = self._model_call(query)
             ctp = self._compute_ctp(result)
-            if self.args.base_model_vocab_size != 0:
+            if self.args.base_model_vocab_size > 0:
                 nctp = (ctp / self.args.base_model_vocab_size) ** self.args.ctp_alpha
         except IndexError:
             error_msg = f"{self.args.model_name}'s context window may be too small for CTP evaluation."
