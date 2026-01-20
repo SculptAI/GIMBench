@@ -128,6 +128,12 @@ class MCQAEvaluator(BaseEvaluator):
             for idx in tqdm(range(total), desc=f"Evaluating {self.args.model_name}"):
                 result = self._evaluate_item(self.dataset[idx])
                 evaled_items.append(result)
+
+                if idx % 10 == 0:
+                    logger.info(f"Progress: {idx}/{total} items evaluated.")
+                    logger.info(
+                        f"Estimated Time Remaining: {(total - idx) * ((datetime.now() - self.start_time).total_seconds() / (idx + 1)) / 60:.2f} minutes"
+                    )
         else:
             with ThreadPoolExecutor(max_workers=self.args.num_proc) as executor:
                 results = executor.map(self._evaluate_item, (self.dataset[i] for i in range(total)))
