@@ -174,9 +174,9 @@ class GIMEvaluator(MCQAEvaluator):
                     f"## Question: Find the sum of first 5 positive integers.\n\n"
                     f"## Reasoning steps: 2\n\n"
                     f"## Question: {question}\n\n"
-                    f"## Reasoning steps: " + guide(desc="A positive integer number", regex=r"\\d+")
+                    f"## Reasoning steps: " + guide(name="reason_budget", desc="A positive integer number", regex=r"\\d+")
                 )
-                budget = int(r.tags[0].content)
+                budget = int(r.tags["reason_budget"].content)
             except Exception as e:
                 logger.warning(f"Auto-budget determination failed: {e}")
                 budget = 1
