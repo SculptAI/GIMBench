@@ -178,7 +178,6 @@ class GIMEvaluator(MCQAEvaluator):
         self.model = SimpleGIM(args)
 
     def _get_reason_budget(self, question: str) -> int:
-        reason_budget = self.args.reason_budget
         if self.args.auto_budget:
             try:
                 r = self.model.generate(
@@ -196,6 +195,8 @@ class GIMEvaluator(MCQAEvaluator):
                 budget = 1
             reason_budget = max(1, budget)
             logger.info(f"Auto-determined reasoning budget: {reason_budget}")
+        else:
+            reason_budget = self.args.reason_budget
         return reason_budget
 
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
