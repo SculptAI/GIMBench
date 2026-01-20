@@ -91,6 +91,18 @@ def _add_ctp_eval_args(parser):
         default="cpu",
         help="Device for the reference model",
     )
+    parser.add_argument(
+        "--base_model_vocab_size",
+        type=int,
+        default=0,
+        help="Vocabulary size of the base model for Normalized Cross Entropy (NCE) calculation",
+    )
+    parser.add_argument(
+        "--nce_alpha",
+        type=float,
+        default=0.2,
+        help="Scaling factor alpha for Normalized Cross Entropy (NCE)",
+    )
 
 
 def _add_mcqa_eval_args(parser):
