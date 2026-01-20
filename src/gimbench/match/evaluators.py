@@ -102,11 +102,7 @@ class MatchEvaluator(BaseEvaluator):
             result = self._evaluate_item(self.dataset[idx])
             evaled_items.append(result)
 
-            if idx % 10 == 0:
-                logger.info(f"Progress: {idx}/{total} items evaluated.")
-                logger.info(
-                    f"Estimated Time Remaining: {(total - idx) * ((datetime.now() - self.start_time).total_seconds() / (idx + 1)) / 60:.2f} minutes"
-                )
+            self._log_progress(total, idx)
 
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")

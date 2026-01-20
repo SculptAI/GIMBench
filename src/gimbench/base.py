@@ -87,3 +87,12 @@ class BaseEvaluator:
     def _safe_average(items: list, attr: str) -> float:
         values = [getattr(item, attr) for item in items if getattr(item, attr) != -1]
         return sum(values) / len(values) if values else 0.0
+
+    def _log_progress(self, total: int, curr_idx: int, log_interval: int = 10) -> None:
+        completed = curr_idx + 1
+        speed = (datetime.now() - self.start_time).total_seconds() / completed
+        if completed % log_interval == 0:
+            logger.info(
+                f"Progress: {completed}/{total} items evaluated with speed {speed:.2f} seconds/item. "
+                f"Time Remaining: {(total - completed) * speed / 60:.2f} minutes"
+            )
