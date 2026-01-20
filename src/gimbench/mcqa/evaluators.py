@@ -177,7 +177,7 @@ class GIMEvaluator(MCQAEvaluator):
                     f"## Reasoning steps: "
                     + guide(name="reason_budget", desc="A positive integer number", regex=r"\\d+")
                 )
-                budget = int(r.tags["reason_budget"].content)
+                budget = int(r.tags["reason_budget"].content or "1")
             except Exception as e:
                 logger.warning(f"Auto-budget determination failed: {e}")
                 budget = 1
