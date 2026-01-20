@@ -128,10 +128,13 @@ class MCQAEvaluator(BaseEvaluator):
             for idx in tqdm(range(total), desc=f"Evaluating {self.args.model_name}"):
                 result = self._evaluate_item(self.dataset[idx])
                 evaled_items.append(result)
+
+                self._log_progress(total, idx)
         else:
             with ThreadPoolExecutor(max_workers=self.args.num_proc) as executor:
                 results = executor.map(self._evaluate_item, (self.dataset[i] for i in range(total)))
                 evaled_items = list(tqdm(results, total=total, desc=f"Evaluating {self.args.model_name}"))
+            # TODO: Add progress logging for multi-threaded evaluation
 
         errors = sum(1 for item in evaled_items if item.error_msg)
         corrects = sum(1 for item in evaled_items if item.conclusion)

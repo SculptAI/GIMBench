@@ -104,6 +104,8 @@ class CTPEvaluator(BaseEvaluator):
             result = self._evaluate_item(self.dataset[idx])
             evaled_items.append(result)
 
+            self._log_progress(total, idx)
+
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")
 
