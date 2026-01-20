@@ -165,12 +165,28 @@ class GIMEvaluator(MCQAEvaluator):
         self.model = SimpleGIM(args)
 
     def _form_cot_query(self, question: str, choices: list[str]) -> str:
+        reason_budget = self.args.reason_budget
+        if self.args.auto_budget:
+            try:
+                r = self.model.generate(
+                    f"I'll show you a question. "
+                    f"You need to determine how many reasoning steps are required to accurately answer it.\n\n"
+                    f"## Question: Find the sum of first 5 positive integers.\n\n"
+                    f"## Reasoning steps: 2\n\n"
+                    f"## Question: {question}\n\n"
+                    f"## Reasoning steps: " + guide(desc="A positive integer number", regex=r"\\d+")
+                )
+                budget = int(r.tags[0].content)
+            except Exception as e:
+                logger.warning(f"Auto-budget determination failed: {e}")
+                budget = 1
+            reason_budget = max(1, budget)
+            logger.info(f"Auto-determined reasoning budget: {reason_budget}")
         reasoning_guides = [
-            f"## Step {idx + 1}\n\n" + guide(desc="One thinking step. About 60 words")
-            for idx in range(self.args.reason_budget)
+            f"## Step {idx + 1}\n\n" + guide(desc="One thinking step. About 60 words") for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
-        if self.args.reason_budget > 0:
+        if reason_budget > 0:
             prompt += "Let's think step by step.\n\n" + "\n\n".join(reasoning_guides) + "\n\n"
         prompt += "## Conclusion\n\nFinal answer: " + guide.select(choices=choices, name="predicted_choice")
         return prompt
