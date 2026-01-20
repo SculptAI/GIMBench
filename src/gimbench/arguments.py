@@ -95,13 +95,13 @@ def _add_ctp_eval_args(parser):
         "--base_model_vocab_size",
         type=int,
         default=0,
-        help="Vocabulary size of the base model for Normalized Cross Entropy (NCE) calculation",
+        help="Vocabulary size of the base model for Normalized CTP calculation",
     )
     parser.add_argument(
-        "--nce_alpha",
+        "--ctp_alpha",
         type=float,
         default=0.2,
-        help="Scaling factor alpha for Normalized Cross Entropy (NCE)",
+        help="Scaling factor alpha for Normalized CTP",
     )
 
 
