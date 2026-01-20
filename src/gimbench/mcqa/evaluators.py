@@ -188,7 +188,7 @@ class GIMEvaluator(MCQAEvaluator):
                     f"## Reasoning steps: 2\n\n"
                     f"## Question: {question}\n\n"
                     f"## Reasoning steps: "
-                    + guide(name="reason_budget", desc="A positive integer number", regex=r"\\d+")
+                    + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
                 budget = int(r.tags["reason_budget"].content or "1")
             except Exception as e:
