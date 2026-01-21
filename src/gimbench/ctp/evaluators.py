@@ -24,6 +24,7 @@ class EvalItemResult(BaseModel):
     result: str = ""
 
     ctp: float = -1.0
+    nctp: float = -1.0
     query_tags: int = -1
     result_tags: int = -1
     infilling_ratio: float = -1.0
@@ -39,6 +40,7 @@ class EvalResult(BaseEvalResult):
     errors: int
 
     avg_ctp: float = 0.0
+    avg_nctp: float = 0.0
     avg_query_tags: float = 0.0
     avg_result_tags: float = 0.0
     avg_infilling_ratio: float = 0.0
@@ -67,10 +69,13 @@ class CTPEvaluator(BaseEvaluator):
         result = "ERROR"
         ctp = -1.0
         error_msg = ""
+        nctp = -1.0
         try:
             query = str(Query(item["gim_query"]))
             result = self._model_call(query)
             ctp = self._compute_ctp(result)
+            if self.args.base_model_vocab_size > 0:
+                nctp = (ctp / self.args.base_model_vocab_size) ** self.args.ctp_alpha
         except IndexError:
             error_msg = f"{self.args.model_name}'s context window may be too small for CTP evaluation."
             logger.error(error_msg)
@@ -81,6 +86,7 @@ class CTPEvaluator(BaseEvaluator):
             query=query,
             result=result,
             ctp=ctp,
+            nctp=nctp,
             query_tags=len(Query(query).tags),
             result_tags=len(Result(result).tags),
             infilling_ratio=(1 - len(Result(result).tags) / len(Query(query).tags))
@@ -98,6 +104,8 @@ class CTPEvaluator(BaseEvaluator):
             result = self._evaluate_item(self.dataset[idx])
             evaled_items.append(result)
 
+            self._log_progress(total, idx)
+
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")
 
@@ -106,6 +114,7 @@ class CTPEvaluator(BaseEvaluator):
             evaluates=len(evaled_items),
             errors=sum(1 for item in evaled_items if item.error_msg),
             avg_ctp=self._safe_average(evaled_items, "ctp"),
+            avg_nctp=self._safe_average(evaled_items, "nctp"),
             avg_query_tags=self._safe_average(evaled_items, "query_tags"),
             avg_result_tags=self._safe_average(evaled_items, "result_tags"),
             avg_infilling_ratio=self._safe_average(evaled_items, "infilling_ratio"),
