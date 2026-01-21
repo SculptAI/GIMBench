@@ -70,18 +70,20 @@ class CTPEvaluator(BaseEvaluator):
         ctp = -1.0
         error_msg = ""
         nctp = -1.0
+        query = str(Query(item["gim_query"]))
         try:
-            query = str(Query(item["gim_query"]))
             result = self._model_call(query)
             ctp = self._compute_ctp(result)
             if self.args.base_model_vocab_size > 0:
                 nctp = (ctp / self.args.base_model_vocab_size) ** self.args.ctp_alpha
-        except IndexError:
-            error_msg = f"{self.args.model_name}'s context window may be too small for CTP evaluation."
-            logger.error(error_msg)
+        except IndexError as ie:
+            error_msg = (
+                repr(ie) + " This may be due to the content length exceeding the model's maximum context length."
+            )
+            logger.exception(error_msg)
         except Exception as e:
-            logger.exception(e)
-            error_msg = str(e)
+            error_msg = repr(e)
+            logger.exception(error_msg)
         return EvalItemResult(
             query=query,
             result=result,
