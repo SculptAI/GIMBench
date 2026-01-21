@@ -36,7 +36,7 @@ def _add_model_args(parser):
         "--max_model_len",
         type=int,
         default=8192,
-        help="Maximum length of the model context window",
+        help="Maximum length of the vllm model context window",
     )
 
 
