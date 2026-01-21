@@ -19,7 +19,7 @@ class SimpleGIM:
             from gimkit import from_vllm_offline
             from vllm import LLM
 
-            vllm_client = LLM(args.model_name)
+            vllm_client = LLM(args.model_name, max_model_len=args.max_model_len)
             self.model = from_vllm_offline(vllm_client)
         else:
             raise ValueError("Unsupported model type")
