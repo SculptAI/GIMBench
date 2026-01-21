@@ -32,6 +32,12 @@ def _add_model_args(parser):
         default="http://localhost:8000/v1",
         help="Base URL for the model API",
     )
+    parser.add_argument(
+        "--max_model_len",
+        type=int,
+        default=8192,
+        help="Maximum length of the vllm model context window",
+    )
 
 
 def _add_sample_args(parser):
