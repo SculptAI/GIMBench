@@ -79,7 +79,7 @@ def _add_evaluator_args(parser):
     parser.add_argument(
         "--counter_tokenizer",
         type=str,
-        default="unsloth/Qwen3-4B-Instruct-2507",
+        default="Qwen/Qwen3-4B-Instruct-2507",
         help="Tokenizer to use for token counting",
     )
 
@@ -88,7 +88,7 @@ def _add_ctp_eval_args(parser):
     parser.add_argument(
         "--ref_model_name",
         type=str,
-        default="gpt2",
+        default="google/gemma-3-270m",
         help="Reference model for Composite Text Perplexity (CTP) evaluation",
     )
     parser.add_argument(
