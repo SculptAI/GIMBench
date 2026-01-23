@@ -41,8 +41,10 @@ class EvalResult(BaseEvalResult):
     errors: int
 
     total_tags: int
+    valid_tags: int
     total_has_prediction: int
     total_regex: int
+    valid_regex: int
     total_regex_match: int
 
     prediction_rate: float
@@ -108,9 +110,12 @@ class MatchEvaluator(BaseEvaluator):
         logger.info(f"Evaluation completed at {self.end_time}")
 
         total_tags = sum(item.num_tags for item in evaled_items)
-        total_has_prediction = sum(item.num_has_prediction for item in evaled_items)
+        valid_tags = sum(item.num_tags for item in evaled_items if not item.error_msg)
+        total_has_prediction = sum(item.num_has_prediction for item in evaled_items if not item.error_msg)
+
         total_regex = sum(item.num_regex for item in evaled_items)
-        total_regex_match = sum(item.num_regex_match for item in evaled_items)
+        valid_regex = sum(item.num_regex for item in evaled_items if not item.error_msg)
+        total_regex_match = sum(item.num_regex_match for item in evaled_items if not item.error_msg)
         return EvalResult(
             args=self.args,
             start_time=self.start_time,
@@ -119,11 +124,13 @@ class MatchEvaluator(BaseEvaluator):
             total_queries=total,
             errors=sum(1 for item in evaled_items if item.error_msg),
             total_tags=total_tags,
+            valid_tags=valid_tags,
             total_has_prediction=total_has_prediction,
             total_regex=total_regex,
+            valid_regex=valid_regex,
             total_regex_match=total_regex_match,
-            prediction_rate=total_has_prediction / total_tags if total_tags > 0 else 0.0,
-            match_rate=total_regex_match / total_regex if total_regex > 0 else 0.0,
+            prediction_rate=total_has_prediction / valid_tags if valid_tags > 0 else 0.0,
+            match_rate=total_regex_match / valid_regex if valid_regex > 0 else 0.0,
             evaled_items=evaled_items,
         )
 
