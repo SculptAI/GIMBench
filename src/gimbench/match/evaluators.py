@@ -41,8 +41,10 @@ class EvalResult(BaseEvalResult):
     errors: int
 
     total_tags: int
+    valid_tags: int
     total_has_prediction: int
     total_regex: int
+    valid_regex: int
     total_regex_match: int
 
     prediction_rate: float
@@ -122,8 +124,10 @@ class MatchEvaluator(BaseEvaluator):
             total_queries=total,
             errors=sum(1 for item in evaled_items if item.error_msg),
             total_tags=total_tags,
+            valid_tags=valid_tags,
             total_has_prediction=total_has_prediction,
             total_regex=total_regex,
+            valid_regex=valid_regex,
             total_regex_match=total_regex_match,
             prediction_rate=total_has_prediction / valid_tags if valid_tags > 0 else 0.0,
             match_rate=total_regex_match / valid_regex if valid_regex > 0 else 0.0,
