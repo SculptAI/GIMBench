@@ -98,7 +98,7 @@ class PPLEvaluator(BaseEvaluator):
     def _compute_norm_ppl(self, input_ids: torch.Tensor) -> float:
         """Compute normalized perplexity for the given input IDs."""
         ppl = self._compute_ppl(input_ids)
-        norm_ppl = (ppl / self.args.base_model_vocab_size) ** self.args.norm_ppl_alpha
+        norm_ppl = (ppl / self.ref_tokenizer.vocab_size) ** self.args.norm_ppl_alpha
         return norm_ppl
 
     def _compute_norm_ppl_from_text(self, text: str) -> float:
