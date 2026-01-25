@@ -3,8 +3,8 @@
 from datasets import concatenate_datasets, load_dataset
 
 from gimbench.arguments import get_args
-from gimbench.ctp.evaluators import conduct_eval
 from gimbench.log import get_logger
+from gimbench.ppl.evaluators import conduct_eval
 
 
 logger = get_logger(__name__)

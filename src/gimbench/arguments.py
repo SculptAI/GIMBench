@@ -76,20 +76,14 @@ def _add_evaluator_args(parser):
         default="results",
         help="Directory to save evaluation results",
     )
-    parser.add_argument(
-        "--counter_tokenizer",
-        type=str,
-        default="Qwen/Qwen3-4B-Instruct-2507",
-        help="Tokenizer to use for token counting",
-    )
 
 
-def _add_ctp_eval_args(parser):
+def _add_ppl_eval_args(parser):
     parser.add_argument(
         "--ref_model_name",
         type=str,
         default="google/gemma-3-270m",
-        help="Reference model for Composite Text Perplexity (CTP) evaluation",
+        help="Reference model for Perplexity (PPL) evaluation",
     )
     parser.add_argument(
         "--ref_model_device",
@@ -98,16 +92,16 @@ def _add_ctp_eval_args(parser):
         help="Device for the reference model",
     )
     parser.add_argument(
-        "--base_model_vocab_size",
-        type=int,
-        default=0,
-        help="Vocabulary size of the base model for Normalized CTP calculation",
-    )
-    parser.add_argument(
-        "--ctp_alpha",
+        "--norm_ppl_alpha",
         type=float,
         default=0.2,
-        help="Scaling factor alpha for Normalized CTP",
+        help="Scaling factor alpha for Normalized PPL",
+    )
+    parser.add_argument(
+        "--ppl_window_k",
+        type=int,
+        default=16,
+        help="Window size for PPL calculation. The window will be of size 2k",
     )
 
 
@@ -123,6 +117,12 @@ def _add_mcqa_eval_args(parser):
         "--auto_budget",
         action="store_true",
         help="Automatically determine the reasoning budget (overrides --reason_budget if both are set)",
+    )
+    parser.add_argument(
+        "--counter_tokenizer",
+        type=str,
+        default="Qwen/Qwen3-4B-Instruct-2507",
+        help="Tokenizer to use for token counting",
     )
 
 
@@ -143,7 +143,7 @@ def get_args() -> argparse.Namespace:
     _add_model_args(parser)
     _add_sample_args(parser)
     _add_evaluator_args(parser)
-    _add_ctp_eval_args(parser)
+    _add_ppl_eval_args(parser)
     _add_mcqa_eval_args(parser)
     args = parser.parse_args()
     validate_and_standardize(args)
