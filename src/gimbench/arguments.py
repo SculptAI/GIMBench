@@ -88,7 +88,6 @@ def _add_ppl_eval_args(parser):
     parser.add_argument(
         "--ref_model_name",
         type=str,
-        choices=["google/gemma-3-270m", "gpt2", "HuggingFaceTB/SmolLM-135M"],
         default="google/gemma-3-270m",
         help="Reference model for Perplexity (PPL) evaluation",
     )

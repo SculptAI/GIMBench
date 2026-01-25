@@ -16,7 +16,7 @@ import torch
 from datasets import Dataset
 from gimkit.contexts import Query, Result
 from gimkit.schemas import MaskedTag
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -43,7 +43,7 @@ class EvalItemResult(BaseModel):
 
     query_len: int = -1
     response_len: int = -1
-    text_span_and_norm_ppl: dict = {}
+    text_span_and_norm_ppl: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
     error_msg: str = ""
 
