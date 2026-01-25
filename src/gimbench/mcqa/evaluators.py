@@ -152,9 +152,8 @@ class MCQAEvaluator(BaseEvaluator):
 
 
 SHARED_PROMPT_PREFIX = (
-    "Answer the following question using a variety of strategies, such as reasoning, reflection, "
-    "trial and error, and parallel thinking (applying different approaches). "
-    "Feel free to use any other methods as needed to find the correct answer."
+    "Answer the following question carefully. "
+    "Use reasoning and verification as needed to find the correct answer."
 )
 
 
@@ -168,13 +167,18 @@ class GIMEvaluator(MCQAEvaluator):
         if self.args.auto_budget:
             try:
                 r = self.model.generate(
-                    f"I'll show you a couple of questions. "
-                    f"You need to determine how many reasoning steps are required to accurately answer each one.\n\n"
-                    f"## Question: A train travels 150 km at 60 km/h, stops for 10 minutes, then continues another 90 km at 45 km/h. How long does the full trip take in minutes?\n\n"
-                    f"## Reasoning steps: 5\n\n"
-                    f"Complex, multi-hop questions typically require 4 or more reasoning steps to stay accurate.\n\n"
+                    "I'll show you a couple of questions. "
+                    "Decide how many reasoning steps are needed to answer each accurately.\n\n"
+                    "## Question: What is 9 + 6?\n\n"
+                    "## Reasoning steps: 1\n\n"
+                    "## Question: A shirt costs $40 and is discounted by 25%. What is the final price?\n\n"
+                    "## Reasoning steps: 2\n\n"
+                    "## Question: A train travels 150 km at 60 km/h, stops for 10 minutes, then continues another 90 km at 45 km/h. "
+                    "How long does the full trip take in minutes?\n\n"
+                    "## Reasoning steps: 5\n\n"
+                    "Some multi-hop questions may need 4+ steps.\n\n"
                     f"## Question: {question}\n\n"
-                    f"## Reasoning steps: "
+                    "## Reasoning steps: "
                     + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
                 budget = int(r.tags["reason_budget"].content or "1")
@@ -190,7 +194,7 @@ class GIMEvaluator(MCQAEvaluator):
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
         reasoning_guides = [
             f"## Step {idx + 1}\n\n"
-            + guide(desc="One thinking step with concrete progress")
+            + guide(desc="One thinking step. About 60-80 words.")
             for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
@@ -234,6 +238,7 @@ class CommonEvaluator(MCQAEvaluator):
     def _form_cot_query(self, question: str, choices: list[str]) -> str:
         prompt = SHARED_PROMPT_PREFIX + (
             " Remember to end with `The answer is: xxx`.\n\n"
+            "Do not write anything after that final line.\n\n"
             f"Question: {question}\n\n"
             f"Choose from the following options: {', '.join(choices)}\n\n"
             "Let's think step by step:\n"
