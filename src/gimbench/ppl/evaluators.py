@@ -109,36 +109,107 @@ class PPLEvaluator(BaseEvaluator):
         input_ids = enc.input_ids.to(self.args.ref_model_device)
         return self._compute_norm_ppl(input_ids) if input_ids.numel() > 1 else -1.0
 
+    def _get_content_offset_mapping(self, result_obj: Result) -> list[tuple[int, int]]:
+        _raw_contents = [part if isinstance(part, str) else part.content for part in result_obj.parts]
+        _contents = [part if part else "" for part in _raw_contents]
+        _start_positions = [len("".join(_contents[:i])) for i in range(len(_contents))]
+        return [(start, start + len(content)) for start, content in zip(_start_positions, _contents, strict=True)]
+
+    def _extract_window_text(
+        self,
+        result_text: str,
+        token_offset_mapping: list[tuple[int, int]],
+        content_start: int,
+        content_end: int,
+    ) -> tuple[str, str]:
+        num_tokens = len(token_offset_mapping)
+
+        # find first token that contains content_start
+        left_window_middle_token_idx = -1
+        for token_idx, (token_start, token_end) in enumerate(token_offset_mapping):
+            if token_start <= content_start < token_end:
+                left_window_middle_token_idx = token_idx
+                break
+
+        left_window_text = ""
+        if left_window_middle_token_idx != -1:
+            left_window = (
+                left_window_middle_token_idx - self.args.ppl_window_k,
+                left_window_middle_token_idx + self.args.ppl_window_k,
+            )
+            if 0 <= left_window[0] < left_window[1] <= num_tokens:
+                left_window_start_pos = token_offset_mapping[left_window[0]][0]
+                left_window_end_pos = token_offset_mapping[left_window[1] - 1][1]
+                left_window_text = result_text[left_window_start_pos:left_window_end_pos]
+
+        # find last token that contains content_end
+        right_window_middle_token_idx = -1
+        for token_idx in reversed(range(len(token_offset_mapping))):
+            token_start, token_end = token_offset_mapping[token_idx]
+            if token_start < content_end <= token_end:
+                right_window_middle_token_idx = token_idx
+                break
+
+        right_window_text = ""
+        if right_window_middle_token_idx != -1:
+            right_window = (
+                right_window_middle_token_idx - self.args.ppl_window_k,
+                right_window_middle_token_idx + self.args.ppl_window_k,
+            )
+            if 0 <= right_window[0] < right_window[1] <= num_tokens:
+                right_window_start_pos = token_offset_mapping[right_window[0]][0]
+                right_window_end_pos = token_offset_mapping[right_window[1] - 1][1]
+                right_window_text = result_text[right_window_start_pos:right_window_end_pos]
+
+        return left_window_text, right_window_text
+
+    def _compute_metrics(self, text_span_and_norm_ppl: dict[str, dict[str, Any]]) -> None:
+        for span_key in text_span_and_norm_ppl:
+            # compute content norm ppl
+            content = text_span_and_norm_ppl[span_key]["content"]
+            content_norm_ppl = self._compute_norm_ppl_from_text(content) if content else -1.0
+            text_span_and_norm_ppl[span_key]["content_norm_ppl"] = content_norm_ppl
+
+            # compute left window norm ppl
+            left_window_text = text_span_and_norm_ppl[span_key]["left_window_text"]
+            left_window_norm_ppl = self._compute_norm_ppl_from_text(left_window_text) if left_window_text else -1.0
+            text_span_and_norm_ppl[span_key]["left_window_norm_ppl"] = left_window_norm_ppl
+
+            # compute right window norm ppl
+            right_window_text = text_span_and_norm_ppl[span_key]["right_window_text"]
+            right_window_norm_ppl = self._compute_norm_ppl_from_text(right_window_text) if right_window_text else -1.0
+            text_span_and_norm_ppl[span_key]["right_window_norm_ppl"] = right_window_norm_ppl
+
+    def _aggregate_scores(self, text_span_and_norm_ppl: dict[str, dict[str, Any]]) -> tuple[float, float, float, float]:
+        _inps = [d["content_norm_ppl"] for d in text_span_and_norm_ppl.values() if d["content_norm_ppl"] >= 0]
+        _lwnps = [d["left_window_norm_ppl"] for d in text_span_and_norm_ppl.values() if d["left_window_norm_ppl"] >= 0]
+        _rwnps = [
+            d["right_window_norm_ppl"] for d in text_span_and_norm_ppl.values() if d["right_window_norm_ppl"] >= 0
+        ]
+
+        inp = sum(_inps) / len(_inps) if _inps else -1.0
+        lwnp = sum(_lwnps) / len(_lwnps) if _lwnps else -1.0
+        rwnp = sum(_rwnps) / len(_rwnps) if _rwnps else -1.0
+        wnp = (lwnp + rwnp) / 2.0 if lwnp >= 0 and rwnp >= 0 else -1.0
+
+        return inp, lwnp, rwnp, wnp
+
     def _evaluate_item(self, item: dict) -> EvalItemResult:
         result_text = "ERROR"
         error_msg = ""
         inp = lwnp = rwnp = wnp = -1.0
         query_text = str(Query(item["gim_query"]))
-        text_span_and_norm_ppl: dict[str, dict[str, Any]] = {
-            # "m_0": { "content": xxx
-            #          "left_window_text": xxx
-            #          "right_window_text": xxx
-            #          "content_norm_ppl": x
-            #          "left_window_norm_ppl": x
-            #          "right_window_norm_ppl": x }
-        }
+        text_span_and_norm_ppl: dict[str, dict[str, Any]] = {}
         try:
             result_obj = self._model_call(query_text)
             result_text = str(result_obj)
 
-            _raw_contents = [part if isinstance(part, str) else part.content for part in result_obj.parts]
-            _contents = [part if part else "" for part in _raw_contents]
-            _start_positions = [len("".join(_contents[:i])) for i in range(len(_contents))]
-            content_offset_mapping = [
-                (start, start + len(content)) for start, content in zip(_start_positions, _contents, strict=True)
-            ]
-
+            content_offset_mapping = self._get_content_offset_mapping(result_obj)
             token_offset_mapping = self.ref_tokenizer(
                 result_text,
                 return_offsets_mapping=True,
                 add_special_tokens=False,
             ).offset_mapping
-            num_tokens = len(token_offset_mapping)
 
             for part_idx, part in enumerate(result_obj.parts):
                 if not isinstance(part, MaskedTag):
@@ -147,40 +218,9 @@ class PPLEvaluator(BaseEvaluator):
                 content = part.content
                 content_start, content_end = content_offset_mapping[part_idx]
 
-                # find first token that contains content_start
-                left_window_middle_token_idx = -1
-                for token_idx, (token_start, token_end) in enumerate(token_offset_mapping):
-                    if token_start <= content_start < token_end:
-                        left_window_middle_token_idx = token_idx
-                        break
-                left_window = (
-                    left_window_middle_token_idx - self.args.ppl_window_k,
-                    left_window_middle_token_idx + self.args.ppl_window_k,
+                left_window_text, right_window_text = self._extract_window_text(
+                    result_text, token_offset_mapping, content_start, content_end
                 )
-                if 0 <= left_window[0] < left_window[1] <= num_tokens:
-                    left_window_start_pos = token_offset_mapping[left_window[0]][0]
-                    left_window_end_pos = token_offset_mapping[left_window[1] - 1][1]
-                    left_window_text = result_text[left_window_start_pos:left_window_end_pos]
-                else:
-                    left_window_text = ""
-
-                # find last token that contains content_end
-                right_window_middle_token_idx = -1
-                for token_idx in reversed(range(len(token_offset_mapping))):
-                    token_start, token_end = token_offset_mapping[token_idx]
-                    if token_start < content_end <= token_end:
-                        right_window_middle_token_idx = token_idx
-                        break
-                right_window = (
-                    right_window_middle_token_idx - self.args.ppl_window_k,
-                    right_window_middle_token_idx + self.args.ppl_window_k,
-                )
-                if 0 <= right_window[0] < right_window[1] <= num_tokens:
-                    right_window_start_pos = token_offset_mapping[right_window[0]][0]
-                    right_window_end_pos = token_offset_mapping[right_window[1] - 1][1]
-                    right_window_text = result_text[right_window_start_pos:right_window_end_pos]
-                else:
-                    right_window_text = ""
 
                 text_span_and_norm_ppl[f"m_{part.id}"] = {
                     "content": content,
@@ -188,46 +228,8 @@ class PPLEvaluator(BaseEvaluator):
                     "right_window_text": right_window_text,
                 }
 
-            for span_key in text_span_and_norm_ppl:
-                # compute content norm ppl
-                content = text_span_and_norm_ppl[span_key]["content"]
-                content_norm_ppl = self._compute_norm_ppl_from_text(content) if content else -1.0
-                text_span_and_norm_ppl[span_key]["content_norm_ppl"] = content_norm_ppl
-
-                # compute left window norm ppl
-                left_window_text = text_span_and_norm_ppl[span_key]["left_window_text"]
-                left_window_norm_ppl = self._compute_norm_ppl_from_text(left_window_text) if left_window_text else -1.0
-                text_span_and_norm_ppl[span_key]["left_window_norm_ppl"] = left_window_norm_ppl
-
-                # compute right window norm ppl
-                right_window_text = text_span_and_norm_ppl[span_key]["right_window_text"]
-                if right_window_text:
-                    right_window_norm_ppl = self._compute_norm_ppl_from_text(right_window_text)
-                else:
-                    right_window_norm_ppl = -1.0
-                text_span_and_norm_ppl[span_key]["right_window_norm_ppl"] = right_window_norm_ppl
-
-            valid_inps = [
-                text_span_and_norm_ppl[span_key]["content_norm_ppl"]
-                for span_key in text_span_and_norm_ppl
-                if text_span_and_norm_ppl[span_key]["content_norm_ppl"] >= 0
-            ]
-            valid_lwnps = [
-                text_span_and_norm_ppl[span_key]["left_window_norm_ppl"]
-                for span_key in text_span_and_norm_ppl
-                if text_span_and_norm_ppl[span_key]["left_window_norm_ppl"] >= 0
-            ]
-            valid_rwnps = [
-                text_span_and_norm_ppl[span_key]["right_window_norm_ppl"]
-                for span_key in text_span_and_norm_ppl
-                if text_span_and_norm_ppl[span_key]["right_window_norm_ppl"] >= 0
-            ]
-
-            inp = sum(valid_inps) / len(valid_inps) if valid_inps else -1.0
-            lwnp = sum(valid_lwnps) / len(valid_lwnps) if valid_lwnps else -1.0
-            rwnp = sum(valid_rwnps) / len(valid_rwnps) if valid_rwnps else -1.0
-            wnp = (lwnp + rwnp) / 2.0 if lwnp >= 0 and rwnp >= 0 else -1.0
-
+            self._compute_metrics(text_span_and_norm_ppl)
+            inp, lwnp, rwnp, wnp = self._aggregate_scores(text_span_and_norm_ppl)
         except Exception as e:
             error_msg = repr(e)
             logger.exception(error_msg)
