@@ -1,11 +1,10 @@
-"""计算一些基于ppl的评测指标
+"""Compute various PPL-based evaluation metrics.
 
-一些缩写的含义
-
-norm ppl: normalized perplexity, 对原始的ppl进行归一化并缩放后的值
-inp: infilling norm ppl, 对填空部分的norm ppl
-wnp: windowed norm ppl, 对某个窗口内的norm ppl
-l/r wnp: left/right windowed norm ppl, 对填空部分左/右窗口内的norm ppl
+Abbreviations:
+- norm ppl: normalized perplexity — a normalized and scaled form of raw perplexity.
+- inp: infilling normalized perplexity — norm ppl computed over masked/filled spans.
+- wnp: windowed normalized perplexity — norm ppl computed over a context window.
+- l/r wnp: left/right windowed norm ppl — norm ppl for the left or right context window.
 """
 
 from argparse import Namespace
@@ -35,7 +34,7 @@ class EvalItemResult(BaseModel):
 
     lwnp: float = -1.0
     rwnp: float = -1.0
-    wnp: float = -1.0  # average of left/right
+    wnp: float = -1.0
     inp: float = -1.0
 
     query_tags: int = -1
@@ -115,7 +114,7 @@ class PPLEvaluator(BaseEvaluator):
         error_msg = ""
         inp = lwnp = rwnp = wnp = -1.0
         query_text = str(Query(item["gim_query"]))
-        span_and_norm_ppl = {
+        text_span_and_norm_ppl = {
             # "m_0": { "content": xxx
             #          "left_window_text": xxx
             #          "right_window_text": xxx
@@ -183,45 +182,45 @@ class PPLEvaluator(BaseEvaluator):
                 else:
                     right_window_text = ""
 
-                span_and_norm_ppl[f"m_{part.id}"] = {
+                text_span_and_norm_ppl[f"m_{part.id}"] = {
                     "content": content,
                     "left_window_text": left_window_text,
                     "right_window_text": right_window_text,
                 }
 
-            for span_key in span_and_norm_ppl:
+            for span_key in text_span_and_norm_ppl:
                 # compute content norm ppl
-                content = span_and_norm_ppl[span_key]["content"]
+                content = text_span_and_norm_ppl[span_key]["content"]
                 content_norm_ppl = self._compute_norm_ppl_from_text(content) if content else -1.0
-                span_and_norm_ppl[span_key]["content_norm_ppl"] = content_norm_ppl
+                text_span_and_norm_ppl[span_key]["content_norm_ppl"] = content_norm_ppl
 
                 # compute left window norm ppl
-                left_window_text = span_and_norm_ppl[span_key]["left_window_text"]
+                left_window_text = text_span_and_norm_ppl[span_key]["left_window_text"]
                 left_window_norm_ppl = self._compute_norm_ppl_from_text(left_window_text) if left_window_text else -1.0
-                span_and_norm_ppl[span_key]["left_window_norm_ppl"] = left_window_norm_ppl
+                text_span_and_norm_ppl[span_key]["left_window_norm_ppl"] = left_window_norm_ppl
 
                 # compute right window norm ppl
-                right_window_text = span_and_norm_ppl[span_key]["right_window_text"]
+                right_window_text = text_span_and_norm_ppl[span_key]["right_window_text"]
                 if right_window_text:
                     right_window_norm_ppl = self._compute_norm_ppl_from_text(right_window_text)
                 else:
                     right_window_norm_ppl = -1.0
-                span_and_norm_ppl[span_key]["right_window_norm_ppl"] = right_window_norm_ppl
+                text_span_and_norm_ppl[span_key]["right_window_norm_ppl"] = right_window_norm_ppl
 
             valid_inps = [
-                span_and_norm_ppl[span_key]["content_norm_ppl"]
-                for span_key in span_and_norm_ppl
-                if span_and_norm_ppl[span_key]["content_norm_ppl"] >= 0
+                text_span_and_norm_ppl[span_key]["content_norm_ppl"]
+                for span_key in text_span_and_norm_ppl
+                if text_span_and_norm_ppl[span_key]["content_norm_ppl"] >= 0
             ]
             valid_lwnps = [
-                span_and_norm_ppl[span_key]["left_window_norm_ppl"]
-                for span_key in span_and_norm_ppl
-                if span_and_norm_ppl[span_key]["left_window_norm_ppl"] >= 0
+                text_span_and_norm_ppl[span_key]["left_window_norm_ppl"]
+                for span_key in text_span_and_norm_ppl
+                if text_span_and_norm_ppl[span_key]["left_window_norm_ppl"] >= 0
             ]
             valid_rwnps = [
-                span_and_norm_ppl[span_key]["right_window_norm_ppl"]
-                for span_key in span_and_norm_ppl
-                if span_and_norm_ppl[span_key]["right_window_norm_ppl"] >= 0
+                text_span_and_norm_ppl[span_key]["right_window_norm_ppl"]
+                for span_key in text_span_and_norm_ppl
+                if text_span_and_norm_ppl[span_key]["right_window_norm_ppl"] >= 0
             ]
 
             inp = sum(valid_inps) / len(valid_inps) if valid_inps else -1.0
@@ -247,7 +246,7 @@ class PPLEvaluator(BaseEvaluator):
             else -1.0,
             query_len=len(query_text),
             response_len=len(result_text),
-            text_span_and_norm_ppl=span_and_norm_ppl,
+            text_span_and_norm_ppl=text_span_and_norm_ppl,
             error_msg=error_msg,
         )
 
