@@ -186,8 +186,6 @@ class GIMEvaluator(MCQAEvaluator):
                 r = self.model.generate(
                     f"I'll show you a couple of questions. "
                     f"You need to determine how many reasoning steps are required to accurately answer each one.\n\n"
-                    f"## Question: Find the sum of first 5 positive integers.\n\n"
-                    f"## Reasoning steps: 2\n\n"
                     f"## Question: A train travels 150 km at 60 km/h, stops for 10 minutes, then continues another 90 km at 45 km/h. How long does the full trip take in minutes?\n\n"
                     f"## Reasoning steps: 5\n\n"
                     f"Complex, multi-hop questions typically require 4 or more reasoning steps to stay accurate.\n\n"
@@ -264,18 +262,42 @@ class CommonEvaluator(MCQAEvaluator):
         additional_info = {f"line_{i + 1}": line for i, line in enumerate(response_str.splitlines())}
 
         last_line = response_str.splitlines()[-1] if response_str.splitlines() else response_str
+        options = "".join(validate_choices)
 
         # 1) Try marker-based extraction: e.g. "The answer is: A", "Final answer: (B)", "Answer: C."
         if m := re.search(
-            r"(?:the answer is|final answer|answer)[:\s]*\(?([A-Za-z0-9]+)\)?",
+            rf"(?:the answer is|the correct answer is|final answer|answer)"
+            rf"[:\s]*"
+            rf"(?:option\s*)?"
+            rf"\(?\**\s*([{options}])\s*\**\)?",
             last_line,
             re.IGNORECASE,
         ):
             model_choice = m.group(1).strip().rstrip(".),")
             additional_info["extracted_by"] = "marker"
 
+        # also support LaTeX boxed in last line
+        elif m_box := re.search(
+            rf"boxed\{{\s*([{options}])\s*\}}",
+            last_line,
+            re.IGNORECASE,
+        ):
+            model_choice = m_box.group(1).strip()
+            additional_info["extracted_by"] = "marker_boxed"
+
+        # also support ANSWER: X style in last line
+        elif m_ans := re.search(
+            rf"(?i)answer\s*:\s*\(?([{options}])\)?",
+            last_line,
+        ):
+            model_choice = m_ans.group(1).strip()
+            additional_info["extracted_by"] = "marker_answer_colon"
+
         # 2) Scan last line for a short token like "A", "(A)", "A.", "A)" at line start or alone
-        elif m2 := re.match(r"^\(?([A-Za-z0-9])\)?[\.|\)]?$", last_line):
+        elif m2 := re.match(
+            rf"^\(?\**\s*([{options}])\s*\**\)?[\.|\)]?$",
+            last_line.strip(),
+        ):
             model_choice = m2.group(1).strip().rstrip(".),")
             additional_info["extracted_by"] = "line_scan_last"
 
