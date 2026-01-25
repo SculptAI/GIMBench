@@ -184,10 +184,13 @@ class GIMEvaluator(MCQAEvaluator):
         if self.args.auto_budget:
             try:
                 r = self.model.generate(
-                    f"I'll show you a question. "
-                    f"You need to determine how many reasoning steps are required to accurately answer it.\n\n"
+                    f"I'll show you a couple of questions. "
+                    f"You need to determine how many reasoning steps are required to accurately answer each one.\n\n"
                     f"## Question: Find the sum of first 5 positive integers.\n\n"
                     f"## Reasoning steps: 2\n\n"
+                    f"## Question: A train travels 150 km at 60 km/h, stops for 10 minutes, then continues another 90 km at 45 km/h. How long does the full trip take in minutes?\n\n"
+                    f"## Reasoning steps: 5\n\n"
+                    f"Complex, multi-hop questions typically require 4 or more reasoning steps to stay accurate.\n\n"
                     f"## Question: {question}\n\n"
                     f"## Reasoning steps: "
                     + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
@@ -204,11 +207,18 @@ class GIMEvaluator(MCQAEvaluator):
 
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
         reasoning_guides = [
-            f"## Step {idx + 1}\n\n" + guide(desc="One thinking step. About 60 words") for idx in range(reason_budget)
+            f"## Step {idx + 1}\n\n"
+            + guide(desc="One thinking step with concrete progress")
+            for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
         if reason_budget > 0:
-            prompt += "Let's think step by step.\n\n" + "\n\n".join(reasoning_guides) + "\n\n"
+            prompt += (
+                f"You have {reason_budget} steps maximum. Use each step for a distinct line of reasoning.\n\n"
+                "Let's think step by step.\n\n"
+                + "\n\n".join(reasoning_guides)
+                + "\n\n"
+            )
         prompt += "## Conclusion\n\nFinal answer: " + guide.select(choices=choices, name="predicted_choice")
         return prompt
 
