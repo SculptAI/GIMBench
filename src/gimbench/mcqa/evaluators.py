@@ -152,7 +152,10 @@ class MCQAEvaluator(BaseEvaluator):
 
 
 SHARED_PROMPT_PREFIX = (
-    "Answer the following question carefully. Use reasoning and verification as needed to find the correct answer."
+    "Answer the following question carefully using a variety of strategies, such as reasoning, reflection, "
+    "trial and error, and parallel thinking (applying different approaches). "
+    "Feel free to use any other methods as needed to find the correct answer. "
+    "Verify your work before concluding."
 )
 
 
@@ -168,14 +171,19 @@ class GIMEvaluator(MCQAEvaluator):
                 r = self.model.generate(
                     "I'll show you a couple of questions. "
                     "Decide how many reasoning steps are needed to answer each accurately.\n\n"
-                    "## Question: What is 9 + 6?\n\n"
-                    "## Reasoning steps: 1\n\n"
-                    "## Question: A shirt costs $40 and is discounted by 25%. What is the final price?\n\n"
-                    "## Reasoning steps: 2\n\n"
+                    "Consider a plausible reasoning workflow first (you may use reasoning, reflection, "
+                    "trial and error, and parallel thinking by applying different approaches, plus a quick verification if needed). "
+                    "Then output a step budget (where each step is an atomic reasoning action taking 3–5 sentences) that allows for granular, step-by-step derivation without skipping logic, ensuring a robust and high-confidence conclusion;"
+                    "leave extra headroom for cross-checking and possible revision on multi-hop or tricky questions.\n\n"
                     "## Question: A train travels 150 km at 60 km/h, stops for 10 minutes, then continues another 90 km at 45 km/h. "
                     "How long does the full trip take in minutes?\n\n"
                     "## Reasoning steps: 5\n\n"
-                    "Some multi-hop questions may need 4+ steps.\n\n"
+                    "## Question: An account starts with $5,000. At the beginning of each month for 12 months, a $5 fee is charged. "
+                    "At the end of each month, you deposit $200. The annual interest rate is 6% compounded monthly for the first 6 months "
+                    "and 4% compounded monthly for the last 6 months. What is the final balance after 12 months, rounded to the nearest cent?\n\n"
+                    "## Reasoning steps: 15\n\n"
+                    "Do not be anchored by the examples above. Scale your step budget linearly with the difficulty. "
+                    "For complex problems, you are encouraged to assign a high budget (20, or more) to ensure there is enough room for step-by-step derivation and verification.\n\n"
                     f"## Question: {question}\n\n"
                     "## Reasoning steps: " + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
@@ -191,7 +199,7 @@ class GIMEvaluator(MCQAEvaluator):
 
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
         reasoning_guides = [
-            f"## Step {idx + 1}\n\n" + guide(desc="One thinking step. About 60-80 words.")
+            f"## Step {idx + 1}\n\n" + guide(desc="A distinct, verified reasoning step building on the previous one. Write 4–6 substantial sentences (60–80 words each) to ensure depth.")
             for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
