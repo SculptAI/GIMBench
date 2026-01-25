@@ -9,7 +9,7 @@ Abbreviations:
 
 from argparse import Namespace
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
 import torch
 
@@ -114,7 +114,7 @@ class PPLEvaluator(BaseEvaluator):
         error_msg = ""
         inp = lwnp = rwnp = wnp = -1.0
         query_text = str(Query(item["gim_query"]))
-        text_span_and_norm_ppl = {
+        text_span_and_norm_ppl: dict[str, dict[str, Any]] = {
             # "m_0": { "content": xxx
             #          "left_window_text": xxx
             #          "right_window_text": xxx
@@ -126,8 +126,8 @@ class PPLEvaluator(BaseEvaluator):
             result_obj = self._model_call(query_text)
             result_text = str(result_obj)
 
-            _contents = [part if isinstance(part, str) else part.content for part in result_obj.parts]
-            _contents = [part if part else "" for part in _contents]
+            _raw_contents = [part if isinstance(part, str) else part.content for part in result_obj.parts]
+            _contents = [part if part else "" for part in _raw_contents]
             _start_positions = [len("".join(_contents[:i])) for i in range(len(_contents))]
             content_offset_mapping = [
                 (start, start + len(content)) for start, content in zip(_start_positions, _contents, strict=True)
