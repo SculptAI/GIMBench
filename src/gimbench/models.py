@@ -31,6 +31,7 @@ class SimpleGIM:
                 output_type=self.args.output_type,
                 use_gim_prompt=self.args.use_gim_prompt,
                 temperature=self.args.temperature,
+                top_p=self.args.top_p,
                 presence_penalty=self.args.presence_penalty,
                 max_tokens=self.args.max_tokens,
             )
@@ -43,6 +44,7 @@ class SimpleGIM:
                 use_gim_prompt=self.args.use_gim_prompt,
                 sampling_params=SamplingParams(
                     temperature=self.args.temperature,
+                    top_p=self.args.top_p,
                     max_tokens=self.args.max_tokens,
                     presence_penalty=self.args.presence_penalty,
                 ),
