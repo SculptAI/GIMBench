@@ -76,12 +76,6 @@ def _add_evaluator_args(parser):
         default="results",
         help="Directory to save evaluation results",
     )
-    parser.add_argument(
-        "--counter_tokenizer",
-        type=str,
-        default="Qwen/Qwen3-4B-Instruct-2507",
-        help="Tokenizer to use for token counting",
-    )
 
 
 def _add_ppl_eval_args(parser):
@@ -123,6 +117,12 @@ def _add_mcqa_eval_args(parser):
         "--auto_budget",
         action="store_true",
         help="Automatically determine the reasoning budget (overrides --reason_budget if both are set)",
+    )
+    parser.add_argument(
+        "--counter_tokenizer",
+        type=str,
+        default="Qwen/Qwen3-4B-Instruct-2507",
+        help="Tokenizer to use for token counting",
     )
 
 
