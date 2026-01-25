@@ -42,6 +42,7 @@ def _add_model_args(parser):
 
 def _add_sample_args(parser):
     parser.add_argument("--temperature", type=float, default=0.0, help="Temperature for the model")
+    parser.add_argument("--top_p", type=float, default=1.0, help="Top-p sampling for the model")
     parser.add_argument(
         "--presence_penalty",
         type=float,
