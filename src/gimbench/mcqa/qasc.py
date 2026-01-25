@@ -16,7 +16,7 @@ def _format_qasc(example: dict, seed: int) -> dict:
     question = example["question"].strip()
     answers = example["choices"]["text"]
     indices = list(range(len(answers)))
-    random.seed(seed + hash(question))
+    random.seed(seed + len(question))
     random.shuffle(indices)
 
     question_with_answer_options = f"{question}\n\nChoices:\n"
