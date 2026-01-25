@@ -152,8 +152,7 @@ class MCQAEvaluator(BaseEvaluator):
 
 
 SHARED_PROMPT_PREFIX = (
-    "Answer the following question carefully. "
-    "Use reasoning and verification as needed to find the correct answer."
+    "Answer the following question carefully. Use reasoning and verification as needed to find the correct answer."
 )
 
 
@@ -178,8 +177,7 @@ class GIMEvaluator(MCQAEvaluator):
                     "## Reasoning steps: 5\n\n"
                     "Some multi-hop questions may need 4+ steps.\n\n"
                     f"## Question: {question}\n\n"
-                    "## Reasoning steps: "
-                    + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
+                    "## Reasoning steps: " + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
                 budget = int(r.tags["reason_budget"].content or "1")
             except Exception as e:
@@ -193,17 +191,14 @@ class GIMEvaluator(MCQAEvaluator):
 
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
         reasoning_guides = [
-            f"## Step {idx + 1}\n\n"
-            + guide(desc="One thinking step. About 60-80 words.")
+            f"## Step {idx + 1}\n\n" + guide(desc="One thinking step. About 60-80 words.")
             for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
         if reason_budget > 0:
             prompt += (
                 f"You have {reason_budget} steps maximum. Use each step for a distinct line of reasoning.\n\n"
-                "Let's think step by step.\n\n"
-                + "\n\n".join(reasoning_guides)
-                + "\n\n"
+                "Let's think step by step.\n\n" + "\n\n".join(reasoning_guides) + "\n\n"
             )
         prompt += "## Conclusion\n\nFinal answer: " + guide.select(choices=choices, name="predicted_choice")
         return prompt
@@ -257,19 +252,17 @@ class CommonEvaluator(MCQAEvaluator):
         additional_info = {f"line_{i + 1}": line for i, line in enumerate(response_str.splitlines())}
 
         lines = response_str.splitlines() if response_str else []
-        options = "".join(validate_choices)
 
-        # Look at the last N lines (raw) but also build a "meaningful" tail that skips markdown fences & blanks
-        N = 5
-        raw_tail_lines = lines[-N:] if lines else [response_str]
+        validate_choices_norm = [c.upper() for c in validate_choices]
+        options = "".join(validate_choices_norm)
+
+        raw_tail_lines = lines[-5:] if lines else [response_str]
 
         def _is_code_fence(s: str) -> bool:
             t = s.strip()
             return bool(re.fullmatch(r"`{3,}|~{3,}", t))
 
-        meaningful_tail_lines: list[str] = [
-            ln for ln in raw_tail_lines if ln.strip() and not _is_code_fence(ln)
-        ]
+        meaningful_tail_lines: list[str] = [ln for ln in raw_tail_lines if ln.strip() and not _is_code_fence(ln)]
         tail_text = "\n".join(meaningful_tail_lines if meaningful_tail_lines else raw_tail_lines).strip()
 
         def _search_last(pattern: str, text: str, flags: int = 0) -> re.Match | None:
@@ -319,7 +312,9 @@ class CommonEvaluator(MCQAEvaluator):
             additional_info["tail_used"] = tail_text
             raise ValueError(f"Could not extract a valid choice from the model response: {response_str}")
 
-        if model_choice not in validate_choices:
+        model_choice = model_choice.upper()
+
+        if model_choice not in validate_choices_norm:
             raise ValueError(f"Extracted choice '{model_choice}' not in valid choices {validate_choices}")
 
         return response_str, model_choice, additional_info
