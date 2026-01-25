@@ -256,47 +256,67 @@ class CommonEvaluator(MCQAEvaluator):
         model_choice = "ERROR"
         additional_info = {f"line_{i + 1}": line for i, line in enumerate(response_str.splitlines())}
 
-        last_line = response_str.splitlines()[-1] if response_str.splitlines() else response_str
+        lines = response_str.splitlines() if response_str else []
         options = "".join(validate_choices)
 
-        # 1) Try marker-based extraction: e.g. "The answer is: A", "Final answer: (B)", "Answer: C."
-        if m := re.search(
+        # Look at the last N lines (raw) but also build a "meaningful" tail that skips markdown fences & blanks
+        N = 5
+        raw_tail_lines = lines[-N:] if lines else [response_str]
+
+        def _is_code_fence(s: str) -> bool:
+            t = s.strip()
+            return bool(re.fullmatch(r"`{3,}|~{3,}", t))
+
+        meaningful_tail_lines: list[str] = [
+            ln for ln in raw_tail_lines if ln.strip() and not _is_code_fence(ln)
+        ]
+        tail_text = "\n".join(meaningful_tail_lines if meaningful_tail_lines else raw_tail_lines).strip()
+
+        def _search_last(pattern: str, text: str, flags: int = 0) -> re.Match | None:
+            ms = list(re.finditer(pattern, text, flags))
+            return ms[-1] if ms else None
+
+        # 1) Marker-based extraction in tail (take the LAST match)
+        marker_pat = (
             rf"(?:the answer is|the correct answer is|final answer|answer)"
             rf"[:\s]*"
             rf"(?:option\s*)?"
-            rf"\(?\**\s*([{options}])\s*\**\)?",
-            last_line,
-            re.IGNORECASE,
-        ):
+            rf"\(?\**\s*([{options}])\s*\**\)?"
+        )
+        if m := _search_last(marker_pat, tail_text, re.IGNORECASE):
             model_choice = m.group(1).strip().rstrip(".),")
-            additional_info["extracted_by"] = "marker"
+            additional_info["extracted_by"] = "tail_marker_last"
+            additional_info["matched_span"] = m.group(0)
 
-        # also support LaTeX boxed in last line
-        elif m_box := re.search(
-            rf"boxed\{{\s*([{options}])\s*\}}",
-            last_line,
-            re.IGNORECASE,
-        ):
+        # 1b) LaTeX boxed in tail (take the LAST match)
+        elif m_box := _search_last(rf"boxed\{{\s*([{options}])\s*\}}", tail_text, re.IGNORECASE):
             model_choice = m_box.group(1).strip()
-            additional_info["extracted_by"] = "marker_boxed"
+            additional_info["extracted_by"] = "tail_marker_boxed_last"
+            additional_info["matched_span"] = m_box.group(0)
 
-        # also support ANSWER: X style in last line
-        elif m_ans := re.search(
-            rf"(?i)answer\s*:\s*\(?([{options}])\)?",
-            last_line,
-        ):
+        # 1c) ANSWER: X in tail (take the LAST match)
+        elif m_ans := _search_last(rf"(?i)answer\s*:\s*\(?([{options}])\)?", tail_text):
             model_choice = m_ans.group(1).strip()
-            additional_info["extracted_by"] = "marker_answer_colon"
+            additional_info["extracted_by"] = "tail_marker_answer_colon_last"
+            additional_info["matched_span"] = m_ans.group(0)
 
-        # 2) Scan last line for a short token like "A", "(A)", "A.", "A)" at line start or alone
-        elif m2 := re.match(
-            rf"^\(?\**\s*([{options}])\s*\**\)?[\.|\)]?$",
-            last_line.strip(),
-        ):
-            model_choice = m2.group(1).strip().rstrip(".),")
-            additional_info["extracted_by"] = "line_scan_last"
+        # 2) Scan from bottom: allow a single-token line like "A", "(A)", "A.", "A)"
+        else:
+            token_pat = rf"^\(?\**\s*([{options}])\s*\**\)?[.)]?$"
+            picked_line = None
+            for ln in reversed(meaningful_tail_lines if meaningful_tail_lines else raw_tail_lines):
+                s = ln.strip()
+                if not s or _is_code_fence(s):
+                    continue
+                if m2 := re.match(token_pat, s):
+                    model_choice = m2.group(1).strip().rstrip(".),")
+                    picked_line = ln
+                    additional_info["extracted_by"] = "tail_line_scan_bottom"
+                    additional_info["matched_line"] = picked_line
+                    break
 
         if model_choice == "ERROR":
+            additional_info["tail_used"] = tail_text
             raise ValueError(f"Could not extract a valid choice from the model response: {response_str}")
 
         if model_choice not in validate_choices:
