@@ -72,7 +72,7 @@ def create_dataset():
     # Create HF Dataset
     # We can load from dicts
     ds = Dataset.from_list(dataset_rows, features=features)
-    ds.push_to_hub("Sculpt-AI/GIMBench-cv-parse")
+    ds.push_to_hub("Sculpt-AI/GIMBench-cv-parse", split="test")
 
 
 if __name__ == "__main__":
