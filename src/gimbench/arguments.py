@@ -124,10 +124,13 @@ def _add_mcqa_eval_args(parser):
         help="Template prompt for auto budget determination; use {question} as placeholder for the question.",
     )
     parser.add_argument(
-        "--reason_steps_instructions",
+        "--reason_step_desc",
         type=str,
-        default="You have {reason_budget} steps maximum. Use each step for a distinct line of reasoning.\n\n",
-        help="Instruction header inserted before the reasoning steps. Supports {reason_budget}.",
+        default=(
+            "A distinct, verified reasoning step building on the previous one. "
+            "Write 2–3 substantial sentences (60–80 words each) to ensure depth."
+        ),
+        help="Description template for each reasoning step used by guide(desc=...).",
     )
 
 
