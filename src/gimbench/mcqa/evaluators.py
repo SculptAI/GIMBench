@@ -169,23 +169,8 @@ class GIMEvaluator(MCQAEvaluator):
         if self.args.auto_budget:
             try:
                 r = self.model.generate(
-                    "I'll show you a couple of questions. "
-                    "Decide how many reasoning steps are needed to answer each accurately.\n\n"
-                    "Consider a plausible reasoning workflow first (you may use reasoning, reflection, "
-                    "trial and error, and parallel thinking by applying different approaches, plus a quick verification if needed). "
-                    "Then output a step budget (where each step is an atomic reasoning action taking 3–5 sentences) that allows for granular, step-by-step derivation without skipping logic, ensuring a robust and high-confidence conclusion;"
-                    "leave extra headroom for cross-checking and possible revision on multi-hop or tricky questions.\n\n"
-                    "## Question: A train travels 150 km at 60 km/h, stops for 10 minutes, then continues another 90 km at 45 km/h. "
-                    "How long does the full trip take in minutes?\n\n"
-                    "## Reasoning steps: 5\n\n"
-                    "## Question: An account starts with $5,000. At the beginning of each month for 12 months, a $5 fee is charged. "
-                    "At the end of each month, you deposit $200. The annual interest rate is 6% compounded monthly for the first 6 months "
-                    "and 4% compounded monthly for the last 6 months. What is the final balance after 12 months, rounded to the nearest cent?\n\n"
-                    "## Reasoning steps: 15\n\n"
-                    "Do not be anchored by the examples above. Scale your step budget linearly with the difficulty. "
-                    "For complex problems, you are encouraged to assign a high budget (20, or more) to ensure there is enough room for step-by-step derivation and verification.\n\n"
-                    f"## Question: {question}\n\n"
-                    "## Reasoning steps: " + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
+                    self.args.auto_budget_prompt.format(question=question)
+                    + "## Reasoning steps: " + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
                 budget = int(r.tags["reason_budget"].content or "1")
             except Exception as e:
@@ -205,8 +190,8 @@ class GIMEvaluator(MCQAEvaluator):
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
         if reason_budget > 0:
             prompt += (
-                f"You have {reason_budget} steps maximum. Use each step for a distinct line of reasoning.\n\n"
-                "Let's think step by step.\n\n" + "\n\n".join(reasoning_guides) + "\n\n"
+                self.args.reason_steps_instructions.format(reason_budget=reason_budget)
+                + "Let's think step by step.\n\n" + "\n\n".join(reasoning_guides) + "\n\n"
             )
         prompt += "## Conclusion\n\nFinal answer: " + guide.select(choices=choices, name="predicted_choice")
         return prompt
