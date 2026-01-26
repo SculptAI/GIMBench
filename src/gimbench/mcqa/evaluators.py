@@ -199,7 +199,7 @@ class GIMEvaluator(MCQAEvaluator):
 
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
         reasoning_guides = [
-            f"## Step {idx + 1}\n\n" + guide(desc="A distinct, verified reasoning step building on the previous one. Write 3–5 substantial sentences (60–80 words each) to ensure depth.")
+            f"## Step {idx + 1}\n\n" + guide(desc="A distinct, verified reasoning step building on the previous one. Write 2–3 substantial sentences (60–80 words each) to ensure depth.")
             for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
