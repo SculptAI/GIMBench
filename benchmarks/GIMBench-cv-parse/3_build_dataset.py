@@ -66,12 +66,9 @@ def create_dataset():
         }
         dataset_rows.append(row)
 
-    # Get Features from schema definitions
-    features = get_hf_features()
-
     # Create HF Dataset
     # We can load from dicts
-    ds = Dataset.from_list(dataset_rows, features=features)
+    ds = Dataset.from_list(dataset_rows, features=get_hf_features())
     ds.push_to_hub("Sculpt-AI/GIMBench-cv-parse", split="test")
 
 
