@@ -2,7 +2,7 @@ from abc import abstractmethod
 from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Literal
+from typing import Literal
 
 import json_repair
 
@@ -134,7 +134,7 @@ class GIMEvaluator(CVEvaluator):
 
     def _extract_fields(self, cv_content: str) -> dict[str, str]:
         query = SHARED_PROMPT_PREFIX.format(cv_content=cv_content) + GIMKIT_TEMPLATE
-        result = self.model.generate(query)
+        result = self._model_call(query)
         extraction = {}
         for field in CV_FIELDS:
             extracted_text = result.tags[field].content
@@ -186,14 +186,14 @@ class OutlinesEvaluator(CVEvaluator):
             raise ValueError("Unsupported model type for OutlinesEvaluator")
         return response
 
-    def _extract_fields(self, cv_content: str) -> dict[str, Any]:
+    def _extract_fields(self, cv_content: str) -> dict[str, str]:
         query = SHARED_PROMPT_PREFIX.format(cv_content=cv_content)
         response_content = self._model_call(query, OUTLINES_JSON_SCHEMA)
         extraction = json_repair.loads(response_content)
         if isinstance(extraction, dict):
-            return extraction
+            return {str(key): ("" if value is None else str(value)) for key, value in extraction.items()}
         else:
-            raise ValueError("Unexpected extracted content format")
+            raise ValueError(f"Expected dict but got {type(extraction).__name__}: {extraction}")
 
 
 def conduct_eval(args: Namespace, ds: Dataset):

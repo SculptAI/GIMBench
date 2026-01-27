@@ -30,7 +30,7 @@ SHARED_PROMPT_PREFIX = """You're an expert on extracting key information from a 
 
 date_regex = r"(?:\d{4}-\d{2}-\d{2})?"
 phone_regex = r"(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)?"
-email_regex = r"(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)?"
+email_regex = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
 degree_regex = r"(Bachelor|Master|PhD)?"
 url_regex = r"(?:https?:\/\/(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[a-zA-Z0-9-]+)*\/?)?"
 
@@ -79,7 +79,7 @@ class CVData(BaseModel):
     start_date: str | None = Field(..., pattern=date_regex)
     end_date: str | None = Field(..., pattern=date_regex)
     # Profile
-    homepage_url: str | None = Field(...)
+    homepage_url: str | None = Field(..., pattern=url_regex)
     twitter_url: str | None = Field(..., pattern=url_regex)
     github_url: str | None = Field(..., pattern=url_regex)
     google_scholar_url: str | None = Field(..., pattern=url_regex)
