@@ -131,6 +131,10 @@ def _add_mcqa_eval_args(parser):
     )
 
 
+def _add_cv_eval_args(parser):
+    parser.add_argument("--use_outlines", action="store_true", help="Whether to use outlines in CV evaluation")
+
+
 def validate_and_standardize(args: argparse.Namespace) -> argparse.Namespace:
     if args.model_type == "openai" and not (args.api_key and args.base_url):
         raise ValueError("API key and base URL must be provided for OpenAI models.")
@@ -150,6 +154,7 @@ def get_args() -> argparse.Namespace:
     _add_evaluator_args(parser)
     _add_ppl_eval_args(parser)
     _add_mcqa_eval_args(parser)
+    _add_cv_eval_args(parser)
     args = parser.parse_args()
     validate_and_standardize(args)
     return args
