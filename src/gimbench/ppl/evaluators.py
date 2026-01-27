@@ -14,7 +14,7 @@ from typing import Any, Literal
 import torch
 
 from datasets import Dataset
-from gimkit.contexts import Query, Result
+from gimkit.contexts import Query, Result, infill
 from gimkit.schemas import MaskedTag
 from pydantic import BaseModel, Field
 from tqdm import tqdm
@@ -72,14 +72,15 @@ class EvalResult(BaseEvalResult):
 
 class PPLEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
-        if "gim_query" not in dataset.column_names:
-            raise ValueError("Dataset must contain 'gim_query' column for PPL evaluation.")
+        if "gim_query" not in dataset.column_names and "gim_response" not in dataset.column_names:
+            raise ValueError("Dataset must contain 'gim_query' and 'gim_response' columns for PPL evaluation.")
 
         super().__init__(args, dataset)
 
-        # SimpleGIM is firstly initialized here to avoid
-        # CUDA context contamination in multiprocessing
-        self.model = SimpleGIM(args)
+        if not args.golden_truth_only:
+            # SimpleGIM is firstly initialized here before ref model to avoid
+            # CUDA context contamination in multiprocessing
+            self.model = SimpleGIM(args)
 
         self.ref_model = AutoModelForCausalLM.from_pretrained(args.ref_model_name).to(self.args.ref_model_device)
         self.ref_tokenizer = AutoTokenizer.from_pretrained(args.ref_model_name)
@@ -201,7 +202,11 @@ class PPLEvaluator(BaseEvaluator):
         query_text = str(Query(item["gim_query"]))
         text_span_and_norm_ppl: dict[str, dict[str, Any]] = {}
         try:
-            result_obj = self._model_call(query_text)
+            result_obj = (
+                infill(item["gim_query"], item["gim_response"])
+                if self.args.golden_truth_only
+                else self._model_call(query_text)
+            )
             result_text = str(result_obj)
 
             content_offset_mapping = self._get_content_offset_mapping(result_obj)

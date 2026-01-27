@@ -40,7 +40,7 @@ if __name__ == "__main__":
             ]
         )
         .shuffle(seed=args.seed)
-        .select_columns(["gim_query"])
+        .select_columns(["gim_query", "gim_response"])
     )
     logger.info(f"Loaded {len(ds)} samples from dataset {args.dataset}")
     logger.info(f"First sample: {ds[0]}")
