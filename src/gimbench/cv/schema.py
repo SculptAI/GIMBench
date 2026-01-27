@@ -20,7 +20,7 @@ CV_FIELDS = [
     "google_scholar_url",
 ]
 
-SHARED_PROMPT_PREFIX = """You're an expert on extracting key information from a CV document.
+SHARED_PROMPT_PREFIX = """You are an expert on extracting key information from a CV document.
 
 ## CV Content
 
@@ -33,6 +33,7 @@ phone_regex = r"(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})
 email_regex = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
 degree_regex = r"(Bachelor|Master|PhD)?"
 url_regex = r"(?:https?:\/\/(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[a-zA-Z0-9-]+)*\/?)?"
+
 
 GIMKIT_TEMPLATE = f"""
 ## Fields
@@ -60,6 +61,15 @@ GIMKIT_TEMPLATE = f"""
 - Twitter/X URL: {g(name="twitter_url", regex=url_regex)}
 - GitHub URL: {g(name="github_url", regex=url_regex)}
 - Google Scholar URL: {g(name="google_scholar_url", regex=url_regex)}
+"""
+
+
+OUTLINES_TEMPLATE = """
+## Note
+
+- Extract the following fields from the CV content: Name, Country, Birthday, Phone Number, Email, Highest Level Degree, University, Department, Major, Start Date, End Date, Homepage URL, Twitter/X URL, GitHub URL, Google Scholar URL.
+- If country/nationality is not provided, you may infer nationality or country of residence from education, institutions, or other clear clues.
+- For Birthday, if not given, try to infer from context. If only a year is present, normalize to YYYY-01-01. If year and month are present, normalize to YYYY-MM-01.
 """
 
 

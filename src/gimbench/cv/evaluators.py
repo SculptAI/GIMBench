@@ -16,7 +16,7 @@ from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
 from gimbench.models import SimpleGIM
 
-from .schema import CV_FIELDS, GIMKIT_TEMPLATE, OUTLINES_JSON_SCHEMA, SHARED_PROMPT_PREFIX
+from .schema import CV_FIELDS, GIMKIT_TEMPLATE, OUTLINES_JSON_SCHEMA, OUTLINES_TEMPLATE, SHARED_PROMPT_PREFIX
 
 
 logger = get_logger(__name__)
@@ -189,7 +189,7 @@ class OutlinesEvaluator(CVEvaluator):
         return response
 
     def _extract_fields(self, cv_content: str) -> dict[str, str]:
-        query = SHARED_PROMPT_PREFIX.format(cv_content=cv_content)
+        query = SHARED_PROMPT_PREFIX.format(cv_content=cv_content) + OUTLINES_TEMPLATE
         response_content = self._model_call(query, OUTLINES_JSON_SCHEMA)
         extraction = json_repair.loads(response_content)
         if isinstance(extraction, dict):
