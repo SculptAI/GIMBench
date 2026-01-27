@@ -24,7 +24,7 @@ def _add_model_args(parser):
         choices=["openai", "vllm", "vllm-offline"],
         help="Type of model to use",
     )
-    parser.add_argument("--model_name", type=str, required=True, help="Model under evaluation")
+    parser.add_argument("--model_name", type=str, help="Model under evaluation")
     parser.add_argument("--api_key", type=str, default="", help="API key for the model")
     parser.add_argument(
         "--base_url",
@@ -102,6 +102,11 @@ def _add_ppl_eval_args(parser):
         type=int,
         default=16,
         help="Window size for PPL calculation. The window will be of size 2k",
+    )
+    parser.add_argument(
+        "--golden_truth_only",
+        action="store_true",
+        help="Only evaluate PPL on golden truth responses",
     )
 
 
