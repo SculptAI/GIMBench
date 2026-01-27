@@ -1,0 +1,3 @@
+mineru[all]
+json-repair
+pdfplumber
