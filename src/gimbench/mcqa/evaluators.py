@@ -185,7 +185,8 @@ class GIMEvaluator(MCQAEvaluator):
         if self.args.auto_budget:
             try:
                 r = self.model.generate(
-                    self.args.auto_budget_prompt.format(question=question)
+                    self.args.auto_budget_prompt
+                    + f"\n\nQuestion: {question}\n\n"
                     + "## Reasoning steps: " + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
                 budget = int(r.tags["reason_budget"].content or "1")
