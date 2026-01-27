@@ -26,6 +26,7 @@ hf download Sculpt-AI/2601199-grid-lr2e-6-ga24
 hf download Sculpt-AI/2601261-qwen-4b
 
 
+python -m gimbench.ppl.gim_sft --ref_model_device cpu --golden_truth_only --first_n 100
 python -m gimbench.ppl.gim_sft --model_type openai --model_name openai/gpt-5.2 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type openai --model_name google/gemini-3-flash-preview --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type openai --model_name moonshotai/kimi-k2-thinking --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
