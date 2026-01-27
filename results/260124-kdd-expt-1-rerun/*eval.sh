@@ -23,6 +23,7 @@ hf download Sculpt-AI/2601196-grid-lr2e-4-ga24
 hf download Sculpt-AI/2601197-grid-lr2e-6-ga12
 hf download Sculpt-AI/2601198-grid-lr2e-6-ga16
 hf download Sculpt-AI/2601199-grid-lr2e-6-ga24
+hf download Sculpt-AI/2601261-qwen-4b
 
 
 python -m gimbench.ppl.gim_sft --model_type openai --model_name openai/gpt-5.2 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
@@ -49,6 +50,7 @@ python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/2601197-grid-lr2e-6-ga12 --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/2601198-grid-lr2e-6-ga16 --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/2601199-grid-lr2e-6-ga24 --output_type cfg --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/2601261-qwen-4b --output_type cfg --ref_model_device cpu --first_n 100
 
 
 python -m gimbench.match.gim_regex --model_type openai --model_name openai/gpt-5.2 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
@@ -75,5 +77,6 @@ python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/2601197-grid-lr2e-6-ga12 --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/2601198-grid-lr2e-6-ga16 --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/2601199-grid-lr2e-6-ga24 --output_type cfg --ref_model_device cpu --first_n 100
+python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/2601261-qwen-4b --output_type cfg --ref_model_device cpu --first_n 100
 
 shutdown -h +3
