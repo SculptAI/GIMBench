@@ -165,14 +165,16 @@ class OutlinesEvaluator(CVEvaluator):
 
     def _model_call(self, query: str, json_schema: dict) -> str:
         if self.args.model_type == "vllm-offline":
+            from vllm import SamplingParams
+
             response = self.model(
                 query,
                 output_type=JsonSchema(json_schema),
-                sampling_params={
-                    "temperature": self.args.temperature,
-                    "presence_penalty": self.args.presence_penalty,
-                    "max_tokens": self.args.max_tokens,
-                },
+                sampling_params=SamplingParams(
+                    temperature=self.args.temperature,
+                    presence_penalty=self.args.presence_penalty,
+                    max_tokens=self.args.max_tokens,
+                ),
             )
         elif self.args.model_type in ["openai", "vllm"]:
             response = self.model(
