@@ -54,4 +54,5 @@ if __name__ == "__main__":
             all_results[evaluator_type].append(result)
 
     for evaluator_type, results in all_results.items():
+        results.sort(key=lambda x: x["filename"])
         to_csv(results, Path(args.output_dir) / f"aggregated_results_{evaluator_type}.csv")
