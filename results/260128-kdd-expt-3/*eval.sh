@@ -28,6 +28,7 @@ local_non_gim_models=(
 )
 for model in "${local_non_gim_models[@]}"; do
     python -m gimbench.cv.cv_parse --model_type vllm-offline --model_name $model --use_gim_prompt --output_type cfg
+    python -m gimbench.cv.cv_parse --model_type vllm-offline --model_name $model --use_outlines
 done
 
 

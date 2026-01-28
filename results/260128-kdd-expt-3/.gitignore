@@ -1,1 +1,2 @@
-*.json  # For privacy reasons
+# For privacy reasons
+*.json
