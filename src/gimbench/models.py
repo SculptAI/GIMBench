@@ -71,7 +71,7 @@ class SimpleCommon:
     def generate(self, prompt: str) -> Result:
         if self.args.model_type in ["openai", "vllm"]:
             response = self.model.chat.completions.create(
-                model=self.args.model_name, 
+                model=self.args.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=self.args.temperature,
                 top_p=self.args.top_p,
@@ -89,13 +89,12 @@ class SimpleCommon:
                     top_p=self.args.top_p,
                     max_tokens=self.args.max_tokens,
                     presence_penalty=self.args.presence_penalty,
-                ),                
+                ),
             )
             for output in outputs:
                 prompt = output.prompt
                 response = output.outputs[0].text
             return response or ""
 
-
         else:
-            raise ValueError("Unsupported model type")    
+            raise ValueError("Unsupported model type")
