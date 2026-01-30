@@ -82,7 +82,7 @@ class SimpleCommon:
         elif self.args.model_type == "vllm-offline":
             from vllm import SamplingParams
 
-            outputs = self.model(
+            outputs = self.model.generate(
                 prompt,
                 sampling_params=SamplingParams(
                     temperature=self.args.temperature,
