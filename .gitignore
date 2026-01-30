@@ -12,8 +12,5 @@ wheels/
 # Eval log
 eval.log
 
-# Eval results
-results/
-
 # Caches
 .mypy_cache/
