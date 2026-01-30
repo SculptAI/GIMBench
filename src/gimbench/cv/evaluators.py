@@ -7,6 +7,7 @@ from typing import Literal
 import json_repair
 
 from datasets import Dataset
+from gimkit import guide as g
 from gimkit.contexts import Result
 from outlines.types import JsonSchema
 from pydantic import BaseModel, Field
@@ -46,6 +47,20 @@ class CVEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
 
+        self.judge_model = SimpleGIM(
+            Namespace(
+                model_type="openai",
+                model_name=args.judge_model_name,
+                api_key=args.api_key,
+                base_url=args.base_url,
+                output_type="json",
+                use_gim_prompt=True,
+                temperature=0.0,
+                presence_penalty=1.0,
+                max_tokens=256,
+            )
+        )
+
     @abstractmethod
     def _extract_fields(self, cv_content: str) -> dict[str, str]:
         """Extract the CV fields from the given content."""
@@ -53,11 +68,31 @@ class CVEvaluator(BaseEvaluator):
 
     def _judge(self, extracted_fields: dict[str, str], eval_details: dict[str, dict]) -> None:
         """Judge the extracted fields against expected values and update details in place."""
+
+        def _judge_field_with_model(field: str, predicted: str, expected: str) -> bool:
+            result = self.judge_model.generate(
+                f"You are evaluating the accuracy of extracted information from a CV. "
+                f"Please determine if the extracted value for the field '{field}' is semantically equivalent to the expected value. "
+                f"\n\nField: {field}\nExtracted Value: '{predicted}'\nExpected Value: '{expected}'\n"
+                f"\nIs the extracted value correct?\n"
+                f"Answer: {g.select(choices=['Correct', 'Incorrect'])}"
+            )
+            logger.info(
+                f"Judgment for field '{field}', predicted: '{predicted}', expected: '{expected}': {result.tags[0].content}"
+            )
+            return result.tags[0].content == "Correct"
+
         for field, info in eval_details.items():
             predicted = extracted_fields.get(field, "")
             expected = info["expected"]
             info["prediction"] = predicted
-            info["correct"] = predicted == expected if expected else False
+            if predicted == "" or expected == "":
+                info["verbatim_correct"] = False
+            elif predicted == expected:
+                info["verbatim_correct"] = True
+            else:
+                info["judge_model_correct"] = _judge_field_with_model(field, predicted, expected)
+            info["correct"] = info["verbatim_correct"] or info["judge_model_correct"]
 
     def _evaluate_item(self, item: dict) -> EvalItemResult:
         cv_content = item["extracted_text"]
@@ -65,6 +100,8 @@ class CVEvaluator(BaseEvaluator):
             field: {
                 "prediction": "N/A",
                 "expected": item.get(field, ""),
+                "verbatim_correct": False,
+                "judge_model_correct": False,
                 "correct": False,
             }
             for field in CV_FIELDS

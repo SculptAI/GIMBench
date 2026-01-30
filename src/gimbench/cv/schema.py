@@ -15,9 +15,7 @@ CV_FIELDS = [
     "start_date",
     "end_date",
     "homepage_url",
-    "twitter_url",
     "github_url",
-    "google_scholar_url",
 ]
 
 SHARED_PROMPT_PREFIX = """You are an expert on extracting key information from a CV document.
@@ -58,16 +56,14 @@ GIMKIT_TEMPLATE = f"""
 ### Profile
 
 - Homepage URL: {g(name="homepage_url", regex=url_regex)}
-- Twitter/X URL: {g(name="twitter_url", regex=url_regex)}
 - GitHub URL: {g(name="github_url", regex=url_regex)}
-- Google Scholar URL: {g(name="google_scholar_url", regex=url_regex)}
 """
 
 
 OUTLINES_TEMPLATE = """
 ## Note
 
-- Extract the following fields from the CV content: Name, Country, Birthday, Phone Number, Email, Highest Level Degree, University, Department, Major, Start Date, End Date, Homepage URL, Twitter/X URL, GitHub URL, Google Scholar URL.
+- Extract the following fields from the CV content: Name, Country, Birthday, Phone Number, Email, Highest Level Degree, University, Department, Major, Start Date, End Date, Homepage URL, GitHub URL.
 - If country/nationality is not provided, you may infer nationality or country of residence from education, institutions, or other clear clues.
 - For Birthday, if not given, try to infer from context. If only a year is present, normalize to YYYY-01-01. If year and month are present, normalize to YYYY-MM-01.
 """
@@ -90,9 +86,7 @@ class CVData(BaseModel):
     end_date: str | None = Field(..., pattern=date_regex)
     # Profile
     homepage_url: str | None = Field(..., pattern=url_regex)
-    twitter_url: str | None = Field(..., pattern=url_regex)
     github_url: str | None = Field(..., pattern=url_regex)
-    google_scholar_url: str | None = Field(..., pattern=url_regex)
 
 
 OUTLINES_JSON_SCHEMA = CVData.model_json_schema()
