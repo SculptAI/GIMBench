@@ -24,13 +24,19 @@ def _add_model_args(parser):
         choices=["openai", "vllm", "vllm-offline"],
         help="Type of model to use",
     )
-    parser.add_argument("--model_name", type=str, required=True, help="Model under evaluation")
+    parser.add_argument("--model_name", type=str, help="Model under evaluation")
     parser.add_argument("--api_key", type=str, default="", help="API key for the model")
     parser.add_argument(
         "--base_url",
         type=str,
         default="http://localhost:8000/v1",
         help="Base URL for the model API",
+    )
+    parser.add_argument(
+        "--max_model_len",
+        type=int,
+        default=8192,
+        help="Maximum length of the vllm model context window",
     )
 
 
@@ -71,26 +77,37 @@ def _add_evaluator_args(parser):
         default="results",
         help="Directory to save evaluation results",
     )
-    parser.add_argument(
-        "--counter_tokenizer",
-        type=str,
-        default="unsloth/Qwen3-4B-Instruct-2507",
-        help="Tokenizer to use for token counting",
-    )
 
 
-def _add_ctp_eval_args(parser):
+def _add_ppl_eval_args(parser):
     parser.add_argument(
         "--ref_model_name",
         type=str,
-        default="gpt2",
-        help="Reference model for Composite Text Perplexity (CTP) evaluation",
+        default="google/gemma-3-270m",
+        help="Reference model for Perplexity (PPL) evaluation",
     )
     parser.add_argument(
         "--ref_model_device",
         type=str,
         default="cpu",
         help="Device for the reference model",
+    )
+    parser.add_argument(
+        "--norm_ppl_alpha",
+        type=float,
+        default=0.2,
+        help="Scaling factor alpha for Normalized PPL",
+    )
+    parser.add_argument(
+        "--ppl_window_k",
+        type=int,
+        default=16,
+        help="Window size for PPL calculation. The window will be of size 2k",
+    )
+    parser.add_argument(
+        "--golden_truth_only",
+        action="store_true",
+        help="Only evaluate PPL on golden truth responses",
     )
 
 
@@ -132,6 +149,22 @@ def _add_mcqa_eval_args(parser):
         ),
         help="Description template for each reasoning step used by guide(desc=...).",
     )
+    parser.add_argument(
+        "--counter_tokenizer",
+        type=str,
+        default="Qwen/Qwen3-4B-Instruct-2507",
+        help="Tokenizer to use for token counting",
+    )
+
+
+def _add_cv_eval_args(parser):
+    parser.add_argument("--use_outlines", action="store_true", help="Whether to use outlines in CV evaluation")
+    parser.add_argument(
+        "--judge_model_name",
+        type=str,
+        default="google/gemini-3-flash-preview",
+        help="Model name for judgment in CV evaluation. Only API-based models are supported.",
+    )
 
 
 def validate_and_standardize(args: argparse.Namespace) -> argparse.Namespace:
@@ -151,8 +184,9 @@ def get_args() -> argparse.Namespace:
     _add_model_args(parser)
     _add_sample_args(parser)
     _add_evaluator_args(parser)
-    _add_ctp_eval_args(parser)
+    _add_ppl_eval_args(parser)
     _add_mcqa_eval_args(parser)
+    _add_cv_eval_args(parser)
     args = parser.parse_args()
     validate_and_standardize(args)
     return args

@@ -29,8 +29,19 @@ def _create_eval_env() -> dict[str, str]:
         git_repo = "unknown"
         git_branch = "unknown"
         git_commit_id = "unknown"
+
+    sanitized_argv = list(sys.argv)
+    for i in range(len(sanitized_argv)):
+        arg = sanitized_argv[i]
+        for secret in SECRET_ARGS:
+            if arg.startswith((f"--{secret}=", f"--{secret.replace('_', '-')}=")):
+                key, _ = arg.split("=", 1)
+                sanitized_argv[i] = f"{key}=****"
+            elif (arg == f"--{secret}" or arg == f"--{secret.replace('_', '-')}") and i + 1 < len(sanitized_argv):
+                sanitized_argv[i + 1] = "****"
+
     return {
-        "exec_command": " ".join([sys.executable, *sys.argv]),
+        "exec_command": " ".join([sys.executable, *sanitized_argv]),
         "gimbench_version": gimbench.__version__,
         "gimbench_file": str(gimbench.__file__),
         "gimkit_version": gimkit.__version__,
@@ -46,7 +57,7 @@ class BaseEvalResult(BaseModel):
 
     eval_env: dict[str, str] = Field(default_factory=_create_eval_env)
 
-    evaluator_type: Literal["mcqa", "ctp", "match"]
+    evaluator_type: Literal["cv", "match", "mcqa", "ppl"]
 
     args: Namespace
 
@@ -87,3 +98,12 @@ class BaseEvaluator:
     def _safe_average(items: list, attr: str) -> float:
         values = [getattr(item, attr) for item in items if getattr(item, attr) != -1]
         return sum(values) / len(values) if values else 0.0
+
+    def _log_progress(self, total: int, curr_idx: int, log_interval: int = 10) -> None:
+        completed = curr_idx + 1
+        if completed % log_interval == 0:
+            speed = (datetime.now() - self.start_time).total_seconds() / completed
+            logger.info(
+                f"Progress: {completed}/{total} items evaluated with speed {speed:.2f} seconds/item. "
+                f"Time Remaining: {(total - completed) * speed / 60:.2f} minutes"
+            )

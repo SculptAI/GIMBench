@@ -3,8 +3,8 @@
 from datasets import concatenate_datasets, load_dataset
 
 from gimbench.arguments import get_args
-from gimbench.ctp.evaluators import conduct_eval
 from gimbench.log import get_logger
+from gimbench.ppl.evaluators import conduct_eval
 
 
 logger = get_logger(__name__)
@@ -40,7 +40,7 @@ if __name__ == "__main__":
             ]
         )
         .shuffle(seed=args.seed)
-        .select_columns(["gim_query"])
+        .select_columns(["gim_query", "gim_response"])
     )
     logger.info(f"Loaded {len(ds)} samples from dataset {args.dataset}")
     logger.info(f"First sample: {ds[0]}")

@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Any, Literal
 
 from datasets import Dataset
-from gimkit import from_vllm, guide
+from gimkit import guide
 from gimkit.contexts import Result
 from openai import OpenAI
 from pydantic import BaseModel
@@ -33,6 +33,7 @@ class EvalItemResult(BaseModel):
     response_tokens: int = -1
     query_len: int = -1
     response_len: int = -1
+    reason_budget: int = -1
 
     error_msg: str = ""
     additional_info: dict = {}
@@ -52,6 +53,7 @@ class EvalResult(BaseEvalResult):
     avg_response_tokens: float
     avg_query_len: float
     avg_response_len: float
+    avg_reason_budget: float
 
     evaled_items: list[EvalItemResult]
 
@@ -64,7 +66,10 @@ class MCQAEvaluator(BaseEvaluator):
         logger.info(f"Loaded tokenizer {args.counter_tokenizer} for token counting.")
 
     @abstractmethod
-    def _form_cot_query(self, question: str, choices: list[str]) -> str: ...
+    def _get_reason_budget(self, question: str) -> int: ...
+
+    @abstractmethod
+    def _form_cot_query(self, question: str, choices: list[str], *args) -> str: ...
 
     @abstractmethod
     def _model_call(self, query: str) -> Any: ...
@@ -80,9 +85,15 @@ class MCQAEvaluator(BaseEvaluator):
             item["choices"],
             item["correct_choice"],
         )
-        query = self._form_cot_query(question, choices)
         try:
-            raw_response = self._model_call(query)
+            if self.args.no_gimkit:
+                reason_budget = -1
+                query = self._form_cot_query(question, choices)
+                raw_response = self._model_call(query)
+            else:
+                reason_budget = self._get_reason_budget(question)
+                query = self._form_cot_query(question, choices, reason_budget)
+                raw_response = self._model_call(query)
             response, model_choice, additional_info = self._parse_response(raw_response, choices)
             conclusion = model_choice == correct_choice
             error_msg = ""
@@ -103,6 +114,7 @@ class MCQAEvaluator(BaseEvaluator):
             response_tokens=self._count_tokens(response) if response != "ERROR" else -1,
             query_len=len(query),
             response_len=len(response),
+            reason_budget=reason_budget,
             error_msg=error_msg,
             additional_info=additional_info,
         )
@@ -112,14 +124,17 @@ class MCQAEvaluator(BaseEvaluator):
         total = len(self.dataset) if self.args.first_n == -1 else min(self.args.first_n, len(self.dataset))
 
         evaled_items = []
-        if self.args.num_proc <= 1:
+        if self.args.num_proc <= 1 or self.args.model_type not in ["openai", "vllm"]:
             for idx in tqdm(range(total), desc=f"Evaluating {self.args.model_name}"):
                 result = self._evaluate_item(self.dataset[idx])
                 evaled_items.append(result)
+
+                self._log_progress(total, idx)
         else:
             with ThreadPoolExecutor(max_workers=self.args.num_proc) as executor:
                 results = executor.map(self._evaluate_item, (self.dataset[i] for i in range(total)))
                 evaled_items = list(tqdm(results, total=total, desc=f"Evaluating {self.args.model_name}"))
+            # TODO: Add progress logging for multi-threaded evaluation
 
         errors = sum(1 for item in evaled_items if item.error_msg)
         corrects = sum(1 for item in evaled_items if item.conclusion)
@@ -141,6 +156,7 @@ class MCQAEvaluator(BaseEvaluator):
             avg_response_tokens=self._safe_average(evaled_items, "response_tokens"),
             avg_query_len=self._safe_average(evaled_items, "query_len"),
             avg_response_len=self._safe_average(evaled_items, "response_len"),
+            avg_reason_budget=self._safe_average(evaled_items, "reason_budget"),
             start_time=self.start_time,
             end_time=self.end_time,
             elapsed_minutes=(self.end_time - self.start_time).total_seconds() / 60.0,
@@ -163,16 +179,19 @@ SHARED_PROMPT_PREFIX = (
 class GIMEvaluator(MCQAEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
-        openai_client = OpenAI(api_key=args.api_key, base_url=args.base_url)
-        self.model = from_vllm(openai_client, model_name=args.model_name)
+        self.model = SimpleGIM(args)
 
     def _get_reason_budget(self, question: str) -> int:
         if self.args.auto_budget:
             try:
                 r = self.model.generate(
-                    self.args.auto_budget_prompt
-                    + f"\n\nQuestion: {question}\n\n"
-                    + "## Reasoning steps: " + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
+                    f"I'll show you a question. "
+                    f"You need to determine how many reasoning steps are required to accurately answer it.\n\n"
+                    f"## Question: Find the sum of first 5 positive integers.\n\n"
+                    f"## Reasoning steps: 2\n\n"
+                    f"## Question: {question}\n\n"
+                    f"## Reasoning steps: "
+                    + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
                 budget = int(r.tags["reason_budget"].content or "1")
             except Exception as e:
@@ -199,16 +218,7 @@ class GIMEvaluator(MCQAEvaluator):
         return prompt
 
     def _model_call(self, query: str) -> Result:
-        result = self.model(
-            query,
-            temperature=self.args.temperature,
-            presence_penalty=self.args.presence_penalty,
-            seed=self.args.seed,
-            max_tokens=self.args.max_tokens,
-        )
-        if isinstance(result, list):
-            raise ValueError("Expected a single Result, but got a list.")
-        return result
+        return self.model.generate(query)
 
     def _parse_response(self, response: Result, validate_choices: list[str]) -> tuple[str, str, dict]:
         str_response = str(response)
@@ -225,7 +235,10 @@ class CommonEvaluator(MCQAEvaluator):
         super().__init__(args, dataset)
         self.model = SimpleCommon(args)
 
-    def _form_cot_query(self, question: str, choices: list[str]) -> str:
+    def _get_reason_budget(self, question: str) -> int:
+        raise NotImplementedError("CommonEvaluator does not support reason budget.")
+
+    def _form_cot_query(self, question: str, choices: list[str], *args) -> str:
         prompt = SHARED_PROMPT_PREFIX + (
             " Remember to end with `The answer is: xxx`.\n\n"
             "Do not write anything after that final line.\n\n"

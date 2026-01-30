@@ -21,7 +21,7 @@ def _format_gpqa(example: dict, seed: int) -> dict:
         example["Incorrect Answer 3"].strip(),
     ]
     indices = list(range(len(answers)))
-    random.seed(seed + hash(question))
+    random.seed(seed + len(question))
     random.shuffle(indices)
 
     question_with_answer_options = f"{question}\n\nChoices:\n"
