@@ -68,7 +68,7 @@ class SimpleCommon:
         else:
             raise ValueError("Unsupported model type")
 
-    def generate(self, prompt: str) -> Result:
+    def generate(self, prompt: str) -> str:
         if self.args.model_type in ["openai", "vllm"]:
             response = self.model.chat.completions.create(
                 model=self.args.model_name,
