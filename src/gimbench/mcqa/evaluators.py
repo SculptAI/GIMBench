@@ -9,14 +9,13 @@ from typing import Any, Literal
 from datasets import Dataset
 from gimkit import guide
 from gimkit.contexts import Result
-from openai import OpenAI
 from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
-from gimbench.models import SimpleGIM, SimpleCommon
+from gimbench.models import SimpleCommon, SimpleGIM
 
 
 logger = get_logger(__name__)
@@ -205,8 +204,7 @@ class GIMEvaluator(MCQAEvaluator):
 
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
         reasoning_guides = [
-            f"## Step {idx + 1}\n\n" + guide(desc=self.args.reason_step_desc)
-            for idx in range(reason_budget)
+            f"## Step {idx + 1}\n\n" + guide(desc=self.args.reason_step_desc) for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
         if reason_budget > 0:
