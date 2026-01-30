@@ -16,6 +16,7 @@ from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
+from gimbench.models import SimpleGIM, SimpleCommon
 
 
 logger = get_logger(__name__)
@@ -86,7 +87,7 @@ class MCQAEvaluator(BaseEvaluator):
             conclusion = model_choice == correct_choice
             error_msg = ""
         except Exception as e:
-            logger.error(e)
+            logger.exception("Unexpected error occurred")
             conclusion = False
             response = "ERROR"
             model_choice = "ERROR"
@@ -222,7 +223,7 @@ class GIMEvaluator(MCQAEvaluator):
 class CommonEvaluator(MCQAEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
-        self.model = OpenAI(api_key=args.api_key, base_url=args.base_url)
+        self.model = SimpleCommon(args)
 
     def _form_cot_query(self, question: str, choices: list[str]) -> str:
         prompt = SHARED_PROMPT_PREFIX + (
@@ -235,10 +236,7 @@ class CommonEvaluator(MCQAEvaluator):
         return prompt
 
     def _model_call(self, query: str) -> str:
-        response = self.model.chat.completions.create(
-            model=self.args.model_name, messages=[{"role": "user", "content": query}]
-        )
-        return response.choices[0].message.content or ""
+        return self.model.generate(query)
 
     def _parse_response(self, response: str, validate_choices: list[str]) -> tuple[str, str, dict]:
         response_str = response.strip()
