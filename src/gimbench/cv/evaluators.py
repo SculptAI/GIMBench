@@ -86,7 +86,7 @@ class CVEvaluator(BaseEvaluator):
             predicted = extracted_fields.get(field, "")
             expected = info["expected"]
             info["prediction"] = predicted
-            if predicted == "" and expected == "":
+            if predicted == "" or expected == "":
                 info["verbatim_correct"] = False
             elif predicted == expected:
                 info["verbatim_correct"] = True
