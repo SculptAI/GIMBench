@@ -9,14 +9,13 @@ from typing import Any, Literal
 from datasets import Dataset
 from gimkit import guide
 from gimkit.contexts import Result
-from openai import OpenAI
 from pydantic import BaseModel
 from tqdm import tqdm
 from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
-from gimbench.models import SimpleGIM
+from gimbench.models import SimpleCommon, SimpleGIM
 
 
 logger = get_logger(__name__)
@@ -98,7 +97,7 @@ class MCQAEvaluator(BaseEvaluator):
             conclusion = model_choice == correct_choice
             error_msg = ""
         except Exception as e:
-            logger.error(e)
+            logger.exception("Unexpected error occurred")
             conclusion = False
             response = "ERROR"
             model_choice = "ERROR"
@@ -169,9 +168,10 @@ class MCQAEvaluator(BaseEvaluator):
 
 
 SHARED_PROMPT_PREFIX = (
-    "Answer the following question using a variety of strategies, such as reasoning, reflection, "
+    "Answer the following question carefully using a variety of strategies, such as reasoning, reflection, "
     "trial and error, and parallel thinking (applying different approaches). "
-    "Feel free to use any other methods as needed to find the correct answer."
+    "Feel free to use any other methods as needed to find the correct answer. "
+    "Verify your work before concluding."
 )
 
 
@@ -184,12 +184,9 @@ class GIMEvaluator(MCQAEvaluator):
         if self.args.auto_budget:
             try:
                 r = self.model.generate(
-                    f"I'll show you a question. "
-                    f"You need to determine how many reasoning steps are required to accurately answer it.\n\n"
-                    f"## Question: Find the sum of first 5 positive integers.\n\n"
-                    f"## Reasoning steps: 2\n\n"
-                    f"## Question: {question}\n\n"
-                    f"## Reasoning steps: "
+                    self.args.auto_budget_prompt
+                    + f"\n\nQuestion: {question}\n\n"
+                    + "## Reasoning steps: "
                     + guide(name="reason_budget", desc="A positive integer number", regex=r"\d+")
                 )
                 budget = int(r.tags["reason_budget"].content or "1")
@@ -204,11 +201,14 @@ class GIMEvaluator(MCQAEvaluator):
 
     def _form_cot_query(self, question: str, choices: list[str], reason_budget: int) -> str:
         reasoning_guides = [
-            f"## Step {idx + 1}\n\n" + guide(desc="One thinking step. About 60 words") for idx in range(reason_budget)
+            f"## Step {idx + 1}\n\n" + guide(desc=self.args.reason_step_desc) for idx in range(reason_budget)
         ]
         prompt = SHARED_PROMPT_PREFIX + f"\n\nQuestion: {question}\n\n"
         if reason_budget > 0:
-            prompt += "Let's think step by step.\n\n" + "\n\n".join(reasoning_guides) + "\n\n"
+            prompt += (
+                f"You have {reason_budget} steps maximum. Use each step for a distinct line of reasoning.\n\n"
+                "Let's think step by step.\n\n" + "\n\n".join(reasoning_guides) + "\n\n"
+            )
         prompt += "## Conclusion\n\nFinal answer: " + guide.select(choices=choices, name="predicted_choice")
         return prompt
 
@@ -228,7 +228,7 @@ class GIMEvaluator(MCQAEvaluator):
 class CommonEvaluator(MCQAEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
-        self.model = OpenAI(api_key=args.api_key, base_url=args.base_url)
+        self.model = SimpleCommon(args)
 
     def _get_reason_budget(self, question: str) -> int:
         raise NotImplementedError("CommonEvaluator does not support reason budget.")
@@ -236,6 +236,7 @@ class CommonEvaluator(MCQAEvaluator):
     def _form_cot_query(self, question: str, choices: list[str], *args) -> str:
         prompt = SHARED_PROMPT_PREFIX + (
             " Remember to end with `The answer is: xxx`.\n\n"
+            "Do not write anything after that final line.\n\n"
             f"Question: {question}\n\n"
             f"Choose from the following options: {', '.join(choices)}\n\n"
             "Let's think step by step:\n"
@@ -243,36 +244,77 @@ class CommonEvaluator(MCQAEvaluator):
         return prompt
 
     def _model_call(self, query: str) -> str:
-        response = self.model.chat.completions.create(
-            model=self.args.model_name, messages=[{"role": "user", "content": query}]
-        )
-        return response.choices[0].message.content or ""
+        return self.model.generate(query)
 
     def _parse_response(self, response: str, validate_choices: list[str]) -> tuple[str, str, dict]:
         response_str = response.strip()
         model_choice = "ERROR"
         additional_info = {f"line_{i + 1}": line for i, line in enumerate(response_str.splitlines())}
 
-        last_line = response_str.splitlines()[-1] if response_str.splitlines() else response_str
+        lines = response_str.splitlines() if response_str else []
 
-        # 1) Try marker-based extraction: e.g. "The answer is: A", "Final answer: (B)", "Answer: C."
-        if m := re.search(
-            r"(?:the answer is|final answer|answer)[:\s]*\(?([A-Za-z0-9]+)\)?",
-            last_line,
-            re.IGNORECASE,
-        ):
+        validate_choices_norm = [c.upper() for c in validate_choices]
+        options = "".join(validate_choices_norm)
+
+        raw_tail_lines = lines[-5:] if lines else [response_str]
+
+        def _is_code_fence(s: str) -> bool:
+            t = s.strip()
+            return bool(re.fullmatch(r"`{3,}|~{3,}", t))
+
+        meaningful_tail_lines: list[str] = [ln for ln in raw_tail_lines if ln.strip() and not _is_code_fence(ln)]
+        tail_text = "\n".join(meaningful_tail_lines if meaningful_tail_lines else raw_tail_lines).strip()
+
+        def _search_last(pattern: str, text: str, flags: int = 0) -> re.Match | None:
+            ms = list(re.finditer(pattern, text, flags))
+            return ms[-1] if ms else None
+
+        # 1) Marker-based extraction in tail (take the LAST match)
+        marker_pat = (
+            rf"(?:the answer is|the correct answer is|final answer|answer)"
+            rf"[:\s]*"
+            rf"(?:option\s*)?"
+            rf"\(?\**\s*([{options}])\s*\**\)?"
+        )
+        if m := _search_last(marker_pat, tail_text, re.IGNORECASE):
             model_choice = m.group(1).strip().rstrip(".),")
-            additional_info["extracted_by"] = "marker"
+            additional_info["extracted_by"] = "tail_marker_last"
+            additional_info["matched_span"] = m.group(0)
 
-        # 2) Scan last line for a short token like "A", "(A)", "A.", "A)" at line start or alone
-        elif m2 := re.match(r"^\(?([A-Za-z0-9])\)?[\.|\)]?$", last_line):
-            model_choice = m2.group(1).strip().rstrip(".),")
-            additional_info["extracted_by"] = "line_scan_last"
+        # 1b) LaTeX boxed in tail (take the LAST match)
+        elif m_box := _search_last(rf"boxed\{{\s*([{options}])\s*\}}", tail_text, re.IGNORECASE):
+            model_choice = m_box.group(1).strip()
+            additional_info["extracted_by"] = "tail_marker_boxed_last"
+            additional_info["matched_span"] = m_box.group(0)
+
+        # 1c) ANSWER: X in tail (take the LAST match)
+        elif m_ans := _search_last(rf"(?i)answer\s*:\s*\(?([{options}])\)?", tail_text):
+            model_choice = m_ans.group(1).strip()
+            additional_info["extracted_by"] = "tail_marker_answer_colon_last"
+            additional_info["matched_span"] = m_ans.group(0)
+
+        # 2) Scan from bottom: allow a single-token line like "A", "(A)", "A.", "A)"
+        else:
+            token_pat = rf"^\(?\**\s*([{options}])\s*\**\)?[.)]?$"
+            picked_line = None
+            for ln in reversed(meaningful_tail_lines if meaningful_tail_lines else raw_tail_lines):
+                s = ln.strip()
+                if not s or _is_code_fence(s):
+                    continue
+                if m2 := re.match(token_pat, s):
+                    model_choice = m2.group(1).strip().rstrip(".),")
+                    picked_line = ln
+                    additional_info["extracted_by"] = "tail_line_scan_bottom"
+                    additional_info["matched_line"] = picked_line
+                    break
 
         if model_choice == "ERROR":
+            additional_info["tail_used"] = tail_text
             raise ValueError(f"Could not extract a valid choice from the model response: {response_str}")
 
-        if model_choice not in validate_choices:
+        model_choice = model_choice.upper()
+
+        if model_choice not in validate_choices_norm:
             raise ValueError(f"Extracted choice '{model_choice}' not in valid choices {validate_choices}")
 
         return response_str, model_choice, additional_info
