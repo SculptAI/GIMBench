@@ -58,6 +58,7 @@ class CVEvaluator(BaseEvaluator):
                 temperature=0.0,
                 presence_penalty=1.0,
                 max_tokens=256,
+                top_p=1.0,
             )
         )
 
@@ -111,7 +112,7 @@ class CVEvaluator(BaseEvaluator):
             self._judge(extracted_fields, eval_details)
             error_msg = ""
         except Exception as e:
-            logger.error(e)
+            logger.exception(e)
             error_msg = str(e)
         return EvalItemResult(
             filename=item["file_name"],
