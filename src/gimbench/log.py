@@ -38,7 +38,12 @@ LOGGING_CONFIG: dict[str, Any] = {
             "handlers": ["console", "file"],
             "level": "DEBUG",
             "propagate": False,
-        }
+        },
+        "gimkit": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
     },
 }
 
