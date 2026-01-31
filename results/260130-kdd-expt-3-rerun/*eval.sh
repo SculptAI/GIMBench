@@ -2,6 +2,9 @@
 
 set -x
 
+export API_KEY=your_api_key_here
+export API_BASE=https://openrouter.ai/api/v1
+
 api_models=(
     "google/gemini-3-flash-preview"
     "openai/gpt-5.2"
