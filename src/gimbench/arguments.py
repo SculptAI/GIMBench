@@ -42,6 +42,7 @@ def _add_model_args(parser):
 
 def _add_sample_args(parser):
     parser.add_argument("--temperature", type=float, default=0.0, help="Temperature for the model")
+    parser.add_argument("--top_p", type=float, default=1.0, help="Top-p sampling for the model")
     parser.add_argument(
         "--presence_penalty",
         type=float,
@@ -122,6 +123,31 @@ def _add_mcqa_eval_args(parser):
         "--auto_budget",
         action="store_true",
         help="Automatically determine the reasoning budget (overrides --reason_budget if both are set)",
+    )
+    parser.add_argument(
+        "--auto_budget_prompt",
+        type=str,
+        default=(
+            "I'll show you a couple of questions. "
+            "Decide how many reasoning steps are needed to answer each accurately.\n\n"
+            "Consider a plausible reasoning workflow first (you may use reasoning, reflection, "
+            "trial and error, and parallel thinking by applying different approaches, plus a quick verification if needed). "
+            "Then output a step budget (where each step is an atomic reasoning action taking 3–5 sentences) that allows for granular, step-by-step derivation without skipping logic, ensuring a robust and high-confidence conclusion;"
+            "leave extra headroom for cross-checking and possible revision on multi-hop or tricky questions.\n\n"
+            "## Question: {question}\n\n"
+            "Do not be anchored by the examples above. Scale your step budget linearly with the difficulty. "
+            "For complex problems, you are encouraged to assign a high budget (20, or more) to ensure there is enough room for step-by-step derivation and verification.\n\n"
+        ),
+        help="Template prompt for auto budget determination; use {question} as placeholder for the question.",
+    )
+    parser.add_argument(
+        "--reason_step_desc",
+        type=str,
+        default=(
+            "A distinct, verified reasoning step building on the previous one. "
+            "Write 2–3 substantial sentences (60–80 words each) to ensure depth."
+        ),
+        help="Description template for each reasoning step used by guide(desc=...).",
     )
     parser.add_argument(
         "--counter_tokenizer",
