@@ -59,11 +59,11 @@ run_api_experiments() {
             --reason_budget "$BUDGET" --num_proc 40 --first_n 500; done
     done
     for model in "${API_MODELS_2[@]}"; do
-        for BUDGET in {1..7..2}; python -m "gimbench.mcqa.qasc" --use_gim_prompt --output_type json --model_type openai \
+        for BUDGET in {1..7..2}; do python -m "gimbench.mcqa.qasc" --use_gim_prompt --output_type json --model_type openai \
             --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
             --reason_budget "$BUDGET" --num_proc 40 --first_n -1; done
 
-        for BUDGET in {1..7..2}; python -m "gimbench.mcqa.medmcqa" --use_gim_prompt --output_type json --model_type openai \
+        for BUDGET in {1..7..2}; do python -m "gimbench.mcqa.medmcqa" --use_gim_prompt --output_type json --model_type openai \
             --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
             --reason_budget "$BUDGET" --num_proc 40 --first_n 500; done
     done
