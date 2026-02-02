@@ -28,7 +28,7 @@ setup_prompt() {
         export AUTO_BUDGET_PROMPT=""
     fi
     export REASON_STEP_DESC="A distinct, verified reasoning step building logically on the previous one. Each step must be a high-density analysis (180–240 words equivalent) but is fully liberated in format: use frequent line breaks, LaTeX, lists, or tables as needed. The goal is logical transparency; ensure each step achieves a sub-goal, shows its full derivation, and includes a micro-verification to prevent error propagation."
-} 
+}
 
 
 
@@ -48,7 +48,7 @@ run_api_experiments() {
             --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
             --auto_budget --auto_budget_prompt "$AUTO_BUDGET_PROMPT" \
             --reason_step_desc "$REASON_STEP_DESC" --num_proc 40 --first_n -1
-        
+
         python -m "gimbench.mcqa.medmcqa" --model_type openai --model_name "$model" \
             --api_key "$API_KEY" --base_url "$API_BASE" --no_gimkit --num_proc 40 --first_n 500
         python -m "gimbench.mcqa.medmcqa" --use_gim_prompt --output_type json --model_type openai \

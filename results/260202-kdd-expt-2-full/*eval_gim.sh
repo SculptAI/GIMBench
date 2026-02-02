@@ -16,7 +16,7 @@ setup_prompt() {
         export AUTO_BUDGET_PROMPT=""
     fi
     export REASON_STEP_DESC="A distinct, verified reasoning step building logically on the previous one. Each step must be a high-density analysis (180–240 words equivalent) but is fully liberated in format: use frequent line breaks, LaTeX, lists, or tables as needed. The goal is logical transparency; ensure each step achieves a sub-goal, shows its full derivation, and includes a micro-verification to prevent error propagation."
-} 
+}
 
 
 run_gim_experiments() {
@@ -45,7 +45,7 @@ run_gim_experiments() {
         --auto_budget --auto_budget_prompt "$AUTO_BUDGET_PROMPT" \
         --reason_step_desc "$REASON_STEP_DESC" --num_proc 40 --first_n -1
     for BUDGET in {1..7..2}; do python -m "gimbench.mcqa.qasc" --use_gim_prompt --output_type cfg --model_type vllm-offline --model_name "Sculpt-AI/2601261-qwen-4b-50k" \
-        --reason_budget "$BUDGET" --num_proc 40 --first_n -1; done        
+        --reason_budget "$BUDGET" --num_proc 40 --first_n -1; done
 
 }
 
