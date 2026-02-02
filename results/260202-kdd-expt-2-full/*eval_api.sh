@@ -7,14 +7,10 @@ export API_BASE="https://openrouter.ai/api/v1"
 API_MODELS=(
     "google/gemma-3-27b-it"
     "qwen/qwen3-30b-a3b-instruct-2507"
-    "minimax/minimax-m2.1"
 )
 
 API_MODELS_2=(
-    "anthropic/claude-haiku-4.5"
-    "deepseek/deepseek-chat-v3-0324"
     "google/gemma-3-12b-it"
-    "x-ai/grok-4-fast"
     "xiaomi/mimo-v2-flash"
 )
 
@@ -48,13 +44,29 @@ run_api_experiments() {
             --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
             --auto_budget --auto_budget_prompt "$AUTO_BUDGET_PROMPT" \
             --reason_step_desc "$REASON_STEP_DESC" --num_proc 40 --first_n -1
-
+        
         python -m "gimbench.mcqa.medmcqa" --model_type openai --model_name "$model" \
             --api_key "$API_KEY" --base_url "$API_BASE" --no_gimkit --num_proc 40 --first_n 500
         python -m "gimbench.mcqa.medmcqa" --use_gim_prompt --output_type json --model_type openai \
             --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
             --auto_budget --auto_budget_prompt "$AUTO_BUDGET_PROMPT" \
             --reason_step_desc "$REASON_STEP_DESC" --num_proc 40 --first_n 500
+    done
+
+    for model in "${API_MODELS[@]}"; do
+        for BUDGET in {1..7..2}; do python -m "gimbench.mcqa.medmcqa" --use_gim_prompt --output_type json --model_type openai \
+            --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
+            --reason_budget "$BUDGET" --num_proc 40 --num_proc 40 --first_n 500; done
+    done
+    for model in "${API_MODELS_2[@]}"; do
+        for BUDGET in {1..7..2}; python -m "gimbench.mcqa.qasc" --use_gim_prompt --output_type json --model_type openai \
+            --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
+            --reason_budget "$BUDGET" --num_proc 40 --num_proc 40 --first_n -1; done
+        
+        for BUDGET in {1..7..2}; python -m "gimbench.mcqa.medmcqa" --use_gim_prompt --output_type json --model_type openai \
+            --model_name "$model" --api_key "$API_KEY" --base_url "$API_BASE" \
+            --auto_budget --auto_budget_prompt "$AUTO_BUDGET_PROMPT" \
+            --reason_budget "$BUDGET" --num_proc 40 --num_proc 40 --first_n 500; done
     done
 }
 
