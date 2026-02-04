@@ -193,7 +193,7 @@ class GIMEvaluator(MCQAEvaluator):
             except Exception as e:
                 logger.warning(f"Auto-budget determination failed: {e}")
                 budget = 1
-            reason_budget = max(1, budget)
+            reason_budget = min(50, max(1, budget))
             logger.info(f"Auto-determined reasoning budget: {reason_budget}")
         else:
             reason_budget = self.args.reason_budget
