@@ -33,6 +33,12 @@ python -m gimbench.ppl.gim_sft --model_type openai --model_name moonshotai/kimi-
 python -m gimbench.ppl.gim_sft --model_type openai --model_name deepseek/deepseek-chat-v3-0324 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type openai --model_name anthropic/claude-haiku-4.5 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type openai --model_name x-ai/grok-4-fast --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type openai --model_name minimax/minimax-m2.1 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type openai --model_name xiaomi/mimo-v2-flash --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type openai --model_name qwen/qwen3-30b-a3b-instruct-2507 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type openai --model_name google/gemma-3-27b-it --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type openai --model_name google/gemma-3-12b-it --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type openai --model_name mistralai/ministral-14b-2512 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Qwen/Qwen3-4B-Instruct-2507 --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Qwen/Qwen3-1.7B --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/09251-gim-sft-tmp --output_type cfg --ref_model_device cpu --first_n 100
@@ -61,6 +67,12 @@ python -m gimbench.match.gim_regex --model_type openai --model_name moonshotai/k
 python -m gimbench.match.gim_regex --model_type openai --model_name deepseek/deepseek-chat-v3-0324 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
 python -m gimbench.match.gim_regex --model_type openai --model_name anthropic/claude-haiku-4.5 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
 python -m gimbench.match.gim_regex --model_type openai --model_name x-ai/grok-4-fast --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
+python -m gimbench.match.gim_regex --model_type openai --model_name minimax/minimax-m2.1 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
+python -m gimbench.match.gim_regex --model_type openai --model_name xiaomi/mimo-v2-flash --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
+python -m gimbench.match.gim_regex --model_type openai --model_name qwen/qwen3-30b-a3b-instruct-2507 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
+python -m gimbench.match.gim_regex --model_type openai --model_name google/gemma-3-27b-it --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
+python -m gimbench.match.gim_regex --model_type openai --model_name google/gemma-3-12b-it --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
+python -m gimbench.match.gim_regex --model_type openai --model_name mistralai/ministral-14b-2512 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Qwen/Qwen3-4B-Instruct-2507 --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Qwen/Qwen3-1.7B --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/09251-gim-sft-tmp --output_type cfg --ref_model_device cpu --first_n 100
