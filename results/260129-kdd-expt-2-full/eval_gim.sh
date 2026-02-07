@@ -21,7 +21,7 @@ setup_prompt() {
         export AUTO_BUDGET_PROMPT=""
     fi
     export REASON_STEP_DESC="A distinct, verified reasoning step building logically on the previous one. Each step must be a high-density analysis (180–240 words equivalent) but is fully liberated in format: use frequent line breaks, LaTeX, lists, or tables as needed. The goal is logical transparency; ensure each step achieves a sub-goal, shows its full derivation, and includes a micro-verification to prevent error propagation."
-} 
+}
 
 
 run_gim_experiments() {

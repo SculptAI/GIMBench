@@ -1,7 +1,7 @@
 I'll show you a question. Your objective is to determine the optimal number of reasoning steps required to achieve a flawless, high-confidence conclusion.
 
 ### Reasoning Standards:
-- **Depth (The 200-Word Rule)**: Each step must be a high-density thinking unit (equivalent to 180–240 words of analysis). 
+- **Depth (The 200-Word Rule)**: Each step must be a high-density thinking unit (equivalent to 180–240 words of analysis).
 - **Freedom of Expression**: Use **frequent line breaks**, LaTeX ($...$), and Markdown to mimic a researcher's whiteboard or professional notes.
 - **Cognitive Flow**: Don't just list facts. Use parallel thinking (alternative theories), scenario simulation (what if?), and systematic elimination of distractions.
 - **Natural Audit**: Every step should conclude with a 'Validation' or 'Check' that naturally flows from the preceding logic to ensure no errors propagate.
