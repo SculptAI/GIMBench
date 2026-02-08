@@ -41,6 +41,8 @@ python -m gimbench.ppl.gim_sft --model_type openai --model_name google/gemma-3-1
 python -m gimbench.ppl.gim_sft --model_type openai --model_name mistralai/ministral-14b-2512 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Qwen/Qwen3-4B-Instruct-2507 --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Qwen/Qwen3-1.7B --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Qwen/Qwen3-4B-Instruct-2507 --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Qwen/Qwen3-1.7B --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/09251-gim-sft-tmp --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/2510231-mixture-high --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name Sculpt-AI/2510232-mixture-mid --output_type cfg --ref_model_device cpu --first_n 100
@@ -75,6 +77,8 @@ python -m gimbench.match.gim_regex --model_type openai --model_name google/gemma
 python -m gimbench.match.gim_regex --model_type openai --model_name mistralai/ministral-14b-2512 --api_key $API_KEY --base_url $API_BASE --use_gim_prompt --output_type json --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Qwen/Qwen3-4B-Instruct-2507 --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Qwen/Qwen3-1.7B --use_gim_prompt --output_type cfg --ref_model_device cpu --first_n 100
+python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Qwen/Qwen3-4B-Instruct-2507 --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
+python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Qwen/Qwen3-1.7B --use_gim_prompt --output_type json --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/09251-gim-sft-tmp --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/2510231-mixture-high --output_type cfg --ref_model_device cpu --first_n 100
 python -m gimbench.match.gim_regex --model_type vllm-offline --model_name Sculpt-AI/2510232-mixture-mid --output_type cfg --ref_model_device cpu --first_n 100
