@@ -136,42 +136,42 @@ class MatchEvaluator(BaseEvaluator):
 
     @staticmethod
     def print_beautiful_stats(eval_results: EvalResult) -> None:
-        from rich.console import Console
-        from rich.panel import Panel
-        from rich.table import Table
-        from rich.text import Text
-
-        console = Console()
-
         args = eval_results.args
-        info_text = Text.from_markup(
-            f"[bold]Model:[/bold] [cyan]{args.model_name}[/cyan] "
-            f"[bold]GIM Prompt:[/bold] [green]{args.use_gim_prompt}[/green] "
-            f"[bold]Output Type:[/bold] [magenta]{args.output_type}[/magenta]"
-        )
-        console.print(Panel(info_text, title="Run Arguments", border_style="blue", expand=False))
 
-        table = Table()
-        table.add_column("Tags", justify="right", style="magenta")
-        table.add_column("Predicted", justify="right", style="green")
-        table.add_column("Regex", justify="right", style="blue")
-        table.add_column("Matched", justify="right", style="yellow")
-        table.add_column("Prediction Rate", justify="right", style="green")
-        table.add_column("Match Rate", justify="right", style="yellow")
+        # Print run arguments panel
+        print("\n" + "=" * 80)
+        print("Run Arguments".center(80))
+        print("=" * 80)
+        print(f"Model: {args.model_name}")
+        print(f"GIM Prompt: {args.use_gim_prompt}")
+        print(f"Output Type: {args.output_type}")
+        print("=" * 80 + "\n")
+
+        # Print table header
+        headers = ["Tags", "Predicted", "Regex", "Matched", "Prediction Rate", "Match Rate"]
+        col_widths = [10, 10, 10, 10, 17, 17]
+        header_line = " | ".join(h.rjust(w) for h, w in zip(headers, col_widths, strict=True))
+        separator = "-+-".join("-" * w for w in col_widths)
+
+        print(header_line)
+        print(separator)
+
+        # Print table rows
         for result in eval_results.evaled_items:
             pred_rate = f"{result.num_has_prediction / result.num_tags:.2%}" if result.num_tags > 0 else "N/A"
             match_rate = f"{result.num_regex_match / result.num_regex:.2%}" if result.num_regex > 0 else "N/A"
 
-            table.add_row(
+            row = [
                 str(result.num_tags),
                 str(result.num_has_prediction),
                 str(result.num_regex),
                 str(result.num_regex_match),
                 pred_rate,
                 match_rate,
-            )
+            ]
+            print(" | ".join(val.rjust(w) for val, w in zip(row, col_widths, strict=True)))
 
-        console.print(table)
+        print()
 
 
 def conduct_eval(args: Namespace, dataset: Dataset):
