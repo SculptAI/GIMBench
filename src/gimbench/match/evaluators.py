@@ -134,48 +134,7 @@ class MatchEvaluator(BaseEvaluator):
             evaled_items=evaled_items,
         )
 
-    @staticmethod
-    def print_beautiful_stats(eval_results: EvalResult) -> None:
-        args = eval_results.args
-
-        # Print run arguments panel
-        print("\n" + "=" * 80)
-        print("Run Arguments".center(80))
-        print("=" * 80)
-        print(f"Model: {args.model_name}")
-        print(f"GIM Prompt: {args.use_gim_prompt}")
-        print(f"Output Type: {args.output_type}")
-        print("=" * 80 + "\n")
-
-        # Print table header
-        headers = ["Tags", "Predicted", "Regex", "Matched", "Prediction Rate", "Match Rate"]
-        col_widths = [10, 10, 10, 10, 17, 17]
-        header_line = " | ".join(h.rjust(w) for h, w in zip(headers, col_widths, strict=True))
-        separator = "-+-".join("-" * w for w in col_widths)
-
-        print(header_line)
-        print(separator)
-
-        # Print table rows
-        for result in eval_results.evaled_items:
-            pred_rate = f"{result.num_has_prediction / result.num_tags:.2%}" if result.num_tags > 0 else "N/A"
-            match_rate = f"{result.num_regex_match / result.num_regex:.2%}" if result.num_regex > 0 else "N/A"
-
-            row = [
-                str(result.num_tags),
-                str(result.num_has_prediction),
-                str(result.num_regex),
-                str(result.num_regex_match),
-                pred_rate,
-                match_rate,
-            ]
-            print(" | ".join(val.rjust(w) for val, w in zip(row, col_widths, strict=True)))
-
-        print()
-
-
 def conduct_eval(args: Namespace, dataset: Dataset):
     evaluator = MatchEvaluator(args, dataset)
     eval_results = evaluator.evaluate()
-    MatchEvaluator.print_beautiful_stats(eval_results)
     eval_results.dump()
