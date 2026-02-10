@@ -109,13 +109,14 @@ class MatchEvaluator(BaseEvaluator):
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")
 
+        non_error_items = self._filter_non_error_items(evaled_items)
         total_tags = sum(item.num_tags for item in evaled_items)
-        valid_tags = sum(item.num_tags for item in evaled_items if not item.error_msg)
-        total_has_prediction = sum(item.num_has_prediction for item in evaled_items if not item.error_msg)
+        valid_tags = sum(item.num_tags for item in non_error_items)
+        total_has_prediction = sum(item.num_has_prediction for item in non_error_items)
 
         total_regex = sum(item.num_regex for item in evaled_items)
-        valid_regex = sum(item.num_regex for item in evaled_items if not item.error_msg)
-        total_regex_match = sum(item.num_regex_match for item in evaled_items if not item.error_msg)
+        valid_regex = sum(item.num_regex for item in non_error_items)
+        total_regex_match = sum(item.num_regex_match for item in non_error_items)
         return EvalResult(
             args=self.args,
             start_time=self.start_time,

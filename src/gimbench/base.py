@@ -95,8 +95,15 @@ class BaseEvaluator:
         self.args = args
 
     @staticmethod
-    def _safe_average(items: list, attr: str) -> float:
-        values = [getattr(item, attr) for item in items if getattr(item, attr) != -1]
+    def _filter_non_error_items(items: list) -> list:
+        """Filter out items that have error messages."""
+        return [item for item in items if not item.error_msg]
+
+    @staticmethod
+    def _safe_average(items: list, attr: str, exclude_errors: bool = True) -> float:
+        """Calculate average of attribute, optionally excluding errored items and sentinel values (-1)."""
+        filtered_items = BaseEvaluator._filter_non_error_items(items) if exclude_errors else items
+        values = [getattr(item, attr) for item in filtered_items if getattr(item, attr) != -1]
         return sum(values) / len(values) if values else 0.0
 
     def _log_progress(self, total: int, curr_idx: int, log_interval: int = 10) -> None:
