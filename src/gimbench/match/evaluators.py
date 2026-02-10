@@ -134,6 +134,7 @@ class MatchEvaluator(BaseEvaluator):
             evaled_items=evaled_items,
         )
 
+
 def conduct_eval(args: Namespace, dataset: Dataset):
     evaluator = MatchEvaluator(args, dataset)
     eval_results = evaluator.evaluate()
