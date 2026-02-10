@@ -14,12 +14,10 @@ Install GIMBench using pip:
 pip install gimbench
 ```
 
-For development, clone the repository and install with dev dependencies:
+For development:
 
 ```bash
-git clone https://github.com/SculptAI/GIMBench.git
-cd GIMBench
-pip install -e ".[dev]"
+make install-dev
 ```
 
 ## Usage
