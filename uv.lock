@@ -1324,7 +1324,6 @@ source = { editable = "." }
 dependencies = [
     { name = "datasets" },
     { name = "gimkit" },
-    { name = "rich" },
     { name = "vllm" },
 ]
 
@@ -1339,7 +1338,6 @@ dev = [
 requires-dist = [
     { name = "datasets", specifier = ">=4.4.1" },
     { name = "gimkit", specifier = ">=0.1.1" },
-    { name = "rich", specifier = ">=14.2.0" },
     { name = "vllm", specifier = ">=0.14.0" },
 ]
 
