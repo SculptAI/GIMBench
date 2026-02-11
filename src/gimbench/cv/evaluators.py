@@ -139,7 +139,7 @@ class CVEvaluator(BaseEvaluator):
                 evaled_items = list(tqdm(results, total=total, desc=f"Evaluating {self.args.model_name}"))
             # TODO: Add progress logging for multi-threaded evaluation
 
-        non_error_items = [item for item in evaled_items if not item.error_msg]
+        non_error_items = self._filter_non_error_items(evaled_items)
         errors = sum(1 for item in evaled_items if item.error_msg)
         total_fields = sum(item.num_fields for item in non_error_items)
         total_correct = sum(item.num_correct for item in non_error_items)

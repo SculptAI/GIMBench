@@ -135,11 +135,12 @@ class MCQAEvaluator(BaseEvaluator):
                 evaled_items = list(tqdm(results, total=total, desc=f"Evaluating {self.args.model_name}"))
             # TODO: Add progress logging for multi-threaded evaluation
 
+        non_error_items = self._filter_non_error_items(evaled_items)
         errors = sum(1 for item in evaled_items if item.error_msg)
         corrects = sum(1 for item in evaled_items if item.conclusion)
         evaluates = len(evaled_items)
         accuracy = corrects / evaluates if evaluates > 0 else 0.0
-        calibrated_accuracy = corrects / (evaluates - errors) if (evaluates - errors) > 0 else 0.0
+        calibrated_accuracy = corrects / len(non_error_items) if non_error_items else 0.0
         logger.info(f"Final accuracy over {total} examples: {corrects}/{total} = {accuracy:.4f}")
         self.end_time = datetime.now()
         logger.info(f"Evaluation completed at {self.end_time}")
