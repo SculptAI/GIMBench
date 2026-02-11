@@ -236,7 +236,7 @@ class PPLEvaluator(BaseEvaluator):
             self._compute_metrics(text_span_and_norm_ppl)
             inp, lwnp, rwnp, wnp = self._aggregate_scores(text_span_and_norm_ppl)
         except Exception as e:
-            error_msg = str(e)
+            error_msg = repr(e)
             logger.exception(error_msg)
 
         return EvalItemResult(
