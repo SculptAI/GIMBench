@@ -2,9 +2,9 @@
 
 set -x
 
-$API_KEY=xxx
-$API_BASE=xxx
-$MODEL=Sculpt-AI/2603171-gemma
+export API_KEY=xxx
+export API_BASE=xxx
+export MODEL=Sculpt-AI/2603171-gemma
 
 hf download $MODEL
 
