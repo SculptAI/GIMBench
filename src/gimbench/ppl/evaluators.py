@@ -224,8 +224,10 @@ class PPLEvaluator(BaseEvaluator):
         try:
             if self.args.golden_truth_only:
                 result_obj = infill(item["gim_query"], item["gim_response"])
-            else:
+            elif self.args.record_timing:
                 result_obj, gen_time, ttft = self._model_call_with_timing(query_text)
+            else:
+                result_obj = self._model_call(query_text)
             result_text = str(result_obj)
 
             content_offset_mapping = self._get_content_offset_mapping(result_obj)

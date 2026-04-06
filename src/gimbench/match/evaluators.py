@@ -80,8 +80,13 @@ class MatchEvaluator(BaseEvaluator):
     def _evaluate_item(self, item: dict) -> EvalItemResult:
         query = item["gim_query"]
         query_obj = Query(query)
+        gen_time = -1.0
+        ttft = -1.0
         try:
-            result, gen_time, ttft = self.model.generate_with_timing(query)
+            if self.args.record_timing:
+                result, gen_time, ttft = self.model.generate_with_timing(query)
+            else:
+                result = self.model.generate(query)
         except Exception as e:
             logger.error(f"Error generating result for query '{query}': {e}")
             return EvalItemResult(
