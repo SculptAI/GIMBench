@@ -57,6 +57,15 @@ python -m gimbench.ppl.gim_sft \
     --model_name meta-llama/Llama-3.1-8B-Instruct
 ```
 
+Run HumanEval Infilling benchmark:
+
+```bash
+python -m gimbench.ppl.humaneval_infilling \
+    --model_type vllm \
+    --model_name meta-llama/Llama-3.1-8B-Instruct \
+    --base_url http://localhost:8000/v1
+```
+
 ## Development
 
 Run linting:
