@@ -28,6 +28,7 @@ GIMBench provides several benchmark types:
 - **Regex Matching**: Test models' ability to generate text matching specific patterns
 - **Multiple Choice QA**: Assess guided generation in question-answering contexts
 - **Perplexity**: Measure language modeling quality with constraints
+- **Code Infilling**: Evaluate code infilling via unit-test execution (pass@k)
 
 ### Example Commands
 
@@ -57,13 +58,30 @@ python -m gimbench.ppl.gim_sft \
     --model_name meta-llama/Llama-3.1-8B-Instruct
 ```
 
-Run HumanEval Infilling benchmark:
+Run HumanEval Infilling benchmark (code generation + unit-test execution, pass@k):
 
 ```bash
-python -m gimbench.ppl.humaneval_infilling \
+# GIM-guided infilling (default), pass@1
+python -m gimbench.code.humaneval_infilling \
     --model_type vllm \
     --model_name meta-llama/Llama-3.1-8B-Instruct \
     --base_url http://localhost:8000/v1
+
+# Sample 20 completions per problem, report pass@1 and pass@10
+python -m gimbench.code.humaneval_infilling \
+    --model_type vllm \
+    --model_name meta-llama/Llama-3.1-8B-Instruct \
+    --base_url http://localhost:8000/v1 \
+    --temperature 0.8 \
+    --num_samples 20 \
+    --pass_k 1 10
+
+# Plain LLM (no GIMKit)
+python -m gimbench.code.humaneval_infilling \
+    --model_type vllm \
+    --model_name meta-llama/Llama-3.1-8B-Instruct \
+    --base_url http://localhost:8000/v1 \
+    --no_gimkit
 ```
 
 ## Development
