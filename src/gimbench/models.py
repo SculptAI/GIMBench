@@ -1,4 +1,5 @@
 import argparse
+import time
 
 from typing import Any
 
@@ -9,11 +10,13 @@ class SimpleGIM:
     def __init__(self, args: argparse.Namespace):
         self.args = args
         self.model: Any
+        self._openai_client: Any = None
         if args.model_type in ["openai", "vllm"]:
             from gimkit import from_openai
             from openai import OpenAI as OpenAIClient
 
             openai_client = OpenAIClient(api_key=args.api_key, base_url=args.base_url)
+            self._openai_client = openai_client
             self.model = from_openai(openai_client, args.model_name)
         elif args.model_type == "vllm-offline":
             from gimkit import from_vllm_offline
@@ -23,6 +26,44 @@ class SimpleGIM:
             self.model = from_vllm_offline(vllm_client)
         else:
             raise ValueError("Unsupported model type")
+
+    def _measure_ttft(self, prompt: str) -> float:
+        """Measure time-to-first-token via a single-token streaming API call.
+
+        Returns the elapsed seconds until the first token is received,
+        or -1.0 if streaming is unavailable (e.g. vllm-offline) or fails.
+        """
+        if self._openai_client is None:
+            return -1.0
+        try:
+            start = time.perf_counter()
+            with self._openai_client.chat.completions.create(
+                model=self.args.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                stream=True,
+                max_tokens=1,
+                temperature=self.args.temperature,
+                top_p=self.args.top_p,
+            ) as stream:
+                for chunk in stream:
+                    if chunk.choices and chunk.choices[0].delta.content is not None:
+                        return time.perf_counter() - start
+        except Exception:
+            pass
+        return -1.0
+
+    def generate_with_timing(self, prompt: str) -> tuple[Result, float, float]:
+        """Generate a response and collect timing metrics.
+
+        Returns a ``(result, generation_time_seconds, ttft_seconds)`` tuple.
+        ``ttft_seconds`` is -1.0 for vllm-offline models or when measurement fails.
+        ``generation_time_seconds`` is the wall-clock time for the full generation call.
+        """
+        ttft = self._measure_ttft(prompt)
+        start = time.perf_counter()
+        result = self.generate(prompt)
+        generation_time = time.perf_counter() - start
+        return result, generation_time, ttft
 
     def generate(self, prompt: str) -> Result:
         if self.args.model_type in ["openai", "vllm"]:

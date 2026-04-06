@@ -10,6 +10,7 @@ from gimkit.contexts import Query
 from gimkit.schemas import MaskedTag
 from pydantic import BaseModel
 from tqdm import tqdm
+from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
@@ -31,6 +32,11 @@ class EvalItemResult(BaseModel):
     num_regex: int
     num_regex_match: int
 
+    response_tokens: int = -1
+    generation_time: float = -1.0
+    throughput: float = -1.0
+    ttft: float = -1.0
+
     error_msg: str = ""
 
 
@@ -50,6 +56,11 @@ class EvalResult(BaseEvalResult):
     prediction_rate: float
     match_rate: float
 
+    avg_response_tokens: float = 0.0
+    avg_generation_time: float = 0.0
+    avg_throughput: float = 0.0
+    avg_ttft: float = 0.0
+
     evaled_items: list[EvalItemResult]
 
 
@@ -60,12 +71,17 @@ class MatchEvaluator(BaseEvaluator):
 
         super().__init__(args, dataset)
         self.model = SimpleGIM(args)
+        self._counter_tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(args.counter_tokenizer)
+        logger.info(f"Loaded tokenizer {args.counter_tokenizer} for token counting.")
+
+    def _count_tokens(self, text: str) -> int:
+        return len(self._counter_tokenizer.encode(text))
 
     def _evaluate_item(self, item: dict) -> EvalItemResult:
         query = item["gim_query"]
         query_obj = Query(query)
         try:
-            result = self.model.generate(query)
+            result, gen_time, ttft = self.model.generate_with_timing(query)
         except Exception as e:
             logger.error(f"Error generating result for query '{query}': {e}")
             return EvalItemResult(
@@ -83,15 +99,22 @@ class MatchEvaluator(BaseEvaluator):
         for idx, tag in enumerate(result.tags):
             if tag.regex and tag.content and re.fullmatch(tag.regex, tag.content) is not None:
                 regex_matched_ids.append(idx)
+        result_text = str(result)
+        response_tokens = self._count_tokens(result_text)
+        throughput = response_tokens / gen_time if gen_time > 0 and response_tokens >= 0 else -1.0
         return EvalItemResult(
             query=query,
-            result=str(result),
+            result=result_text,
             tags=result.tags[:],
             regex_matched_ids=regex_matched_ids,
             num_tags=len(result.tags),
             num_has_prediction=sum(1 for tag in result.tags if tag.content),
             num_regex=sum(1 for tag in result.tags if tag.regex),
             num_regex_match=len(regex_matched_ids),
+            response_tokens=response_tokens,
+            generation_time=gen_time,
+            throughput=throughput,
+            ttft=ttft,
             error_msg="",
         )
 
@@ -132,6 +155,10 @@ class MatchEvaluator(BaseEvaluator):
             total_regex_match=total_regex_match,
             prediction_rate=total_has_prediction / valid_tags if valid_tags > 0 else 0.0,
             match_rate=total_regex_match / valid_regex if valid_regex > 0 else 0.0,
+            avg_response_tokens=self._safe_average(evaled_items, "response_tokens"),
+            avg_generation_time=self._safe_average(evaled_items, "generation_time"),
+            avg_throughput=self._safe_average(evaled_items, "throughput"),
+            avg_ttft=self._safe_average(evaled_items, "ttft"),
             evaled_items=evaled_items,
         )
 

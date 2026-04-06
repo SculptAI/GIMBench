@@ -18,7 +18,7 @@ from gimkit.contexts import Query, Result, infill
 from gimkit.schemas import MaskedTag
 from pydantic import BaseModel, Field
 from tqdm import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedTokenizerBase
 
 from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
@@ -43,6 +43,10 @@ class EvalItemResult(BaseModel):
 
     query_len: int = -1
     response_len: int = -1
+    response_tokens: int = -1
+    generation_time: float = -1.0
+    throughput: float = -1.0
+    ttft: float = -1.0
     text_span_and_norm_ppl: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
     error_msg: str = ""
@@ -66,6 +70,10 @@ class EvalResult(BaseEvalResult):
 
     avg_query_len: float = 0.0
     avg_response_len: float = 0.0
+    avg_response_tokens: float = 0.0
+    avg_generation_time: float = 0.0
+    avg_throughput: float = 0.0
+    avg_ttft: float = 0.0
 
     evaled_items: list[EvalItemResult]
 
@@ -82,12 +90,22 @@ class PPLEvaluator(BaseEvaluator):
             # CUDA context contamination in multiprocessing
             self.model = SimpleGIM(args)
 
+        self._counter_tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(args.counter_tokenizer)
+        logger.info(f"Loaded tokenizer {args.counter_tokenizer} for token counting.")
+
         self.ref_model = AutoModelForCausalLM.from_pretrained(args.ref_model_name).to(self.args.ref_model_device)
         self.ref_tokenizer = AutoTokenizer.from_pretrained(args.ref_model_name)
 
     def _model_call(self, query: str) -> Result:
         """Call the model with the given query and return the Result object."""
         return self.model.generate(query)
+
+    def _model_call_with_timing(self, query: str) -> tuple[Result, float, float]:
+        """Call the model and return ``(result, generation_time_seconds, ttft_seconds)``."""
+        return self.model.generate_with_timing(query)
+
+    def _count_tokens(self, text: str) -> int:
+        return len(self._counter_tokenizer.encode(text))
 
     @torch.no_grad()
     def _compute_ppl(self, input_ids: torch.Tensor) -> float:
@@ -199,14 +217,15 @@ class PPLEvaluator(BaseEvaluator):
         result_text = "ERROR"
         error_msg = ""
         inp = lwnp = rwnp = wnp = -1.0
+        gen_time = -1.0
+        ttft = -1.0
         query_text = str(Query(item["gim_query"]))
         text_span_and_norm_ppl: dict[str, dict[str, Any]] = {}
         try:
-            result_obj = (
-                infill(item["gim_query"], item["gim_response"])
-                if self.args.golden_truth_only
-                else self._model_call(query_text)
-            )
+            if self.args.golden_truth_only:
+                result_obj = infill(item["gim_query"], item["gim_response"])
+            else:
+                result_obj, gen_time, ttft = self._model_call_with_timing(query_text)
             result_text = str(result_obj)
 
             content_offset_mapping = self._get_content_offset_mapping(result_obj)
@@ -239,6 +258,9 @@ class PPLEvaluator(BaseEvaluator):
             error_msg = repr(e)
             logger.exception(error_msg)
 
+        response_tokens = self._count_tokens(result_text) if result_text != "ERROR" else -1
+        throughput = response_tokens / gen_time if gen_time > 0 and response_tokens >= 0 else -1.0
+
         return EvalItemResult(
             query=query_text,
             result=result_text,
@@ -253,6 +275,10 @@ class PPLEvaluator(BaseEvaluator):
             else -1.0,
             query_len=len(query_text),
             response_len=len(result_text),
+            response_tokens=response_tokens,
+            generation_time=gen_time,
+            throughput=throughput,
+            ttft=ttft,
             text_span_and_norm_ppl=text_span_and_norm_ppl,
             error_msg=error_msg,
         )
@@ -284,6 +310,10 @@ class PPLEvaluator(BaseEvaluator):
             avg_infilling_ratio=self._safe_average(evaled_items, "infilling_ratio"),
             avg_query_len=self._safe_average(evaled_items, "query_len"),
             avg_response_len=self._safe_average(evaled_items, "response_len"),
+            avg_response_tokens=self._safe_average(evaled_items, "response_tokens"),
+            avg_generation_time=self._safe_average(evaled_items, "generation_time"),
+            avg_throughput=self._safe_average(evaled_items, "throughput"),
+            avg_ttft=self._safe_average(evaled_items, "ttft"),
             start_time=self.start_time,
             end_time=self.end_time,
             elapsed_minutes=(self.end_time - self.start_time).total_seconds() / 60.0,
