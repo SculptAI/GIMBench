@@ -83,6 +83,11 @@ def _add_evaluator_args(parser):
         default="Qwen/Qwen3-4B-Instruct-2507",
         help="Tokenizer to use for token counting",
     )
+    parser.add_argument(
+        "--record_timing",
+        action="store_true",
+        help="Record generation timing metrics (generation_time, ttft)",
+    )
 
 
 def _add_ppl_eval_args(parser):
