@@ -77,6 +77,17 @@ def _add_evaluator_args(parser):
         default="results",
         help="Directory to save evaluation results",
     )
+    parser.add_argument(
+        "--counter_tokenizer",
+        type=str,
+        default="Qwen/Qwen3-4B-Instruct-2507",
+        help="Tokenizer to use for token counting",
+    )
+    parser.add_argument(
+        "--record_timing",
+        action="store_true",
+        help="Record generation timing metrics (generation_time, ttft)",
+    )
 
 
 def _add_ppl_eval_args(parser):
@@ -148,12 +159,6 @@ def _add_mcqa_eval_args(parser):
             "Write 2–3 substantial sentences (60–80 words each) to ensure depth."
         ),
         help="Description template for each reasoning step used by guide(desc=...).",
-    )
-    parser.add_argument(
-        "--counter_tokenizer",
-        type=str,
-        default="Qwen/Qwen3-4B-Instruct-2507",
-        help="Tokenizer to use for token counting",
     )
 
 
