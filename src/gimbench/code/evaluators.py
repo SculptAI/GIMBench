@@ -203,22 +203,23 @@ class CommonCodeInfillingEvaluator(CodeInfillingEvaluator):
 
     def _form_query(self, prompt: str, suffix: str) -> str:
         return (
-            "Complete the missing code in the function below. "
-            "Output only the missing code fragment with no explanation, no markdown, and no code fences.\n\n"
-            f"# Prefix:\n{prompt}\n"
-            f"# Suffix:\n{suffix}\n\n"
-            "# Missing code:"
+            "Fill in the missing code between the prefix and suffix.\n"
+            "Return ONLY the missing code, wrapped in a markdown code fence:\n"
+            "```python\n<missing code>\n```\n"
+            "Do not include explanations or any text outside the code fence.\n\n"
+            f"Prefix:\n```{prompt}```\n"
+            f"Suffix:\n```{suffix}```\n\n"
+            "Missing code:"
         )
 
     @staticmethod
     def _strip_code_fences(text: str) -> str:
         """Remove surrounding markdown code fences if present."""
-        stripped = text.strip()
-        if stripped.startswith("```"):
-            lines = stripped.splitlines()
+        if text.startswith("```"):
+            lines = text.splitlines()
             inner = lines[1:-1] if len(lines) > 1 and lines[-1].startswith("```") else lines[1:]
             return "\n".join(inner)
-        return stripped
+        return text
 
     def _generate_completions(self, item: dict) -> tuple[str, list[str]]:
         prompt = item["prompt"]
