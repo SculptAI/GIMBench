@@ -1,6 +1,7 @@
 import contextlib
 import math
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -213,12 +214,19 @@ class CommonCodeInfillingEvaluator(CodeInfillingEvaluator):
         )
 
     @staticmethod
-    def _strip_code_fences(text: str) -> str:
-        """Remove surrounding markdown code fences if present."""
-        if text.startswith("```"):
-            lines = text.splitlines()
-            inner = lines[1:-1] if len(lines) > 1 and lines[-1].startswith("```") else lines[1:]
-            return "\n".join(inner)
+    def _extract_code(text: str) -> str:
+        """Extract the first fenced code block, preferring ```python blocks."""
+        # Prefer the first explicit python fenced block.
+        python_match = re.search(r"```\s*python\s*\r?\n([\s\S]*?)```", text, flags=re.IGNORECASE)
+        if python_match:
+            return python_match.group(1)
+
+        # Fallback to the first generic fenced block if python is not specified.
+        fence_match = re.search(r"```[^\n]*\r?\n([\s\S]*?)```", text)
+        if fence_match:
+            return fence_match.group(1)
+
+        # If no fence exists, return the raw response.
         return text
 
     def _generate_completions(self, item: dict) -> tuple[str, list[str]]:
@@ -228,7 +236,7 @@ class CommonCodeInfillingEvaluator(CodeInfillingEvaluator):
         completions = []
         for _ in range(self.args.num_samples):
             response = self.model.generate(query)
-            completions.append(self._strip_code_fences(response))
+            completions.append(self._extract_code(response))
         return query, completions
 
 
