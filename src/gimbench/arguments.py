@@ -162,6 +162,28 @@ def _add_mcqa_eval_args(parser):
     )
 
 
+def _add_code_eval_args(parser):
+    parser.add_argument(
+        "--num_samples",
+        type=int,
+        default=1,
+        help="Number of completions to generate per problem for pass@k evaluation",
+    )
+    parser.add_argument(
+        "--pass_k",
+        type=int,
+        nargs="+",
+        default=[1],
+        help="Values of k for pass@k metric computation (e.g. --pass_k 1 10 100)",
+    )
+    parser.add_argument(
+        "--exec_timeout",
+        type=int,
+        default=10,
+        help="Timeout in seconds for executing each generated code solution",
+    )
+
+
 def _add_cv_eval_args(parser):
     parser.add_argument("--use_outlines", action="store_true", help="Whether to use outlines in CV evaluation")
     parser.add_argument(
@@ -192,6 +214,7 @@ def get_args() -> argparse.Namespace:
     _add_ppl_eval_args(parser)
     _add_mcqa_eval_args(parser)
     _add_cv_eval_args(parser)
+    _add_code_eval_args(parser)
     args = parser.parse_args()
     validate_and_standardize(args)
     return args
