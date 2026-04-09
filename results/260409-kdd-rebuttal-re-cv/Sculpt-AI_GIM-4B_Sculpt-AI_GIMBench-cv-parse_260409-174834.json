@@ -1,0 +1,4320 @@
+{
+    "eval_env": {
+        "exec_command": "/root/autodl-tmp/GIMBench/.venv/bin/python /root/autodl-tmp/GIMBench/src/gimbench/cv/cv_parse.py --model_type vllm-offline --model_name Sculpt-AI/GIM-4B --output_type cfg --api_key **** --base_url https://openrouter.ai/api/v1 --presence_penalty 0",
+        "gimbench_version": "0.3.0",
+        "gimbench_file": "/root/autodl-tmp/GIMBench/src/gimbench/__init__.py",
+        "gimkit_version": "0.1.1",
+        "gimkit_file": "/root/autodl-tmp/GIMBench/.venv/lib/python3.13/site-packages/gimkit/__init__.py",
+        "git_repo": "/root/autodl-tmp/GIMBench",
+        "git_branch": "feat/eval-results",
+        "git_commit_id": "9a466de219c1655e3b873a2038032b56eb5bdf80"
+    },
+    "evaluator_type": "cv",
+    "args": {
+        "use_gim_prompt": false,
+        "output_type": "cfg",
+        "model_type": "vllm-offline",
+        "model_name": "Sculpt-AI/GIM-4B",
+        "api_key": "****",
+        "base_url": "https://openrouter.ai/api/v1",
+        "max_model_len": 8192,
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "presence_penalty": 0.0,
+        "max_tokens": 8192,
+        "seed": 16,
+        "first_n": -1,
+        "num_proc": 1,
+        "output_dir": "results",
+        "counter_tokenizer": "Qwen/Qwen3-4B-Instruct-2507",
+        "record_timing": false,
+        "ref_model_name": "google/gemma-3-270m",
+        "ref_model_device": "cpu",
+        "norm_ppl_alpha": 0.2,
+        "ppl_window_k": 16,
+        "golden_truth_only": false,
+        "no_gimkit": false,
+        "reason_budget": 0,
+        "auto_budget": false,
+        "auto_budget_prompt": "I'll show you a couple of questions. Decide how many reasoning steps are needed to answer each accurately.\n\nConsider a plausible reasoning workflow first (you may use reasoning, reflection, trial and error, and parallel thinking by applying different approaches, plus a quick verification if needed). Then output a step budget (where each step is an atomic reasoning action taking 3–5 sentences) that allows for granular, step-by-step derivation without skipping logic, ensuring a robust and high-confidence conclusion;leave extra headroom for cross-checking and possible revision on multi-hop or tricky questions.\n\n## Question: {question}\n\nDo not be anchored by the examples above. Scale your step budget linearly with the difficulty. For complex problems, you are encouraged to assign a high budget (20, or more) to ensure there is enough room for step-by-step derivation and verification.\n\n",
+        "reason_step_desc": "A distinct, verified reasoning step building on the previous one. Write 2–3 substantial sentences (60–80 words each) to ensure depth.",
+        "use_outlines": false,
+        "judge_model_name": "google/gemini-3-flash-preview",
+        "num_samples": 1,
+        "pass_k": [
+            1
+        ],
+        "exec_timeout": 10,
+        "dataset": {
+            "path": "Sculpt-AI/GIMBench-cv-parse",
+            "name": null,
+            "split": "test"
+        }
+    },
+    "start_time": "2026-04-09T17:48:34.253929",
+    "end_time": "2026-04-09T18:01:00.987534",
+    "elapsed_minutes": 12.445560083333334,
+    "evaled_items": [
+        {
+            "filename": "Nan_Zhang.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Nan Zhang",
+                    "expected": "Nan Zhang",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Germany",
+                    "expected": "Germany",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "1984-01-03",
+                    "expected": "1984-01-03",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "phone_number": {
+                    "prediction": "+49 (06211812098",
+                    "expected": "+49 (0) 621 181 2098",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "b.n.zhang@uni-mannheim.de",
+                    "expected": "n.zhang@uni-mannheim.de",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Stanford University",
+                    "expected": "Stanford University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Political Science",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Political Science",
+                    "expected": "Political Science",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2009-09-01",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2014-05-01",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "http://nanzhangresearch.github",
+                    "expected": "http://nanzhangresearch.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/nanzhangresearch",
+                    "expected": "https://github.com/nanzhangresearch",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Aurelie_de_Gendre.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Nicolás Salamanca",
+                    "expected": "Aurelie de Gendre",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "country": {
+                    "prediction": "Australia",
+                    "expected": "France",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1990-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "000000000000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "n.salamanca@unimelb.edu.au",
+                    "expected": "a.degendre@unimelb.edu.au",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Maastricht University",
+                    "expected": "Maastricht University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": "Research Centre for Education and the Labor Market",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2015-20-21",
+                    "expected": "2015-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2021-01-01",
+                    "expected": "2021-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://www.unimelb.edu",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/nsalamanca",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 4,
+            "error_msg": ""
+        },
+        {
+            "filename": "Aditya_Chaudhry.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Aditya Chaudhry",
+                    "expected": "Aditya Chaudhry",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States of America",
+                    "expected": "United States of America",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2018-01-01",
+                    "expected": "1996-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+1 555 555 5555",
+                    "expected": "703 628 9071",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "aditya.chaudhry@osu.edu",
+                    "expected": "chaudhry.127@osu.ed",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Chicago",
+                    "expected": "University of Chicago",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Booth School of Business",
+                    "expected": "Booth School of Business",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Finance",
+                    "expected": "Finance",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2018-01-01",
+                    "expected": "2018-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2023-01-01",
+                    "expected": "2023-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://www.fisher.ohiostate",
+                    "expected": "https://chaudhryaditya.github.io/",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/aditya-chaudhry",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Alexander_J_Fertig.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Alexander J. Fertig",
+                    "expected": "Alexander J. Fertig",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1988-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "(716) 587-1812",
+                    "expected": "(716) 587-1812",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "afertig@umich.edu",
+                    "expected": "afertig@umich.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Michigan",
+                    "expected": "University of Michigan",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics & Public Policy",
+                    "expected": "Department of Economics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Economics & Public Policy",
+                    "expected": "Economics & Public Policy",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2026-01-01",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "",
+                    "expected": "2026-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://alexanderfertig.com",
+                    "expected": "http://alexanderfertig.com",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Maksim_Zhdanov.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "MAKSIM ZHDANOV",
+                    "expected": "Maksim Zhdanov",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Germany",
+                    "expected": "Netherlands",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1997-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "email@zhdanov.com",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "Master",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "university": {
+                    "prediction": "University of Amsterdam",
+                    "expected": "University of Amsterdam",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "AMLab",
+                    "expected": "AMLab",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Machine Learning",
+                    "expected": "Machine Learning",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2023-04-01",
+                    "expected": "2023-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2027-04-01",
+                    "expected": "2027-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://maksimzhdanov.com",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/maksimzhdanov",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 9,
+            "num_correct": 5,
+            "error_msg": ""
+        },
+        {
+            "filename": "Theo_Serlin.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Theo Serlin",
+                    "expected": "Theo Serlin",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "UK",
+                    "expected": "United Kingdom",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1997-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "theo.serlin@kcl.ac.uk",
+                    "expected": "theo.serlin@kcl.ac.uk",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Stanford University",
+                    "expected": "Stanford University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Political Science",
+                    "expected": "Department of Political Science",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Political Science",
+                    "expected": "Political Science",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2024-12-31",
+                    "expected": "2024-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://theo-serlin.github",
+                    "expected": "https://theo-serlin.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://theo-serlin.github",
+                    "expected": "https://github.com/theo-serlin",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "August_Bruno.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "August Bruno",
+                    "expected": "August Bruno",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2017-05-01",
+                    "expected": "1995-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+1-716-238-5546",
+                    "expected": "+1 (716) 238-5546",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "abruno@skidmore.edu",
+                    "expected": "abruno@skidmore.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of North Carolina at Chapel Hill",
+                    "expected": "University of North Carolina at Chapel Hill",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": "Department of Economics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2022-05-01",
+                    "expected": "2025-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2025-05-01",
+                    "expected": "2025-05-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://augustbruno.github",
+                    "expected": "https://augustbruno.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://augustbruno.github",
+                    "expected": "https://github.com/augustbruno",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 13,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Unknown.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Sergio",
+                    "expected": "Amarnath Murugan",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "country": {
+                    "prediction": "Spain",
+                    "expected": "USA",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "1988-01-01",
+                    "expected": "1997-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+34 636 333 333",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "sergio@sergio.es",
+                    "expected": "amarnathmurugan0@gmail.com",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "Master",
+                    "expected": "Master",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "U",
+                    "expected": "University of Utah",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "department": {
+                    "prediction": "Computing",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Graphics & Visualization",
+                    "expected": "Graphics & Visualization",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2014-09-01",
+                    "expected": "2022-08-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2016-06-30",
+                    "expected": "2024-05-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "http://sergio.es",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/sergio",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 9,
+            "num_correct": 2,
+            "error_msg": ""
+        },
+        {
+            "filename": "Guillermo_A_Perez.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Guillermo A. Perez´",
+                    "expected": "Guillermo A. Perez",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Belgium",
+                    "expected": "Belgium",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2005-01-01",
+                    "expected": "1987-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+3232653904",
+                    "expected": "+3232653904",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "guillermo.perez@uantwerpen.be",
+                    "expected": "guillermo.perez@uantwerpen.be",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Université libre de Bruxelles (ULB)",
+                    "expected": "Université libre de Bruxelles",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Computer Science",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Computer Science",
+                    "expected": "Computer Science",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2012-01-01",
+                    "expected": "2012-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2016-01-01",
+                    "expected": "2016-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://www.uantwerpen.be/en/staff/guillermoalberto-perez/",
+                    "expected": "https://www.uantwerpen.be/en/staff/guillermoalberto-perez/",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "https://github.com/guillermoalbertoperez",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 10,
+            "error_msg": ""
+        },
+        {
+            "filename": "Nicholas_Vreugdenhil.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Nicholas Vreugdenhil",
+                    "expected": "Nicholas Vreugdenhil",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Australia",
+                    "expected": "Australia",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1990-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "nvreugde@asu.edu",
+                    "expected": "nvreugde@asu.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Northwestern University",
+                    "expected": "Northwestern University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2020-07-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2020-01-01",
+                    "expected": "2026-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://nvreug.github",
+                    "expected": "https://nvreug.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://nvreug.github",
+                    "expected": "https://github.com/nvreug",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "Florian_P_Ederer.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Florian P. Ederer",
+                    "expected": "Florian P. Ederer",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Austria, USA",
+                    "expected": "USA",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1980-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0000-0000-0000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "florian.ederer@gmail.com",
+                    "expected": "florian.ederer@gmail.com",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Massachusetts Institute of Technology",
+                    "expected": "Massachusetts Institute of Technology",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Department of Economics",
+                    "expected": "Department of Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2009-01-01",
+                    "expected": "2004-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2009-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://florianederer.github",
+                    "expected": "https://florianederer.github.io/",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://florianederer.github",
+                    "expected": "https://github.com/florianederer",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Ivan_Kartáč.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Ivan Kart´aˇc",
+                    "expected": "Ivan Kartáč",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Czechia",
+                    "expected": "Czechia",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1996-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+420 777 000 000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "kartac@ufal.mff.cuni.cz",
+                    "expected": "kartac@ufal.mff.cuni.cz",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "Master",
+                    "expected": "Master",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Charles University, Faculty of Mathematics and Physics",
+                    "expected": "Charles University",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Faculty of Mathematics and Physics",
+                    "expected": "Faculty of Mathematics and Physics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Language Technologies and Computational Linguistics",
+                    "expected": "Language Technologies and Computational Linguistics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "1002-20-21",
+                    "expected": "2021-10-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "0202-20-25",
+                    "expected": "2025-02-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://ufal.mffcuni",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/ivan-kartac",
+                    "expected": "https://github.com/ivan-kartac",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Diego_Martínez.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Diego Martínez",
+                    "expected": "Diego Martínez",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Belgium",
+                    "expected": "Spain",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1992-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0000000000000000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "diego.martinez@kuleuven.be",
+                    "expected": "diego.martinez@kuleuven.be",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Universidad Carlos III de Madrid (UC3M) and Instituto de Ciencias Matemáticas (ICMAT)",
+                    "expected": "Universidad Carlos III de Madrid",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "department": {
+                    "prediction": "Mathematics",
+                    "expected": "Department of Mathematics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Mathematics",
+                    "expected": "Mathematics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2016-09-01",
+                    "expected": "2025-10-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2021-03-01",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://diego-mmg.githubio/",
+                    "expected": "https://diego-mmg.github.io/",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "https://diego-mmg.githubio/",
+                    "expected": "https://github.com/diego-mmg",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Yuki_Takahashi.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Yuki Takahashi",
+                    "expected": "Yuki Takahashi",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Netherlands",
+                    "expected": "The Netherlands",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1987-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+31 641458415",
+                    "expected": "+31 6-4145-8415",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "y.takahashi@tilburguniversity.edu",
+                    "expected": "y.takahashi@tilburguniversity.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Bologna",
+                    "expected": "University of Bologna",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Dept. of Economics",
+                    "expected": "Dept. of Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2017-01-01",
+                    "expected": "2017-11-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2022-07-31",
+                    "expected": "2022-07-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://yukitakahashi1.github",
+                    "expected": "https://yukitakahashi1.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://yukitakahashi1.github",
+                    "expected": "https://github.com/yukitakahashi1",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 13,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Richard_Cornelius_Suwandi.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Richard Cornelius Suwandi",
+                    "expected": "Richard Cornelius Suwandi",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "China",
+                    "expected": "China",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "2001-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "richardsuwandi@link.cuhk.edu.cn",
+                    "expected": "richardsuwandi@link.cuhk.edu.cn",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "The Chinese University of Hong Kong, Shenzhen",
+                    "expected": "The Chinese University of Hong Kong, Shenzhen",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Computer and Information Engineering",
+                    "expected": "School of Science and Engineering",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Computer and Information Engineering",
+                    "expected": "Computer and Information Engineering",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2023-09-01",
+                    "expected": "2023-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2027-05-01",
+                    "expected": "2027-05-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://richardcsuwandi.github",
+                    "expected": "https://richardcsuwandi.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://richardcsuwandi.github",
+                    "expected": "https://github.com/richardcsuwandi",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Wojciech_Anyszka.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Wojciech Anyszka",
+                    "expected": "Wojciech Anyszka",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Netherlands",
+                    "expected": "USA",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "2001-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "531 333 131",
+                    "expected": "531 333 131",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "wa8157@princeton.edu",
+                    "expected": "wa8157@princeton.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Princeton University, Operations Research and Financial Engineering (ORFE)",
+                    "expected": "Princeton University",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Operations Research and Financial Engineering (ORFE)",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Operations Research and Financial Engineering (ORFE)",
+                    "expected": "Operations Research and Financial Engineering",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2025-09-01",
+                    "expected": "2025-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2025-09-01",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://wanyszka.github",
+                    "expected": "https://wanyszka.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://wanyszka.github",
+                    "expected": "https://github.com/wanyszka",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "A_Combs.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Combs, A.",
+                    "expected": "A. Combs",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2009-01-01",
+                    "expected": "1987-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "859-246-2100",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "a.combs@uga.edu",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Kentucky",
+                    "expected": "University of Kentucky",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Public Policy & Administration",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Public Policy & Administration",
+                    "expected": "Public Policy & Administration",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2018-01-01",
+                    "expected": "2014-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2025-01-01",
+                    "expected": "2018-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://www.uga.edu/colleges/sapi/academics/faculty/academic-appointments/academic-appointments-combs-a",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/ajcombs",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 8,
+            "num_correct": 5,
+            "error_msg": ""
+        },
+        {
+            "filename": "Elena_Pagnin.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Elena Pagnin",
+                    "expected": "Elena Pagnin",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Sweden",
+                    "expected": "Italy",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1989-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "elenap@chalmers.se",
+                    "expected": "elenap@chalmers.se",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Chalmers (SE)",
+                    "expected": "Chalmers University of Technology",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "CSE",
+                    "expected": "Department of Computer Science and Engineering",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Cryptography",
+                    "expected": "Computer Science",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "start_date": {
+                    "prediction": "2014-05-01",
+                    "expected": "2014-05-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://epagnin.github",
+                    "expected": "https://epagnin.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://epagnin.github",
+                    "expected": "https://github.com/epagnin",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Gabriel_Okasa.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Gabriel Okasa",
+                    "expected": "Gabriel Okasa",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Switzerland",
+                    "expected": "Switzerland",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1992-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+41 787000763",
+                    "expected": "+41 78 700 07 63",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "gabriel.okasa@epfl.ch",
+                    "expected": "gabriel.okasa@epfl.ch",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of St.Gallen",
+                    "expected": "University of St.Gallen",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics and Finance",
+                    "expected": "School of Economics and Political Science",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "causal inference and econometrics",
+                    "expected": "Economics and Finance",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "start_date": {
+                    "prediction": "2017-02-01",
+                    "expected": "2017-02-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2022-02-01",
+                    "expected": "2022-02-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://okasag.github",
+                    "expected": "https://okasag.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://okasag.github",
+                    "expected": "https://github.com/okasag",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 13,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Martin_Souchier.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Martin Souchier",
+                    "expected": "Martin Souchier",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "USA",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1993-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "souchier@wharton.upenn.edu",
+                    "expected": "souchier@wharton.upenn.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Stanford University",
+                    "expected": "Stanford University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2017-01-01",
+                    "expected": "2017-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2023-12-31",
+                    "expected": "2023-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://www.martinsouchier.com/",
+                    "expected": "https://www.martinsouchier.com/",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "https://github.com/martinsouchier",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Alexey_Makarin.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Alexey Makarin",
+                    "expected": "Alexey Makarin",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Russia",
+                    "expected": "Russia",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1990-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "(224) 304-3896",
+                    "expected": "(224) 304-3896",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "makarin@mit.edu",
+                    "expected": "makarin@mit.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Northwestern University",
+                    "expected": "Northwestern University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2014-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://alexymakarin.github",
+                    "expected": "https://alexymakarin.github.io/",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://alexymakarin.github",
+                    "expected": "https://github.com/alexymakarin",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "Minguk_Kang.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Minguk Kang",
+                    "expected": "Minguk Kang",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Republic of Korea",
+                    "expected": "Republic of Korea",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1994-03-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "mgkang@postech.ac.kr",
+                    "expected": "mgkang@postech.ac.kr",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "POSTECH",
+                    "expected": "POSTECH",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Graduate School of AI",
+                    "expected": "Graduate School of AI",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "One-step Image Synthesis Models, such as GANs and Consistency Models",
+                    "expected": "AI",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2020-02-01",
+                    "expected": "2020-02-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2023-02-01",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://minkang.githubio",
+                    "expected": "https://mingukkang.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/minkang",
+                    "expected": "https://github.com/POSTECH-CVL/PyTorch-StudioGAN",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Not_Provided.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Chen, Yen-Chen",
+                    "expected": "Yu-Hsuan Teng",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "country": {
+                    "prediction": "Taiwan",
+                    "expected": "Taiwan",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "1994-01-01",
+                    "expected": "1995-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0912-1234567",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "ycc@ntu.edu.tw",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "Master",
+                    "expected": "Master",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "National Taiwan University (NTU)",
+                    "expected": "National Taiwan University",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Physics",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Physics",
+                    "expected": "Physics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2017-09-01",
+                    "expected": "2017-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2019-06-30",
+                    "expected": "2019-06-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://www.asiaa.sinica/asiaa/people/chen-yenchen",
+                    "expected": "https://elthateng.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/yccchen",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 9,
+            "num_correct": 5,
+            "error_msg": ""
+        },
+        {
+            "filename": "Jason_Alan_Snyder.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Jason Alan Snyder",
+                    "expected": "Jason Alan Snyder",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "USA",
+                    "expected": "USA",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1978-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "310-210-1471",
+                    "expected": "310-210-1471",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "jsnyder@eccles.utah.edu",
+                    "expected": "jsnyder@eccles.utah.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of California, Berkeley",
+                    "expected": "University of California, Berkeley",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Business Administration",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Business Administration",
+                    "expected": "Business Administration",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2000-01-01",
+                    "expected": "2000-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2006-01-01",
+                    "expected": "2006-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://www.eccles.utah",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/jasonalansnyder",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Zsigmond_Pálvölgyi.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Zsigmond Pálvölgyi",
+                    "expected": "Zsigmond Pálvölgyi",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Hungary",
+                    "expected": "Hungary",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2025-01-01",
+                    "expected": "1991-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "zsigmond.palvolgyi@uni-corvinus.hu",
+                    "expected": "zsigmond.palvolgyi@uni-corvinus.hu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Michigan",
+                    "expected": "University of Michigan",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2025-01-01",
+                    "expected": "2018-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2025-01-01",
+                    "expected": "2025-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://zsigmond-palvolgyi.github",
+                    "expected": "https://zsigmond-palvolgyi.github.io/",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://zsigmond-palvolgyi.github",
+                    "expected": "https://github.com/zsigmond-palvolgyi",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Mayara_Felix.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Mayara Felix",
+                    "expected": "Mayara Felix",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "Brazil",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "1990-01-01",
+                    "expected": "1989-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+1 413 437 0105",
+                    "expected": "+1 413 437 0105",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "mayara.felix@yale.edu",
+                    "expected": "mayara.felix@yale.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Massachusetts Institute of Technology",
+                    "expected": "Massachusetts Institute of Technology",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": "Department of Economics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2021-06-01",
+                    "expected": "2015-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2021-06-01",
+                    "expected": "2021-06-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "http://www.mayarafelix.com",
+                    "expected": "http://www.mayarafelix.com",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "https://github.com/mayarafelix",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Filippo_Pallotti.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Filippo Pallotti",
+                    "expected": "Filippo Pallotti",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United Kingdom",
+                    "expected": "Italy",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "1990-01-01",
+                    "expected": "1991-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+393384892976",
+                    "expected": "+393384892976",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "filippo.pallotti@ucl.ac.uk",
+                    "expected": "filippo.pallotti@ucl.ac.uk",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University College London",
+                    "expected": "University College London",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": "Department of Economics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Macroeconomics; Heterogeneous-Agent Macro (HANK); Administrative Data",
+                    "expected": "Economics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "start_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2025-01-01",
+                    "expected": "2025-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "http://www.filippopallotti.com",
+                    "expected": "http://www.filippopallotti.com",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "https://github.com/filippopallotti",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 9,
+            "error_msg": ""
+        },
+        {
+            "filename": "Hazel_Doughty.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Hazel Doughty",
+                    "expected": "Hazel Doughty",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Netherlands",
+                    "expected": "Netherlands",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1994-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "a.h.r.doughty@liacs.leidenuniv.nl",
+                    "expected": "h.r.doughty@liacs.leidenuniv.nl",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Bristol, Computer Science",
+                    "expected": "University of Bristol",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Computer Science",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Computer Science",
+                    "expected": "Computer Science",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2016-09-01",
+                    "expected": "2016-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2020-09-01",
+                    "expected": "2020-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://hazeldoughty.githubio",
+                    "expected": "https://hazeldoughty.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "https://hazeldoughty.githubio",
+                    "expected": "https://github.com/hazeldoughty",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Masoud_Jasbi.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "M. Jasbi",
+                    "expected": "Masoud Jasbi",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2000-01-01",
+                    "expected": "1990-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0000000000000000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "jasbi@ucdavis.edu",
+                    "expected": "jasbi@ucdavis.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Stanford University",
+                    "expected": "Stanford University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Linguistics",
+                    "expected": "Department of Linguistics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Linguistics",
+                    "expected": "Linguistics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2009-12-01",
+                    "expected": "2012-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2012-18-01",
+                    "expected": "2018-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://jasbi.github",
+                    "expected": "https://jasbi.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://jasbi.github",
+                    "expected": "https://github.com/jasbi",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "Nikola_Konstantinov.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Dr. Nikola Konstantinov",
+                    "expected": "Nikola Konstantinov",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Bulgaria",
+                    "expected": "Bulgaria",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1994-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "nikola.konstantinov@insait.ai",
+                    "expected": "nikola.konstantinov@insait.ai",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "IST Austria (ISTA)",
+                    "expected": "IST Austria",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Mathematics",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Mathematics and Statistics",
+                    "expected": "Machine Learning",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "start_date": {
+                    "prediction": "2017-03-20",
+                    "expected": "2017-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2022-03-20",
+                    "expected": "2022-03-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://insait.ai/dr-nikola-konstantinov",
+                    "expected": "https://insait.ai/dr-nikola-konstantinov",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "github_url": {
+                    "prediction": "https://github.com/nikolakonstantinov",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "Devin_Judge-Lord.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Devin Judge-Lord",
+                    "expected": "Devin Judge-Lord",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1987-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0000000000000000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "Qjudgelor@umich.edu",
+                    "expected": "judgelor@umich.edu",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Wisconsin–Madison",
+                    "expected": "University of Wisconsin–Madison",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Political Science",
+                    "expected": "Department of Political Science",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Political Science",
+                    "expected": "Political Science",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2017-01-01",
+                    "expected": "2023-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2021-01-01",
+                    "expected": "2025-04-28",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://judgelord.github",
+                    "expected": "https://judgelord.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://judgelord.github",
+                    "expected": "https://github.com/judgelord",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Amanda_R_Kreider.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Amanda R. Kreider",
+                    "expected": "Amanda R. Kreider",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1987-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "amandakreider@pitt.edu",
+                    "expected": "amandakreider@pitt.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Harvard University",
+                    "expected": "Harvard University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Health Policy, Economics Track",
+                    "expected": "Department of Health Policy & Management",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Health Policy",
+                    "expected": "Health Policy, Economics Track",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "start_date": {
+                    "prediction": "2015-21-01",
+                    "expected": "2015-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "",
+                    "expected": "2021-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 5,
+            "error_msg": ""
+        },
+        {
+            "filename": "K_Zhu.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Kai Zhu",
+                    "expected": "K. Zhu",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "China",
+                    "expected": "China",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2000-01-01",
+                    "expected": "1997-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+86 135 11111111",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "kai.zhu@uiuc.edu",
+                    "expected": "kunlunz2@illinois.edu",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "Master",
+                    "expected": "Master",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Illinois Urbana Chanpaign (UIUC)",
+                    "expected": "University of Illinois Urbana Chanpaign",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Computer Science",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Computer Science",
+                    "expected": "Computer Science",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2024-08-01",
+                    "expected": "2024-08-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2026-05-31",
+                    "expected": "2026-05-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://kai-zhu.github",
+                    "expected": "https://kzhu.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/kai-zhu",
+                    "expected": "https://github.com/Kunlun-Zhu",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Matthieu_Blanke.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Matthieu Blanke",
+                    "expected": "Matthieu Blanke",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "France",
+                    "expected": "France",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2000-01-01",
+                    "expected": "1999-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0000000000000000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "matthieu.blanke@ens.fr",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Inria Paris and DI ENS",
+                    "expected": "Inria Paris and DI ENS",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Mathematics",
+                    "expected": "DI ENS",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Deep learning for physical systems",
+                    "expected": "Deep learning for physical systems",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2021-01-01",
+                    "expected": "2021-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2024-01-01",
+                    "expected": "2024-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://matthieu-blankes.githubpages",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/matthieu-blankes",
+                    "expected": "https://github.com/MatthieuBlanke",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "Paul_G_Freed.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "PAUL G. FREED",
+                    "expected": "Paul G. Freed",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2025-01-01",
+                    "expected": "1998-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0000000000000000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "freedp@darden.virginia.edu",
+                    "expected": "freedp@darden.virginia.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of South Carolina",
+                    "expected": "University of South Carolina",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Finance",
+                    "expected": "Darla Moore School of Business",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Business Administration",
+                    "expected": "Finance",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "start_date": {
+                    "prediction": "2025-01-01",
+                    "expected": "2020-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2025-01-01",
+                    "expected": "2025-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://www.darden.virginia/academics/faculty/paul-freed",
+                    "expected": "https://freedp.github.io/",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/paulfreed",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Eric_J_Leonardis.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Eric J. Leonardis",
+                    "expected": "Eric J. Leonardis",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "United States",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1992-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "516-510-2096",
+                    "expected": "516-510-2096",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "NotGivenInCVDocument.com.au@outlook.com",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of California, San Diego",
+                    "expected": "University of California, San Diego",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Cognitive Science",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Systems Neuroscience, Robotics",
+                    "expected": "Systems Neuroscience, Robotics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2014-09-01",
+                    "expected": "2014-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2022-06-30",
+                    "expected": "2022-06-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://www.salk.edu/eric-leonardis",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/ericjleonardis",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 9,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "Justin_Junyang_Lin.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Justin (Junyang) Lin",
+                    "expected": "Justin (Junyang) Lin",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "China",
+                    "expected": "China",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "2019-01-01",
+                    "expected": "1994-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": "+86 156-5296-8896",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "0@0.com",
+                    "expected": "linjunyang@pku.edu.cn",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "highest_level_degree": {
+                    "prediction": "Master",
+                    "expected": "Master",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "Peking University",
+                    "expected": "Peking University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Linguistics Institute of Linguistics School of Foreign Languages",
+                    "expected": "Institute of Linguistics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Linguistics",
+                    "expected": "Linguistics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2016-09-01",
+                    "expected": "2016-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2019-06-30",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://julianlin.github",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/julianlin",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Xiaoyang_Ye.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Xiaoyang Ye",
+                    "expected": "Xiaoyang Ye",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "China",
+                    "expected": "USA",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "birthday": {
+                    "prediction": "2000-01-01",
+                    "expected": "1988-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "xiaoyang.ye26@gmail.com",
+                    "expected": "xiaoyang.ye26@gmail.com",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Michigan",
+                    "expected": "University of Michigan",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Higher Education",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2017-01-01",
+                    "expected": "2014-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2025-12-31",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://xiaoyangye.github",
+                    "expected": "https://xiaoyangye.github.io/",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://xiaoyangye.github",
+                    "expected": "https://github.com/xiaoyangye",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 11,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Pedro_Rodriguez-Martinez.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Pedro Rodriguez-Martinez",
+                    "expected": "Pedro Rodriguez-Martinez",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "USA",
+                    "expected": "USA",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1993-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "+1 (628) 252-8644",
+                    "expected": "+1 (628) 252-8644",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "perodmar@gwu.edu",
+                    "expected": "perodmar@gwu.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "George Washington University, Washington DC, USA",
+                    "expected": "George Washington University",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": "Department of Economics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "major": {
+                    "prediction": "Public, Urban, & Development Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "0820-20-20",
+                    "expected": "2020-08-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "0520-26-26",
+                    "expected": "2026-05-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "https://perodmar.github",
+                    "expected": "https://perodmar.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://perodmar.github",
+                    "expected": "https://github.com/perodmar",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 13,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "Yifan_Jiang.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Yifan Jiang",
+                    "expected": "Yifan Jiang",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United Kingdom",
+                    "expected": "United Kingdom",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1998-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "yifan.jiang@imperial.ac.uk",
+                    "expected": "yifan.jiang@imperial.ac.uk",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of Oxford",
+                    "expected": "University of Oxford",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Mathematics of Random Systems",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Mathematics of Random Systems",
+                    "expected": "Mathematics",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "start_date": {
+                    "prediction": "2021-09-01",
+                    "expected": "2021-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "end_date": {
+                    "prediction": "2025-09-01",
+                    "expected": "2025-09-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "https://yifanjiang233.github",
+                    "expected": "https://yifanjiang233.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://yifanjiang233.github",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 8,
+            "error_msg": ""
+        },
+        {
+            "filename": "ZHOU_HUACHI.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "ZHOU, HUACHI",
+                    "expected": "Huachi Zhou",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "Hong Kong",
+                    "expected": "Hong Kong",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1998-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "60629081",
+                    "expected": "60629081",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "huachi.zhou@connect.polyu.hk",
+                    "expected": "huachi.zhou@connect.polyu.hk",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "The Hong Kong Polytechnic University",
+                    "expected": "The Hong Kong Polytechnic University",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Computing",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Computing",
+                    "expected": "Computing",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "0920-22-09",
+                    "expected": "2022-09-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "0920-26-09",
+                    "expected": "2026-09-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "homepage_url": {
+                    "prediction": "",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 7,
+            "error_msg": ""
+        },
+        {
+            "filename": "Zarek_Brot-Goldberg.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Zarek Cohen",
+                    "expected": "Zarek Brot-Goldberg",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "USA",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "",
+                    "expected": "1989-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0000000000000000",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "email": {
+                    "prediction": "zarek@uchicago.edu",
+                    "expected": "zarek@uchicago.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "University of California at Berkeley",
+                    "expected": "University of California at Berkeley",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Economics",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Economics",
+                    "expected": "Economics",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2013-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2019-01-01",
+                    "expected": "2019-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "http://sites.googleusercontent",
+                    "expected": "http://sites.google.com/site/zarekcb",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/zarekcb",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                }
+            },
+            "num_fields": 10,
+            "num_correct": 6,
+            "error_msg": ""
+        },
+        {
+            "filename": "Zubin_Jelveh.pdf",
+            "extraction_details": {
+                "name": {
+                    "prediction": "Zubin Jelveh",
+                    "expected": "Zubin Jelveh",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "country": {
+                    "prediction": "United States",
+                    "expected": "USA",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "birthday": {
+                    "prediction": "1999-01-01",
+                    "expected": "1977-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "phone_number": {
+                    "prediction": "0",
+                    "expected": null,
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "email": {
+                    "prediction": "zjelveh@umd.edu",
+                    "expected": "zjelveh@umd.edu",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "highest_level_degree": {
+                    "prediction": "PhD",
+                    "expected": "PhD",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "university": {
+                    "prediction": "New York University - Tandon School of Engineering",
+                    "expected": "New York University",
+                    "verbatim_correct": false,
+                    "judge_model_correct": true,
+                    "correct": true
+                },
+                "department": {
+                    "prediction": "Computer Science",
+                    "expected": "Tandon School of Engineering",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "major": {
+                    "prediction": "Computer Science",
+                    "expected": "Computer Science",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "start_date": {
+                    "prediction": "2017-01-01",
+                    "expected": "2011-01-01",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "end_date": {
+                    "prediction": "2017-01-01",
+                    "expected": "2017-01-01",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                },
+                "homepage_url": {
+                    "prediction": "http://zjelveh.github",
+                    "expected": "http://zjelveh.github.io",
+                    "verbatim_correct": false,
+                    "judge_model_correct": false,
+                    "correct": false
+                },
+                "github_url": {
+                    "prediction": "https://github.com/zjelveh",
+                    "expected": "https://github.com/zjelveh",
+                    "verbatim_correct": true,
+                    "judge_model_correct": false,
+                    "correct": true
+                }
+            },
+            "num_fields": 12,
+            "num_correct": 9,
+            "error_msg": ""
+        }
+    ],
+    "total_fields": 472,
+    "total_correct": 310,
+    "errors": 0,
+    "calibrated_accuracy": 0.6567796610169492
+}
