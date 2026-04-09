@@ -184,6 +184,22 @@ def _add_code_eval_args(parser):
     )
 
 
+def _add_scierc_eval_args(parser):
+    parser.add_argument(
+        "--scierc_split",
+        type=str,
+        choices=["train", "dev", "test"],
+        default="test",
+        help="SciERC split to evaluate",
+    )
+    parser.add_argument(
+        "--scierc_max_relations",
+        type=int,
+        default=30,
+        help="Maximum number of extracted relations to ask the model for each document",
+    )
+
+
 def _add_cv_eval_args(parser):
     parser.add_argument("--use_outlines", action="store_true", help="Whether to use outlines in CV evaluation")
     parser.add_argument(
@@ -215,6 +231,7 @@ def get_args() -> argparse.Namespace:
     _add_mcqa_eval_args(parser)
     _add_cv_eval_args(parser)
     _add_code_eval_args(parser)
+    _add_scierc_eval_args(parser)
     args = parser.parse_args()
     validate_and_standardize(args)
     return args
