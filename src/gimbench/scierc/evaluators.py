@@ -299,7 +299,7 @@ class GIMSciERCEvaluator(SciERCEvaluator):
             "## Extracted Relations\n\n"
         )
         for i in range(self.args.scierc_max_relations):
-            prompt += f"- Relation {i+1}:\n"
+            prompt += f"- Relation {i + 1}:\n"
             prompt += f"  - Head Entity: {guide(name=f'head_{i}')}\n"
             prompt += f"  - Relation Type: {guide(name=f'relation_{i}')}\n"
             prompt += f"  - Tail Entity: {guide(name=f'tail_{i}')}\n\n"
