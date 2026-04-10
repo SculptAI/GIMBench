@@ -57,7 +57,7 @@ class BaseEvalResult(BaseModel):
 
     eval_env: dict[str, str] = Field(default_factory=_create_eval_env)
 
-    evaluator_type: Literal["code", "cv", "match", "mcqa", "ppl"]
+    evaluator_type: Literal["code", "cv", "match", "mcqa", "ppl", "scierc"]
 
     args: Namespace
 
