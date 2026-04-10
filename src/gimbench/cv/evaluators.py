@@ -17,7 +17,14 @@ from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
 from gimbench.models import SimpleGIM
 
-from .schema import CV_FIELDS, GIMKIT_TEMPLATE, OUTLINES_JSON_SCHEMA, OUTLINES_TEMPLATE, SHARED_PROMPT_PREFIX, GLINER_SCHEMA
+from .schema import (
+    CV_FIELDS,
+    GIMKIT_TEMPLATE,
+    GLINER_SCHEMA,
+    OUTLINES_JSON_SCHEMA,
+    OUTLINES_TEMPLATE,
+    SHARED_PROMPT_PREFIX,
+)
 
 
 logger = get_logger(__name__)
@@ -248,11 +255,11 @@ class GLiNEREvaluator(CVEvaluator):
                 "to evaluate using this model."
             )
         self.model = GLiNER2.from_pretrained(args.model_name)
-    
+
     def _extract_fields(self, cv_content: str) -> dict[str, str]:
         # GLiNER2 has a length limit, let's truncate just in case, or pass directly
         result = self.model.extract_json(cv_content, GLINER_SCHEMA)
-        
+
         extraction = {}
         if "cv" in result and isinstance(result["cv"], list) and len(result["cv"]) > 0:
             extracted_item = result["cv"][0]
