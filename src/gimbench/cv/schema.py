@@ -90,3 +90,21 @@ class CVData(BaseModel):
 
 
 OUTLINES_JSON_SCHEMA = CVData.model_json_schema()
+
+GLINER_SCHEMA = {
+    "cv": [
+        "name::str::Full name of the person",
+        "country::str::Country, nationality, or country of residence",
+        "birthday::str::Date of birth",
+        "phone_number::str::Phone number",
+        "email::str::Email address",
+        "highest_level_degree::[Bachelor|Master|PhD]::str::Highest educational degree",
+        "university::str::University name",
+        "department::str::Department or school",
+        "major::str::Major or field of study",
+        "start_date::str::Start date of education",
+        "end_date::str::End date of education",
+        "homepage_url::str::Personal homepage URL",
+        "github_url::str::GitHub profile URL",
+    ]
+}
