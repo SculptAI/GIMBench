@@ -29,6 +29,7 @@ GIMBench provides several benchmark types:
 - **Multiple Choice QA**: Assess guided generation in question-answering contexts
 - **Perplexity**: Measure language modeling quality with constraints
 - **Code Infilling**: Evaluate code infilling via unit-test execution (pass@k)
+- **SciERC Relation Extraction**: Evaluate scientific relation extraction on the Hugging Face dataset `Sculpt-AI/GIMBench-sci-erc`
 
 ### Example Commands
 
@@ -82,6 +83,33 @@ python -m gimbench.code.humaneval_infilling \
     --model_name meta-llama/Llama-3.1-8B-Instruct \
     --base_url http://localhost:8000/v1 \
     --no_gimkit
+
+Run SciERC relation extraction benchmark (Hugging Face dataset):
+
+```bash
+python -m gimbench.scierc.scierc \
+    --model_type vllm \
+    --model_name meta-llama/Llama-3.1-8B-Instruct \
+    --base_url http://localhost:8000/v1 \
+    --scierc_split test
+
+# Plain LLM (no GIMKit)
+python -m gimbench.scierc.scierc \
+    --model_type vllm \
+    --model_name meta-llama/Llama-3.1-8B-Instruct \
+    --base_url http://localhost:8000/v1 \
+    --scierc_split dev \
+    --no_gimkit
+```
+
+If you need to rebuild and upload the dataset, use:
+
+```bash
+python benchmarks/GIMBench-sci-erc/1_build_dataset.py \
+    --raw_dir benchmarks/GIMBench-sci-erc/data/raw_data \
+    --repo_id Sculpt-AI/GIMBench-sci-erc \
+    --push_to_hub
+```
 ```
 
 ## Development
