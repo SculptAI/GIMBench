@@ -121,6 +121,7 @@ class SciERCEvaluator(BaseEvaluator):
     def __init__(self, args: Namespace, dataset: Dataset):
         super().__init__(args, dataset)
         self._counter_tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(args.counter_tokenizer)
+        self.model: SimpleGIM | SimpleCommon | None = None
         logger.info(f"Loaded tokenizer {args.counter_tokenizer} for token counting.")
 
     def _count_tokens(self, text: str) -> int:
@@ -180,15 +181,19 @@ class SciERCEvaluator(BaseEvaluator):
         response = ""
         gen_time = -1.0
         ttft = -1.0
+        model = self.model
+
+        assert model is not None
 
         try:
-            if isinstance(self.model, SimpleGIM) and self.args.record_timing:
-                result, gen_time, ttft = self.model.generate_with_timing(query)
-                response = str(result)
-            elif isinstance(self.model, SimpleGIM):
-                response = str(self.model.generate(query))
+            if isinstance(model, SimpleGIM):
+                if self.args.record_timing:
+                    result, gen_time, ttft = model.generate_with_timing(query)
+                    response = str(result)
+                else:
+                    response = str(model.generate(query))
             else:
-                response = self.model.generate(query)
+                response = model.generate(query)
 
             gold = self._gold_relations(item)
             pred = self._parse_predicted_relations(response)
@@ -315,12 +320,15 @@ class GIMSciERCEvaluator(SciERCEvaluator):
         response = ""
         gen_time = -1.0
         ttft = -1.0
+        model = self.model
+
+        assert isinstance(model, SimpleGIM)
 
         try:
             if self.args.record_timing:
-                result, gen_time, ttft = self.model.generate_with_timing(query)
+                result, gen_time, ttft = model.generate_with_timing(query)
             else:
-                result = self.model.generate(query)
+                result = model.generate(query)
             response = str(result)
 
             gold = self._gold_relations(item)
