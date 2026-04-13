@@ -1,7 +1,6 @@
 # https://huggingface.co/datasets/Sculpt-AI/humaneval_infilling
-# TODO: the HF dataset repo needs repairs.
 
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets
 
 from gimbench.arguments import get_args
 from gimbench.code.evaluators import conduct_eval
@@ -15,9 +14,18 @@ if __name__ == "__main__":
     args = get_args()
     args.dataset = {
         "path": "Sculpt-AI/humaneval_infilling",
+        "subsets": [
+            "MultiLine",
+            "RandomSpan",
+            "RandomSpanLight",
+            "SingleLine"
+        ]
     }
 
-    ds = load_dataset(args.dataset["path"], split="train")
+    ds = concatenate_datasets([
+        load_dataset(args.dataset["path"], split="test", name=subset)
+        for subset in args.dataset["subsets"]
+    ]).shuffle(seed=args.seed)
     logger.info(f"Loaded {len(ds)} samples from dataset {args.dataset}")
     logger.info(f"Columns: {ds.column_names}")
     logger.info(f"First sample: {ds[0]}")
