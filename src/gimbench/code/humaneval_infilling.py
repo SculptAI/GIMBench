@@ -1,6 +1,6 @@
 # https://huggingface.co/datasets/Sculpt-AI/humaneval_infilling
 
-from datasets import load_dataset, concatenate_datasets
+from datasets import concatenate_datasets, load_dataset
 
 from gimbench.arguments import get_args
 from gimbench.code.evaluators import conduct_eval
@@ -14,18 +14,12 @@ if __name__ == "__main__":
     args = get_args()
     args.dataset = {
         "path": "Sculpt-AI/humaneval_infilling",
-        "subsets": [
-            "MultiLine",
-            "RandomSpan",
-            "RandomSpanLight",
-            "SingleLine"
-        ]
+        "subsets": ["MultiLine", "RandomSpan", "RandomSpanLight", "SingleLine"],
     }
 
-    ds = concatenate_datasets([
-        load_dataset(args.dataset["path"], split="test", name=subset)
-        for subset in args.dataset["subsets"]
-    ]).shuffle(seed=args.seed)
+    ds = concatenate_datasets(
+        [load_dataset(args.dataset["path"], split="test", name=subset) for subset in args.dataset["subsets"]]
+    ).shuffle(seed=args.seed)
     logger.info(f"Loaded {len(ds)} samples from dataset {args.dataset}")
     logger.info(f"Columns: {ds.column_names}")
     logger.info(f"First sample: {ds[0]}")
