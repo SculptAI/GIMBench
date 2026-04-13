@@ -83,6 +83,7 @@ python -m gimbench.code.humaneval_infilling \
     --model_name meta-llama/Llama-3.1-8B-Instruct \
     --base_url http://localhost:8000/v1 \
     --no_gimkit
+```
 
 Run SciERC relation extraction benchmark (Hugging Face dataset):
 
@@ -109,7 +110,6 @@ python benchmarks/GIMBench-sci-erc/1_build_dataset.py \
     --raw_dir benchmarks/GIMBench-sci-erc/data/raw_data \
     --repo_id Sculpt-AI/GIMBench-sci-erc \
     --push_to_hub
-```
 ```
 
 ## Development
