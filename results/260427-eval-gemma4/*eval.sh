@@ -2,6 +2,9 @@
 
 set -x
 
+API_KEY="$1"
+API_BASE="https://openrouter.ai/api/v1"
+
 MODEL_NAME="/mnt/data/artifacts/2604261-gemma-e2b-update/sft-gim"
 
 python -m gimbench.ppl.gim_sft --model_type vllm-offline --model_name "$MODEL_NAME" --output_type cfg --first_n 100
