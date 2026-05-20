@@ -202,6 +202,7 @@ def _add_scierc_eval_args(parser):
 
 def _add_cv_eval_args(parser):
     parser.add_argument("--use_outlines", action="store_true", help="Whether to use outlines in CV evaluation")
+    parser.add_argument("--use_uie", action="store_true", help="Whether to use Traditional UIE model in CV evaluation")
     parser.add_argument(
         "--judge_model_name",
         type=str,

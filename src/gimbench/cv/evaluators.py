@@ -236,7 +236,47 @@ class OutlinesEvaluator(CVEvaluator):
             raise ValueError(f"Expected dict but got {type(extraction).__name__}: {extraction}")
 
 
+class UIEEvaluator(CVEvaluator):
+    def __init__(self, args: Namespace, dataset: Dataset):
+        super().__init__(args, dataset)
+        try:
+            from paddlenlp import Taskflow
+
+            model_name = args.model_name or "uie-base"
+            if "PP-UIE" in model_name and not model_name.startswith("paddlenlp/"):
+                model_name = f"paddlenlp/{model_name}"
+            # PP-UIE-7B or other LLM-based UIE might require different task names,
+            # but usually "information_extraction" covers UIE.
+            self.model = Taskflow("information_extraction", schema=CV_FIELDS, model=model_name, precision="bfloat16")
+        except ImportError:
+            raise ImportError("Please install paddlenlp to use the UIEEvaluator. (pip install paddlenlp)")
+
+    def _extract_fields(self, cv_content: str) -> dict[str, str]:
+        try:
+            # We might want to chunk or limit cv_content length depending on the model's context window.
+            # PP-UIE-7B handles longer contexts but passing the whole CV might still be long.
+            # Taskflow can handle it or truncate internally.
+            results = self.model(cv_content)
+            extraction = {}
+            for field in CV_FIELDS:
+                # UIE returns a list of dictionaries. The first dictionary contains the field if extracted.
+                if results and isinstance(results, list) and len(results) > 0 and field in results[0]:
+                    # Extract the text of the first matched entity
+                    # Taskflow usually returns [{'text': 'xxx', ...}, ...] for each field
+                    extracted_texts = [item["text"] for item in results[0][field]]
+                    extraction[field] = ", ".join(extracted_texts) if extracted_texts else ""
+                else:
+                    extraction[field] = ""
+        except Exception as e:
+            logger.error(f"PaddleNLP UIE generation failed: {e}")
+            extraction = dict.fromkeys(CV_FIELDS, "")
+        return extraction
+
+
 def conduct_eval(args: Namespace, ds: Dataset):
-    evaluator = OutlinesEvaluator(args, ds) if args.use_outlines else GIMEvaluator(args, ds)
+    if hasattr(args, "use_uie") and args.use_uie:
+        evaluator = UIEEvaluator(args, ds)
+    else:
+        evaluator = OutlinesEvaluator(args, ds) if args.use_outlines else GIMEvaluator(args, ds)
     result = evaluator.evaluate()
     result.dump()
