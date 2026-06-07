@@ -15,3 +15,6 @@ eval.log.*
 
 # Caches
 .mypy_cache/
+
+# CV results
+results/**/*cv*.json
