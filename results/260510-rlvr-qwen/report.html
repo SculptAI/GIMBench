@@ -34,7 +34,7 @@
 <div class="container">
 
 <h1>GIMBench RLVR 实验深度分析报告</h1>
-<p class="subtitle">260510-rlvr-qwen &mdash; 更新于 2026-06-07 &mdash; 9 个模型变体，6 个 benchmark</p>
+<p class="subtitle">260510-rlvr-qwen &mdash; 更新于 2026-06-08 &mdash; 10 个模型变体，6 个 benchmark</p>
 
 <div class="toc"><strong>目录</strong><ol>
   <li><a href="#overview">实验概览与综合汇总</a></li>
@@ -54,24 +54,24 @@
 <div class="card" id="overview">
 <h2>一、实验概览</h2>
 <div class="summary-grid">
-  <div class="summary-item"><div class="label">RL 变体数</div><div class="value">7</div></div>
+  <div class="summary-item"><div class="label">RL 变体数</div><div class="value">8</div></div>
   <div class="summary-item"><div class="label">评测任务</div><div class="value">6</div></div>
-  <div class="summary-item"><div class="label">最新变体</div><div class="value" style="font-size:1.1rem;color:var(--brown)">RLVR-6041</div></div>
-  <div class="summary-item"><div class="label">综合最强 RL</div><div class="value" style="font-size:1.1rem;color:var(--teal)">601-ckpt490</div></div>
+  <div class="summary-item"><div class="label">最新变体</div><div class="value" style="font-size:1.1rem;color:var(--brown)">RLVR-6071</div></div>
+  <div class="summary-item"><div class="label">综合最强</div><div class="value" style="font-size:1.1rem;color:var(--teal)">601-ckpt490</div></div>
 </div>
 
 <h3>模型说明</h3>
-<p style="font-size:.85rem;color:var(--muted);margin-bottom:.5rem">所有 RLVR 变体均为<strong>独立实验</strong>，使用不同的训练数据、reward 函数和优化策略。</p>
 <table>
-  <tr><th>简称</th><th>路径</th><th>说明</th></tr>
-  <tr><td><strong>Qwen3-1.7B</strong></td><td>Qwen/Qwen3-1.7B</td><td>基座模型</td></tr>
-  <tr><td><strong>GIM-1.7B (SFT)</strong></td><td>Sculpt-AI/GIM-1.7B</td><td>SFT 训练的 GIM 模型</td></tr>
-  <tr><td><strong>RLVR-061</strong></td><td>.../2605061/</td><td>RL 变体（05-06）</td></tr>
-  <tr><td><strong>RLVR-141</strong></td><td>.../2605141/</td><td>RL 变体（05-14）</td></tr>
-  <tr><td><strong>RLVR-151</strong></td><td>.../2605151/</td><td>RL 变体（05-15）</td></tr>
-  <tr><td><strong>RLVR-601</strong></td><td>.../2606011/</td><td>RL 变体（06-01），含 ckpt-490 / ckpt-980</td></tr>
-  <tr><td><strong>RLVR-6021</strong></td><td>.../2606021/</td><td>RL 变体（06-02），精确匹配 reward</td></tr>
-  <tr><td><strong>RLVR-6041</strong></td><td>.../2606041/</td><td>RL 变体（06-04），半量数据+高温度<span class="tag tag-teal" style="margin-left:.5rem">最新</span></td></tr>
+  <tr><th>简称</th><th>说明</th><th>关键配置差异</th></tr>
+  <tr><td><strong>Qwen3-1.7B</strong></td><td>基座模型</td><td>&mdash;</td></tr>
+  <tr><td><strong>GIM-1.7B (SFT)</strong></td><td>SFT 训练的 GIM 模型</td><td>&mdash;</td></tr>
+  <tr><td>RLVR-061</td><td>RL 变体（05-06）</td><td>5000 数据，二元 length reward</td></tr>
+  <tr><td>RLVR-141</td><td>RL 变体（05-14）</td><td>5000 数据，三独立 reward</td></tr>
+  <tr><td>RLVR-151</td><td>RL 变体（05-15）</td><td>5000 数据，三独立 reward</td></tr>
+  <tr><td><strong>RLVR-601</strong></td><td>RL 变体（06-01），含 ckpt-490 / ckpt-980</td><td>1000 数据，math_verify，temp=1.2，group=6</td></tr>
+  <tr><td>RLVR-6021</td><td>RL 变体（06-02）</td><td>2000 数据，精确匹配，temp=1.0，group=6</td></tr>
+  <tr><td>RLVR-6041</td><td>RL 变体（06-04）</td><td>1000 数据，精确匹配，temp=1.2，group=6</td></tr>
+  <tr><td><strong>RLVR-6071</strong></td><td>RL 变体（06-07）<span class="tag tag-teal" style="margin-left:.5rem">最新</span></td><td>2000 数据，math_verify，temp=1.0，<strong>group=6</strong></td></tr>
 </table>
 
 <h3>综合汇总表</h3>
@@ -84,27 +84,28 @@
   <tr><td>RLVR-151</td><td>0.20</td><td>0.23</td><td class="best">0.80</td><td>0.44</td><td>0.020</td><td>0.730</td><td>0.002</td><td>0.581</td><td>0.638</td></tr>
   <tr><td><strong>RLVR-601 ckpt-490</strong></td><td>0.20</td><td class="rlvr-best">0.35</td><td>0.76</td><td>0.44</td><td class="rlvr-best">0.095</td><td>0.768</td><td>0.013</td><td>0.619</td><td class="rlvr-best">0.259</td></tr>
   <tr><td>RLVR-601 ckpt-980</td><td>0.19</td><td>0.34</td><td>0.77</td><td>0.44</td><td>0.060</td><td>0.782</td><td>0.018</td><td>0.619</td><td>0.283</td></tr>
-  <tr><td>RLVR-6021</td><td class="rlvr-best">0.22</td><td>0.27</td><td class="rlvr-best">0.79</td><td>0.38</td><td>0.080</td><td class="rlvr-best">0.794</td><td class="rlvr-best">0.022</td><td>0.606</td><td>0.280</td></tr>
-  <tr><td><strong>RLVR-6041</strong></td><td>0.19</td><td>0.29</td><td>0.78</td><td>0.44</td><td>0.090</td><td>0.762</td><td>0.017</td><td class="rlvr-best">0.623</td><td>0.271</td></tr>
+  <tr><td>RLVR-6021</td><td>0.22</td><td>0.27</td><td class="rlvr-best">0.79</td><td>0.38</td><td>0.080</td><td class="rlvr-best">0.794</td><td class="rlvr-best">0.022</td><td>0.606</td><td>0.280</td></tr>
+  <tr><td>RLVR-6041</td><td>0.19</td><td>0.29</td><td>0.78</td><td>0.44</td><td>0.090</td><td>0.762</td><td>0.017</td><td class="rlvr-best">0.623</td><td>0.271</td></tr>
+  <tr><td><strong>RLVR-6071</strong></td><td class="rlvr-best">0.23</td><td>0.30</td><td>0.78</td><td>0.44</td><td class="rlvr-best">0.095</td><td class="worst">0.748</td><td>0.021</td><td>0.617</td><td>0.283</td></tr>
 </table>
-<div class="note">绿色 = 全局最优，青绿色 = RL 变体中最优，红色 = 全局最差。PPL INP 越低越好。</div>
+<div class="note">绿色 = 全局最优，青绿色 = RL 变体中最优，红色 = 全局最差（排除早期 061/141/151）。</div>
 
 <div class="highlight-box">
-<strong>RL 变体 vs SFT 对比（6041 为重点）：</strong>
+<strong>最新变体 RLVR-6071（2000 数据 + math_verify + temp=1.0 + group=6）：</strong>
 <table style="margin-top:.5rem">
-  <tr><th>Benchmark</th><th>SFT</th><th>601-490</th><th>6021</th><th>6041</th><th>6041 vs SFT</th></tr>
-  <tr><td>GPQA</td><td>0.130</td><td>0.200</td><td class="best">0.220</td><td>0.190</td><td><span class="tag tag-up">+6pp</span></td></tr>
-  <tr><td>MMLU-Pro</td><td>0.300</td><td class="best">0.350</td><td>0.270</td><td>0.290</td><td><span class="tag tag-down">&minus;1pp</span></td></tr>
-  <tr><td>QASC</td><td>0.760</td><td>0.760</td><td class="best">0.790</td><td>0.780</td><td><span class="tag tag-up">+2pp</span></td></tr>
-  <tr><td>MedMCQA</td><td>0.460</td><td>0.440</td><td>0.380</td><td>0.440</td><td><span class="tag tag-down">&minus;2pp</span></td></tr>
-  <tr><td>Code</td><td>0.090</td><td class="best">0.095</td><td>0.080</td><td>0.090</td><td><span class="tag tag-flat">+0pp</span></td></tr>
-  <tr><td>Match</td><td>0.756</td><td>0.768</td><td class="best">0.794</td><td>0.762</td><td><span class="tag tag-up">+0.6pp</span></td></tr>
-  <tr><td>SciERC</td><td>0.011</td><td>0.013</td><td class="best">0.022</td><td>0.017</td><td><span class="tag tag-up">+0.6pp</span></td></tr>
-  <tr><td>CV Acc</td><td>0.619</td><td>0.619</td><td>0.606</td><td class="best">0.623</td><td><span class="tag tag-up">+0.4pp</span></td></tr>
-  <tr><td>PPL INP↓</td><td>0.268</td><td class="best">0.259</td><td>0.280</td><td>0.271</td><td><span class="tag tag-up">&minus;0.003</span></td></tr>
+  <tr><th>Benchmark</th><th>SFT</th><th>601-490</th><th>6071</th><th>6071 vs SFT</th><th>6071 vs 601-490</th></tr>
+  <tr><td>GPQA</td><td>0.130</td><td>0.200</td><td class="rlvr-best">0.230</td><td><span class="tag tag-up">+10pp</span></td><td><span class="tag tag-up">+3pp</span></td></tr>
+  <tr><td>MMLU-Pro</td><td>0.300</td><td class="rlvr-best">0.350</td><td>0.300</td><td><span class="tag tag-flat">+0pp</span></td><td><span class="tag tag-down">&minus;5pp</span></td></tr>
+  <tr><td>QASC</td><td>0.760</td><td>0.760</td><td>0.780</td><td><span class="tag tag-up">+2pp</span></td><td><span class="tag tag-up">+2pp</span></td></tr>
+  <tr><td>MedMCQA</td><td>0.460</td><td>0.440</td><td>0.440</td><td><span class="tag tag-down">&minus;2pp</span></td><td><span class="tag tag-flat">+0pp</span></td></tr>
+  <tr><td>Code</td><td>0.090</td><td class="rlvr-best">0.095</td><td class="rlvr-best">0.095</td><td><span class="tag tag-up">+0.5pp</span></td><td><span class="tag tag-flat">+0pp</span></td></tr>
+  <tr><td>Match</td><td>0.756</td><td>0.768</td><td class="worst">0.748</td><td><span class="tag tag-down">&minus;0.8pp</span></td><td><span class="tag tag-down">&minus;2pp</span></td></tr>
+  <tr><td>SciERC</td><td>0.011</td><td>0.013</td><td>0.021</td><td><span class="tag tag-up">+1.0pp</span></td><td><span class="tag tag-up">+0.8pp</span></td></tr>
+  <tr><td>CV</td><td>0.619</td><td>0.619</td><td>0.617</td><td><span class="tag tag-down">&minus;0.2pp</span></td><td><span class="tag tag-down">&minus;0.2pp</span></td></tr>
+  <tr><td>PPL INP↓</td><td>0.268</td><td class="rlvr-best">0.259</td><td>0.283</td><td><span class="tag tag-down">+0.015</span></td><td><span class="tag tag-down">+0.024</span></td></tr>
 </table>
-<strong>6041 是最接近 SFT 的变体</strong>：在 CV（0.623，超越 SFT）和 PPL INP（0.271，接近 SFT）上表现最好。但 GPQA/MMLU-Pro 不如 601-490/6021。<br>
-<strong>601-ckpt490 仍是综合最强</strong>：MMLU-Pro（0.35）、Code（0.095）、PPL INP（0.259）三项最优。
+<strong>6071 亮点</strong>：GPQA 新高（0.23，+3pp vs 601-490），Code 并列最佳（0.095），SciERC 接近最佳（0.021）。<br>
+<strong>6071 短板</strong>：Match 最低（0.748，低于 SFT），MMLU-Pro 回落到 SFT 水平（0.30），PPL INP 退化（0.283）。
 </div>
 </div>
 
@@ -117,52 +118,50 @@
   <tr><td>MMLU-Pro</td><td>0.300</td><td class="best">0.350</td><td>0.340</td><td><span class="tag tag-up">+5pp</span></td><td><span class="tag tag-down">&minus;1pp</span></td></tr>
   <tr><td>Code</td><td>0.090</td><td class="best">0.095</td><td class="worst">0.060</td><td><span class="tag tag-up">+0.5pp</span></td><td><span class="tag tag-down">&minus;3.5pp</span></td></tr>
   <tr><td>PPL INP↓</td><td>0.268</td><td class="best">0.259</td><td class="worst">0.283</td><td><span class="tag tag-up">&minus;0.010</span></td><td><span class="tag tag-down">+0.025</span></td></tr>
-  <tr><td>Match</td><td>0.756</td><td>0.768</td><td class="best">0.782</td><td><span class="tag tag-up">+1.2pp</span></td><td><span class="tag tag-up">+1.4pp</span></td></tr>
 </table>
-<div class="success-box"><strong>ckpt-490 是 601 的最优 checkpoint</strong>：前 50% 训练贡献主要收益，后 50% 导致 Code -3.5pp、PPL INP 退化（overfitting）。</div>
+<div class="success-box"><strong>ckpt-490 是 601 的最优 checkpoint</strong>：前 50% 训练贡献主要收益，后 50% 导致 Code/PPL 退化（overfitting）。</div>
 </div>
 
 <!-- ===== MCQA ===== -->
 <div class="card" id="mcqa">
 <h2>三、MCQA 多选题</h2>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#0d6efd"></div>Qwen3-1.7B</div>
   <div class="legend-item"><div class="legend-dot" style="background:#198754"></div>SFT</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#fd7e14"></div>RLVR-061</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#dc3545"></div>RLVR-141</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#6f42c1"></div>RLVR-151</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#0d9488"></div>RLVR-601</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div>RLVR-6021</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#d63384"></div>RLVR-6041</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0d9488"></div>601-ckpt490</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div>6021</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#d63384"></div>6041</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3498db"></div>6071</div>
 </div>
 
 <h3>GPQA Diamond</h3>
 <div class="bar-container"><div class="bar-label">Qwen3-1.7B</div><div class="bar-track"><div class="bar-fill" style="width:72.5%;background:#0d6efd"></div></div><div class="bar-value best">0.290</div></div>
 <div class="bar-container"><div class="bar-label">GIM-1.7B</div><div class="bar-track"><div class="bar-fill" style="width:32.5%;background:#198754"></div></div><div class="bar-value">0.130</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-601</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#0d9488"></div></div><div class="bar-value">0.200</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6021</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#e67e22"></div></div><div class="bar-value rlvr-best">0.220</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6041</div><div class="bar-track"><div class="bar-fill" style="width:47.5%;background:#d63384"></div></div><div class="bar-value">0.190</div></div>
+<div class="bar-container"><div class="bar-label">601-ckpt490</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#0d9488"></div></div><div class="bar-value">0.200</div></div>
+<div class="bar-container"><div class="bar-label">6021</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#e67e22"></div></div><div class="bar-value">0.220</div></div>
+<div class="bar-container"><div class="bar-label">6041</div><div class="bar-track"><div class="bar-fill" style="width:47.5%;background:#d63384"></div></div><div class="bar-value">0.190</div></div>
+<div class="bar-container"><div class="bar-label">6071</div><div class="bar-track"><div class="bar-fill" style="width:57.5%;background:#3498db"></div></div><div class="bar-value rlvr-best">0.230</div></div>
 
 <h3>MMLU-Pro</h3>
 <div class="bar-container"><div class="bar-label">Qwen3-1.7B</div><div class="bar-track"><div class="bar-fill" style="width:53.8%;background:#0d6efd"></div></div><div class="bar-value best">0.430</div></div>
 <div class="bar-container"><div class="bar-label">GIM-1.7B</div><div class="bar-track"><div class="bar-fill" style="width:37.5%;background:#198754"></div></div><div class="bar-value">0.300</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-601</div><div class="bar-track"><div class="bar-fill" style="width:43.8%;background:#0d9488"></div></div><div class="bar-value rlvr-best">0.350</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6021</div><div class="bar-track"><div class="bar-fill" style="width:33.8%;background:#e67e22"></div></div><div class="bar-value">0.270</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6041</div><div class="bar-track"><div class="bar-fill" style="width:36.3%;background:#d63384"></div></div><div class="bar-value">0.290</div></div>
+<div class="bar-container"><div class="bar-label">601-ckpt490</div><div class="bar-track"><div class="bar-fill" style="width:43.8%;background:#0d9488"></div></div><div class="bar-value rlvr-best">0.350</div></div>
+<div class="bar-container"><div class="bar-label">6021</div><div class="bar-track"><div class="bar-fill" style="width:33.8%;background:#e67e22"></div></div><div class="bar-value">0.270</div></div>
+<div class="bar-container"><div class="bar-label">6041</div><div class="bar-track"><div class="bar-fill" style="width:36.3%;background:#d63384"></div></div><div class="bar-value">0.290</div></div>
+<div class="bar-container"><div class="bar-label">6071</div><div class="bar-track"><div class="bar-fill" style="width:37.5%;background:#3498db"></div></div><div class="bar-value">0.300</div></div>
 
 <h3>QASC</h3>
 <div class="bar-container"><div class="bar-label">GIM-1.7B</div><div class="bar-track"><div class="bar-fill" style="width:95%;background:#198754"></div></div><div class="bar-value">0.760</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-601</div><div class="bar-track"><div class="bar-fill" style="width:95%;background:#0d9488"></div></div><div class="bar-value">0.760</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6021</div><div class="bar-track"><div class="bar-fill" style="width:98.8%;background:#e67e22"></div></div><div class="bar-value rlvr-best">0.790</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6041</div><div class="bar-track"><div class="bar-fill" style="width:97.5%;background:#d63384"></div></div><div class="bar-value">0.780</div></div>
+<div class="bar-container"><div class="bar-label">6021</div><div class="bar-track"><div class="bar-fill" style="width:98.8%;background:#e67e22"></div></div><div class="bar-value rlvr-best">0.790</div></div>
+<div class="bar-container"><div class="bar-label">6041</div><div class="bar-track"><div class="bar-fill" style="width:97.5%;background:#d63384"></div></div><div class="bar-value">0.780</div></div>
+<div class="bar-container"><div class="bar-label">6071</div><div class="bar-track"><div class="bar-fill" style="width:97.5%;background:#3498db"></div></div><div class="bar-value">0.780</div></div>
 
 <h3>MedMCQA</h3>
 <div class="bar-container"><div class="bar-label">GIM-1.7B</div><div class="bar-track"><div class="bar-fill" style="width:57.5%;background:#198754"></div></div><div class="bar-value">0.460</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-601</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#0d9488"></div></div><div class="bar-value">0.440</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6021</div><div class="bar-track"><div class="bar-fill" style="width:47.5%;background:#e67e22"></div></div><div class="bar-value">0.380</div></div>
-<div class="bar-container"><div class="bar-label">RLVR-6041</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#d63384"></div></div><div class="bar-value">0.440</div></div>
+<div class="bar-container"><div class="bar-label">601-ckpt490</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#0d9488"></div></div><div class="bar-value">0.440</div></div>
+<div class="bar-container"><div class="bar-label">6041</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#d63384"></div></div><div class="bar-value">0.440</div></div>
+<div class="bar-container"><div class="bar-label">6071</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#3498db"></div></div><div class="bar-value">0.440</div></div>
 
-<div class="insight-box"><strong>6041 vs 6021</strong>：两者使用相同的 reward（精确匹配），但 6041 用半量数据（1000 vs 2000）+ 高温度（1.2 vs 1.0）。6041 在 MMLU-Pro（+2pp）、MedMCQA（+6pp）上显著优于 6021，说明<strong>更少数据 + 更高温度有助于防止 overfitting</strong>。</div>
+<div class="insight-box"><strong>6071 GPQA 新高（0.23）</strong>，是所有 RL 变体中最强的推理能力。但 MMLU-Pro 回落到 SFT 水平（0.30 vs 601-490 的 0.35），说明 math_verify reward 对不同推理任务的影响不同。</div>
 </div>
 
 <!-- ===== Code ===== -->
@@ -171,15 +170,12 @@
 <table>
   <tr><th>模型</th><th>pass@1</th><th>与 SFT 差值</th></tr>
   <tr><td>GIM-1.7B (SFT)</td><td>0.090</td><td>&mdash;</td></tr>
-  <tr><td>RLVR-601 ckpt-490</td><td class="best">0.095</td><td><span class="tag tag-up">+0.005</span></td></tr>
+  <tr><td><strong>RLVR-601 ckpt-490</strong></td><td class="rlvr-best">0.095</td><td><span class="tag tag-up">+0.005</span></td></tr>
+  <tr><td><strong>RLVR-6071</strong></td><td class="rlvr-best">0.095</td><td><span class="tag tag-up">+0.005</span></td></tr>
   <tr><td>RLVR-6041</td><td>0.090</td><td><span class="tag tag-flat">+0.000</span></td></tr>
   <tr><td>RLVR-6021</td><td>0.080</td><td><span class="tag tag-down">&minus;0.010</span></td></tr>
-  <tr><td>RLVR-061</td><td>0.060</td><td><span class="tag tag-down">&minus;0.030</span></td></tr>
-  <tr><td>RLVR-601 ckpt-980</td><td>0.060</td><td><span class="tag tag-down">&minus;0.030</span></td></tr>
-  <tr><td>RLVR-141</td><td class="worst">0.025</td><td><span class="tag tag-down">&minus;0.065</span></td></tr>
-  <tr><td>RLVR-151</td><td class="worst">0.020</td><td><span class="tag tag-down">&minus;0.070</span></td></tr>
 </table>
-<div class="insight-box">6041 完全恢复了 SFT 的代码能力（0.090 = SFT），优于 6021（0.080）。半量数据+高温度的配置有助于保留代码 infilling 能力。</div>
+<div class="success-box"><strong>6071 代码能力并列最佳（0.095 = 601-ckpt490）</strong>。两者都使用 math_verify + group=6，说明这个组合对代码 infilling 最友好。</div>
 </div>
 
 <!-- ===== Match ===== -->
@@ -187,14 +183,15 @@
 <h2>五、正则匹配（match_rate）</h2>
 <table>
   <tr><th>模型</th><th>match_rate</th><th>prediction_rate</th></tr>
-  <tr><td>GIM-1.7B (SFT)</td><td>0.756</td><td>0.936</td></tr>
   <tr><td>RLVR-061</td><td class="best">0.814</td><td>0.945</td></tr>
   <tr><td>RLVR-6021</td><td class="rlvr-best">0.794</td><td>0.952</td></tr>
   <tr><td>RLVR-601 ckpt-980</td><td>0.782</td><td class="rlvr-best">0.960</td></tr>
   <tr><td>RLVR-601 ckpt-490</td><td>0.768</td><td>0.945</td></tr>
   <tr><td>RLVR-6041</td><td>0.762</td><td>0.940</td></tr>
+  <tr><td>GIM-1.7B (SFT)</td><td>0.756</td><td>0.936</td></tr>
+  <tr><td><strong>RLVR-6071</strong></td><td class="worst">0.748</td><td>0.940</td></tr>
 </table>
-<div class="note">6041 的 match_rate（0.762）接近 SFT（0.756），说明半量训练对格式合规性的提升有限。</div>
+<div class="danger-box"><strong>6071 的 match_rate（0.748）是所有近期变体中最低的，甚至低于 SFT（0.756）。</strong> 这与 6021（0.794）形成鲜明对比。两者都用 2000 数据，但 6021 用精确匹配 reward + temp=1.0，6071 用 math_verify + temp=1.0。<strong>math_verify 的模糊匹配可能降低了模型对精确字符串模式的敏感度。</strong></div>
 </div>
 
 <!-- ===== SciERC ===== -->
@@ -202,13 +199,13 @@
 <h2>六、SciERC 关系抽取（F1）</h2>
 <table>
   <tr><th>模型</th><th>Precision</th><th>Recall</th><th>F1</th><th>TP</th></tr>
-  <tr><td>GIM-1.7B (SFT)</td><td>0.018</td><td>0.008</td><td>0.011</td><td>6</td></tr>
   <tr><td>RLVR-6021</td><td class="rlvr-best">0.039</td><td class="rlvr-best">0.016</td><td class="rlvr-best">0.022</td><td>10</td></tr>
+  <tr><td><strong>RLVR-6071</strong></td><td>0.033</td><td>0.014</td><td>0.021</td><td>9</td></tr>
   <tr><td>RLVR-601 ckpt-980</td><td>0.031</td><td>0.012</td><td>0.018</td><td>7</td></tr>
   <tr><td>RLVR-6041</td><td>0.029</td><td>0.012</td><td>0.017</td><td>9</td></tr>
-  <tr><td>RLVR-601 ckpt-490</td><td>0.022</td><td>0.009</td><td>0.013</td><td>7</td></tr>
+  <tr><td>GIM-1.7B (SFT)</td><td>0.018</td><td>0.008</td><td>0.011</td><td>6</td></tr>
 </table>
-<div class="note">6041 的 F1（0.017）接近 601-ckpt980（0.018），TP=9 是所有变体中第二高的。</div>
+<div class="note">6071 的 F1（0.021）接近 6021（0.022），TP=9。</div>
 </div>
 
 <!-- ===== CV ===== -->
@@ -217,13 +214,13 @@
 <table>
   <tr><th>模型</th><th>accuracy</th><th>正确/总数</th></tr>
   <tr><td>Qwen3-1.7B</td><td class="best">0.631</td><td>298/472</td></tr>
-  <tr><td><strong>RLVR-6041</strong></td><td class="rlvr-best">0.623</td><td>294/472</td></tr>
+  <tr><td>RLVR-6041</td><td class="rlvr-best">0.623</td><td>294/472</td></tr>
   <tr><td>GIM-1.7B (SFT)</td><td>0.619</td><td>292/472</td></tr>
   <tr><td>RLVR-601 ckpt-490</td><td>0.619</td><td>292/472</td></tr>
-  <tr><td>RLVR-601 ckpt-980</td><td>0.619</td><td>292/472</td></tr>
+  <tr><td><strong>RLVR-6071</strong></td><td>0.617</td><td>291/472</td></tr>
   <tr><td>RLVR-6021</td><td>0.606</td><td>286/472</td></tr>
 </table>
-<div class="success-box"><strong>6041 的 CV accuracy（0.623）是所有 RL 变体中最高的</strong>，超越 SFT（0.619），仅差基座 Qwen3-1.7B（0.631）0.8pp。比 6021 多对了 8 个字段。</div>
+<div class="note">6071 的 CV（0.617）接近 SFT（0.619），比 6021 好 1.1pp。</div>
 </div>
 
 <!-- ===== PPL ===== -->
@@ -231,36 +228,38 @@
 <h2>八、PPL 困惑度</h2>
 <table>
   <tr><th>模型</th><th>avg_wnp</th><th>avg_inp ↓</th><th>response_len</th><th>infilling_ratio</th></tr>
-  <tr><td>GIM-1.7B (SFT)</td><td>0.380</td><td>0.268</td><td>4044</td><td>0.929</td></tr>
   <tr><td>RLVR-601 ckpt-490</td><td>0.391</td><td class="best">0.259</td><td>4109</td><td>0.905</td></tr>
   <tr><td>RLVR-6041</td><td>0.379</td><td>0.271</td><td>3850</td><td>0.953</td></tr>
+  <tr><td>GIM-1.7B (SFT)</td><td>0.380</td><td>0.268</td><td>4044</td><td>0.929</td></tr>
   <tr><td>RLVR-6021</td><td class="best">0.366</td><td>0.280</td><td>3210</td><td>0.953</td></tr>
+  <tr><td><strong>RLVR-6071</strong></td><td>0.372</td><td>0.283</td><td>3344</td><td>0.944</td></tr>
   <tr><td>RLVR-601 ckpt-980</td><td>0.371</td><td>0.283</td><td>3491</td><td>0.942</td></tr>
 </table>
-<div class="note">6041 的 INP（0.271）接近 SFT（0.268），是第二低的（仅次于 601-ckpt490 的 0.259）。</div>
+<div class="note">6071 的 INP（0.283）与 601-ckpt980 相同，是近期变体中最差的。601-ckpt490（0.259）仍是 INP 最优。</div>
 </div>
 
 <!-- ===== Config ===== -->
 <div class="card" id="config">
-<h2>九、训练配置对比</h2>
+<h2>九、训练配置对比（近期变体）</h2>
 <table>
-  <tr><th>维度</th><th>RLVR-601</th><th>RLVR-6021</th><th>RLVR-6041</th></tr>
-  <tr><td>数据量</td><td>1,000</td><td><strong>2,000</strong></td><td>1,000</td></tr>
-  <tr><td>训练 epochs</td><td>1</td><td>0.5</td><td>1</td></tr>
-  <tr><td>有效步数</td><td>~980</td><td>~980</td><td>~980</td></tr>
-  <tr><td>group size</td><td>6</td><td>6</td><td>6</td></tr>
-  <tr><td>采样温度</td><td><strong>1.2</strong></td><td>1.0</td><td><strong>1.2</strong></td></tr>
-  <tr><td>Tag 匹配</td><td>math_verify 模糊</td><td>精确字符串</td><td>精确字符串</td></tr>
-  <tr><td>max_seq_len</td><td>4096</td><td>4096</td><td>4096</td></tr>
-  <tr><td>LR / scheduler</td><td>5e-6 / constant_warmup</td><td>5e-6 / constant_warmup</td><td>5e-6 / constant_warmup</td></tr>
+  <tr><th>维度</th><th>601</th><th>6021</th><th>6041</th><th>6071</th></tr>
+  <tr><td>数据量</td><td>1,000</td><td><strong>2,000</strong></td><td>1,000</td><td><strong>2,000</strong></td></tr>
+  <tr><td>训练 epochs</td><td>1</td><td>0.5</td><td>1</td><td>0.5</td></tr>
+  <tr><td>group size</td><td>6</td><td>6</td><td>6</td><td>6</td></tr>
+  <tr><td>采样温度</td><td><strong>1.2</strong></td><td>1.0</td><td><strong>1.2</strong></td><td>1.0</td></tr>
+  <tr><td>Tag 匹配</td><td>math_verify</td><td>精确</td><td>精确</td><td>math_verify</td></tr>
 </table>
 
 <div class="highlight-box">
-<strong>6041 vs 6021 的唯一差异：数据量（1000 vs 2000）和温度（1.2 vs 1.0）。</strong><br>
-两者使用相同的 reward（精确匹配），相同的有效训练步数。6041 效果更好（MMLU-Pro +2pp, MedMCQA +6pp, Code +1pp, CV +1.7pp），说明：<br>
-1. <strong>更少数据 + 更高温度有助于防止 overfitting</strong><br>
-2. 但 GPQA（-3pp）和 Match（-3.2pp）不如 6021，说明更多数据对推理和格式合规有帮助<br>
-3. <strong>最优配置可能是：1000 数据 + 温度 1.2 + math_verify reward</strong>（尚未尝试）
+<strong>配置-效果关系总结：</strong><br>
+<table style="margin-top:.5rem;font-size:.88rem">
+  <tr><th>配置因素</th><th>对 GPQA/MMLU</th><th>对 Match</th><th>对 Code</th></tr>
+  <tr><td><strong>math_verify</strong>（vs 精确匹配）</td><td><span class="tag tag-up">↑ 推理更好</span></td><td><span class="tag tag-down">↓ 匹配更差</span></td><td><span class="tag tag-up">↑ 代码更好</span></td></tr>
+  <tr><td><strong>temp=1.2</strong>（vs 1.0）</td><td><span class="tag tag-flat">~ 混合</span></td><td><span class="tag tag-down">↓ 匹配更差</span></td><td><span class="tag tag-up">↑ 代码更好</span></td></tr>
+  <tr><td><strong>少数据 1000</strong>（vs 2000）</td><td><span class="tag tag-flat">~ 混合</span></td><td><span class="tag tag-down">↓ 匹配更差</span></td><td><span class="tag tag-up">↑ 代码更好</span></td></tr>
+</table>
+<p style="margin-top:.5rem"><strong>核心 trade-off</strong>：math_verify + 高温度 + 少数据 → 推理/代码更好，但匹配更差。精确匹配 + 低温度 + 多数据 → 匹配更好，但推理/代码更差。</p>
+<p><strong>未尝试的组合</strong>：math_verify + 低温度 + 多数据（可能同时获得推理和匹配的优势）。</p>
 </div>
 </div>
 
@@ -268,7 +267,7 @@
 <div class="card" id="ppl-critique">
 <h2>十、PPL Benchmark 设计问题</h2>
 <div class="danger-box">
-<strong>PPL benchmark 只测流畅度，不测正确性，且耗时占总评测 47%（60 分钟）。</strong>
+<strong>PPL benchmark 只测流畅度，不测正确性，耗时占总评测 47%（60 分钟）。</strong>
 <ul style="margin:.5rem 0 0 1.2rem;font-size:.9rem">
   <li>alpha=0.2 归一化把 PPL 的 10 倍差异压缩到 37%</li>
   <li>参考模型太小（gemma-3-270m），PPL 估计 noisy</li>
@@ -291,30 +290,23 @@
 <h3>P1 — 下一轮训练</h3>
 <table>
   <tr><th>方案</th><th>预期收益</th><th>难度</th></tr>
-  <tr><td><strong>1000 数据 + 温度 1.2 + math_verify reward</strong><br><small>结合 6041 的数据配置和 601 的 reward 优势</small></td><td>可能同时获得 6041 的 CV 和 601 的 MMLU-Pro</td><td><span class="tag tag-flat">低</span></td></tr>
-  <tr><td><strong>Early stopping at step 400-500</strong><br><small>避免 overfitting 导致的 Code/PPL 退化</small></td><td>保留代码和 infilling 能力</td><td><span class="tag tag-flat">低</span></td></tr>
-  <tr><td><strong>统一 format + correctness reward</strong></td><td>消除 50% zero-std 问题</td><td><span class="tag tag-flat">低</span></td></tr>
+  <tr><td><strong>math_verify + 2000 数据 + temp=1.0</strong><br><small>即 6071 的配置，但解决 Match 退化问题</small></td><td>保留 6071 的 GPQA/Code 优势</td><td><span class="tag tag-flat">低</span></td></tr>
+  <tr><td><strong>Early stopping at step 400-500</strong><br><small>避免 overfitting</small></td><td>保留代码和 infilling 能力</td><td><span class="tag tag-flat">低</span></td></tr>
+  <tr><td><strong>加入 regex pattern matching reward</strong><br><small>专门优化 Match 指标</small></td><td>解决 6071 的 Match 退化</td><td><span class="tag tag-flat">中</span></td></tr>
 </table>
 
 <h3>P2 — 中期改进</h3>
 <table>
   <tr><th>方案</th><th>预期收益</th><th>难度</th></tr>
   <tr><td><strong>SciERC 评估改进</strong><br><small>max_relations 30→15，加 "none" 退出</small></td><td>F1 从 ≈0 到可量化</td><td><span class="tag tag-flat">中</span></td></tr>
-  <tr><td><strong>加入代码 infilling 样本 + syntax check reward</strong></td><td>pass@1 从 9% 到 12%+</td><td><span class="tag tag-flat">中</span></td></tr>
-  <tr><td><strong>PPL benchmark 缩减到 200 样本</strong></td><td>节省 50 分钟评测时间</td><td><span class="tag tag-flat">低</span></td></tr>
-</table>
-
-<h3>P3 — 长期探索</h3>
-<table>
-  <tr><th>方案</th><th>预期收益</th><th>难度</th></tr>
-  <tr><td><strong>更大基座模型（Qwen3-4B/7B）</strong></td><td>突破 1.7B 瓶颈</td><td><span class="tag tag-down">高</span></td></tr>
+  <tr><td><strong>加入代码 infilling 样本 + syntax check reward</strong></td><td>pass@1 从 9.5% 到 12%+</td><td><span class="tag tag-flat">中</span></td></tr>
 </table>
 
 <div class="success-box">
 <strong>最高优先级</strong>：<br>
 1. <strong>立即</strong>：用 601-ckpt490 作为最优 RL 模型<br>
-2. <strong>下一轮</strong>：1000 数据 + 温度 1.2 + math_verify + early stopping at 400-500<br>
-3. <strong>中期</strong>：修复 SciERC + 代码 reward + 缩减 PPL
+2. <strong>下一轮</strong>：math_verify + 2000 数据 + temp=1.0 + early stopping + regex reward<br>
+3. <strong>中期</strong>：修复 SciERC + 代码 reward
 </div>
 </div>
 
