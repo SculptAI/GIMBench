@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIM-4B 实验报告</title>
+<style>
+  :root{--bg:#f8f9fa;--card:#fff;--border:#dee2e6;--text:#212529;--muted:#6c757d;--accent:#0d6efd;--green:#198754;--red:#dc3545;--teal:#0d9488}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:2rem}
+  .container{max-width:1100px;margin:0 auto}
+  h1{font-size:1.8rem;margin-bottom:.25rem}h2{font-size:1.25rem;margin:1.5rem 0 1rem;padding-bottom:.4rem;border-bottom:2px solid var(--accent)}
+  .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin-bottom:.75rem}th,td{padding:.5rem .75rem;text-align:left;border-bottom:1px solid var(--border)}th{background:#f1f3f5;font-weight:600;white-space:nowrap}td{font-variant-numeric:tabular-nums}
+  .best{font-weight:700;color:var(--green)}.worst{color:var(--red)}
+  .tag{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.75rem;font-weight:600}
+  .tag-up{background:#d1e7dd;color:#0f5132}.tag-down{background:#f8d7da;color:#842029}.tag-flat{background:#fff3cd;color:#664d03}
+  .note{font-size:.85rem;color:var(--muted);margin-top:.5rem}
+  .box{padding:.75rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:.9rem}
+  .box-yellow{background:#fff3cd;border-left:4px solid #ffc107}
+  .box-blue{background:#e7f1ff;border-left:4px solid var(--accent)}
+  .box-green{background:#d1e7dd;border-left:4px solid var(--green)}
+  .box-red{background:#f8d7da;border-left:4px solid var(--red)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>GIM-4B 实验报告</h1>
+<p class="subtitle">260608-rlvr-qwen4b &mdash; 2026-06-09 &mdash; Qwen3-4B-Instruct → GIM-4B SFT → RLVR-4B</p>
+
+<!-- 概览 -->
+<div class="card">
+<h2>实验概览</h2>
+<table>
+  <tr><th>模型</th><th>说明</th><th>基座</th></tr>
+  <tr><td><strong>Qwen3-4B (base)</strong></td><td>原始 Instruct 模型</td><td>Qwen/Qwen3-4B-Instruct-2507</td></tr>
+  <tr><td><strong>GIM-4B (SFT)</strong></td><td>SFT 训练的 GIM 模型</td><td>Sculpt-AI/GIM-4B</td></tr>
+  <tr><td><strong>RLVR-4B</strong></td><td>RL 训练（math_verify reward, 2000 数据, group=4, temp=1.0）</td><td>Sculpt-AI/GIM-4B</td></tr>
+</table>
+</div>
+
+<!-- 核心结果 -->
+<div class="card">
+<h2>核心结果</h2>
+<table>
+  <tr><th>Benchmark</th><th>Base</th><th>SFT</th><th>RL</th><th>SFT vs Base</th><th>RL vs SFT</th><th>RL vs Base</th></tr>
+  <tr><td>GPQA</td><td class="best">0.510</td><td>0.290</td><td>0.370</td><td><span class="tag tag-down">&minus;22pp</span></td><td><span class="tag tag-up">+8pp</span></td><td><span class="tag tag-down">&minus;14pp</span></td></tr>
+  <tr><td>MMLU-Pro</td><td class="best">0.790</td><td>0.460</td><td>0.520</td><td><span class="tag tag-down">&minus;33pp</span></td><td><span class="tag tag-up">+6pp</span></td><td><span class="tag tag-down">&minus;27pp</span></td></tr>
+  <tr><td>QASC</td><td class="best">0.840</td><td>0.810</td><td>0.820</td><td><span class="tag tag-down">&minus;3pp</span></td><td><span class="tag tag-up">+1pp</span></td><td><span class="tag tag-down">&minus;2pp</span></td></tr>
+  <tr><td>MedMCQA</td><td class="best">0.630</td><td>0.560</td><td>0.590</td><td><span class="tag tag-down">&minus;7pp</span></td><td><span class="tag tag-up">+3pp</span></td><td><span class="tag tag-down">&minus;4pp</span></td></tr>
+  <tr><td>Code</td><td>0.135</td><td class="best">0.200</td><td>0.190</td><td><span class="tag tag-up">+6.5pp</span></td><td><span class="tag tag-down">&minus;1pp</span></td><td><span class="tag tag-up">+5.5pp</span></td></tr>
+  <tr><td>Match</td><td>0.776</td><td>0.833</td><td class="best">0.834</td><td><span class="tag tag-up">+5.7pp</span></td><td><span class="tag tag-up">+0.1pp</span></td><td><span class="tag tag-up">+5.8pp</span></td></tr>
+  <tr><td>SciERC F1</td><td class="best">0.066</td><td>0.061</td><td>0.057</td><td><span class="tag tag-down">&minus;0.5pp</span></td><td><span class="tag tag-down">&minus;0.4pp</span></td><td><span class="tag tag-down">&minus;0.9pp</span></td></tr>
+  <tr><td>CV Acc</td><td class="worst">0.125</td><td>0.653</td><td class="best">0.659</td><td><span class="tag tag-up">+52.8pp</span></td><td><span class="tag tag-up">+0.6pp</span></td><td><span class="tag tag-up">+53.4pp</span></td></tr>
+</table>
+</div>
+
+<!-- 分类分析 -->
+<div class="card">
+<h2>分类分析</h2>
+
+<h3>推理任务（GPQA / MMLU-Pro / QASC / MedMCQA）</h3>
+<div class="box box-red">
+<strong>GIM 训练严重损害推理能力。</strong> Base → SFT 下降 7-33pp。RL 训练部分恢复（GPQA +8pp, MMLU-Pro +6pp），但仍远不及 base。<br>
+RL 恢复率：GPQA 36%，MMLU-Pro 18%。
+</div>
+
+<h3>结构化任务（Code / Match / CV）</h3>
+<div class="box box-green">
+<strong>GIM 训练大幅提升结构化任务。</strong> CV 从 0.125 飙升到 0.653（+53pp），Code +6.5pp，Match +5.7pp。<br>
+RL 在此基础上进一步微调，CV 达到 0.659（最优）。
+</div>
+
+<h3>SciERC</h3>
+<div class="box box-yellow">
+Base 最强（0.066），SFT/RL 略有退化。4B 模型的 SciERC F1 远高于 1.7B（0.057 vs 0.022）。
+</div>
+</div>
+
+<!-- 回答长度 -->
+<div class="card">
+<h2>QA 回答长度变化</h2>
+<table>
+  <tr><th>Benchmark</th><th>Base tokens</th><th>SFT tokens</th><th>RL tokens</th><th>Base→SFT 缩短</th></tr>
+  <tr><td>GPQA</td><td>3129</td><td>502</td><td>466</td><td><strong>&minus;84%</strong></td></tr>
+  <tr><td>MMLU-Pro</td><td>1384</td><td>396</td><td>396</td><td><strong>&minus;71%</strong></td></tr>
+  <tr><td>QASC</td><td>476</td><td>221</td><td>214</td><td><strong>&minus;54%</strong></td></tr>
+  <tr><td>MedMCQA</td><td>1184</td><td>237</td><td>235</td><td><strong>&minus;80%</strong></td></tr>
+</table>
+<div class="box box-blue">
+Base 模型回答极其冗长（GPQA 平均 3129 tokens）。SFT 训练将回答缩短 54-84%。RL 在此基础上进一步微调，<strong>用更少 token 获得更高准确率</strong>。
+</div>
+</div>
+
+<!-- CV 字段级 -->
+<div class="card">
+<h2>CV 字段级准确率</h2>
+<table>
+  <tr><th>字段</th><th>Base</th><th>SFT</th><th>RL</th></tr>
+  <tr><td>birthday</td><td class="worst">0.0%</td><td>2.3%</td><td class="best">4.7%</td></tr>
+  <tr><td>github_url</td><td>0.0%</td><td>7.0%</td><td>7.0%</td></tr>
+  <tr><td>phone_number</td><td>0.0%</td><td>32.6%</td><td>32.6%</td></tr>
+  <tr><td>department</td><td>0.0%</td><td>39.5%</td><td>39.5%</td></tr>
+  <tr><td>homepage_url</td><td>55.8%</td><td>41.9%</td><td class="best">46.5%</td></tr>
+  <tr><td>email</td><td class="best">72.1%</td><td>69.8%</td><td>69.8%</td></tr>
+  <tr><td>name</td><td>2.3%</td><td class="best">90.7%</td><td class="best">90.7%</td></tr>
+  <tr><td>university</td><td>0.0%</td><td class="best">95.3%</td><td class="best">95.3%</td></tr>
+  <tr><td>highest_level_degree</td><td>2.3%</td><td class="best">97.7%</td><td class="best">97.7%</td></tr>
+</table>
+<div class="box box-yellow">
+Base 模型只能提取 email（72%）和 homepage_url（56%），其他字段几乎全错。SFT/RL 让模型学会 GIM 格式，name/university/degree 达到 90%+。
+</div>
+</div>
+
+<!-- 总结 -->
+<div class="card">
+<h2>总结</h2>
+<table>
+  <tr><th>维度</th><th>Base</th><th>SFT</th><th>RL</th></tr>
+  <tr><td>推理能力</td><td class="best">最强</td><td>最弱</td><td>中间（部分恢复）</td></tr>
+  <tr><td>GIM 格式合规</td><td>不懂</td><td>强</td><td class="best">最强</td></tr>
+  <tr><td>结构化提取</td><td>最弱</td><td>强</td><td class="best">最强</td></tr>
+  <tr><td>回答简洁度</td><td>极冗长</td><td>简洁</td><td class="best">最简洁</td></tr>
+</table>
+<div class="box box-green">
+<strong>结论</strong>：GIM 训练（SFT+RL）的本质是用推理能力换取结构化任务能力。RL 训练在 SFT 基础上部分恢复了推理能力（GPQA +8pp, MMLU-Pro +6pp），同时保持了结构化任务的优势。<br><br>
+<strong>与 1.7B 对比</strong>：4B RL 在全部 8 个指标上超越 1.7B 最佳，平均提升 +8.6pp。模型越大，RL 效果越好、退化越小。
+</div>
+</div>
+
+<p style="text-align:center;color:var(--muted);font-size:.8rem;margin-top:2rem;">基于 <code>results/260608-rlvr-qwen4b/</code> 中的评测结果生成</p>
+
+</div>
+</body>
+</html>
