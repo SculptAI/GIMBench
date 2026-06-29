@@ -17,7 +17,14 @@ from gimbench.base import BaseEvalResult, BaseEvaluator
 from gimbench.log import get_logger
 from gimbench.models import SimpleGIM
 
-from .schema import CV_FIELDS, GIMKIT_TEMPLATE, OUTLINES_JSON_SCHEMA, OUTLINES_TEMPLATE, SHARED_PROMPT_PREFIX
+from .schema import (
+    CV_FIELDS,
+    GIMKIT_TEMPLATE,
+    GLINER_SCHEMA,
+    OUTLINES_JSON_SCHEMA,
+    OUTLINES_TEMPLATE,
+    SHARED_PROMPT_PREFIX,
+)
 
 
 logger = get_logger(__name__)
@@ -236,7 +243,39 @@ class OutlinesEvaluator(CVEvaluator):
             raise ValueError(f"Expected dict but got {type(extraction).__name__}: {extraction}")
 
 
+class GLiNEREvaluator(CVEvaluator):
+    def __init__(self, args: Namespace, dataset: Dataset):
+        super().__init__(args, dataset)
+        try:
+            from gliner2 import GLiNER2
+        except ImportError:
+            raise ImportError(
+                "The 'gliner2' package is required but not installed. "
+                "Please install it manually using `pip install gliner2` or `uv add gliner2` "
+                "to evaluate using this model."
+            )
+        self.model = GLiNER2.from_pretrained(args.model_name)
+
+    def _extract_fields(self, cv_content: str) -> dict[str, str]:
+        # GLiNER2 has a length limit, let's truncate just in case, or pass directly
+        result = self.model.extract_json(cv_content, GLINER_SCHEMA)
+
+        extraction = {}
+        if "cv" in result and isinstance(result["cv"], list) and len(result["cv"]) > 0:
+            extracted_item = result["cv"][0]
+            if isinstance(extracted_item, dict):
+                for field in CV_FIELDS:
+                    val = extracted_item.get(field, "")
+                    extraction[field] = str(val) if val is not None else ""
+        return extraction
+
+
 def conduct_eval(args: Namespace, ds: Dataset):
-    evaluator = OutlinesEvaluator(args, ds) if args.use_outlines else GIMEvaluator(args, ds)
+    if args.use_outlines:
+        evaluator = OutlinesEvaluator(args, ds)
+    elif getattr(args, "use_gliner2", False):
+        evaluator = GLiNEREvaluator(args, ds)
+    else:
+        evaluator = GIMEvaluator(args, ds)
     result = evaluator.evaluate()
     result.dump()
