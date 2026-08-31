@@ -86,8 +86,7 @@ def extract_fields():
 
     # Save results
     with open(output_file, "w", encoding="utf-8") as f:
-        for res in results:
-            f.write(json.dumps(res, ensure_ascii=False) + "\n")
+        f.writelines(json.dumps(res, ensure_ascii=False) + "\n" for res in results)
 
     print(f"Processing complete. Saved to {output_file}")
 
