@@ -64,8 +64,7 @@ def extract_content():
 
     # Write results
     with open(result_file, "w", encoding="utf-8") as f:
-        for item in results:
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+        f.writelines(json.dumps(item, ensure_ascii=False) + "\n" for item in results)
 
     print("\nProcessing complete.")
     print(f"Successfully loaded {len(results)}/{len(pdf_files)} documents.")
